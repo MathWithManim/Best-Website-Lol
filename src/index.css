@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+@theme {
+  --color-bg: #F5E6CA;
+  --color-primary: #8B4513;
+  --color-accent: #A0522D;
+  --color-secondary: #D2B48C;
+  --color-darker: #5D3A1A;
+  --font-typewriter: "Special Elite", cursive;
+  --font-cursive: "Great Vibes", cursive;
+}
+
+body {
+  @apply bg-[#F5E6CA] text-[#8B4513] font-sans;
+}
