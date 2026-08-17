@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { RARITY_COLORS } from './RarityStatsModal';
 
 const RARITIES = [
   "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic",
@@ -10,17 +11,6 @@ const RARITIES = [
   "Reality", "Existence", "Infinity", "Beyond", "Absolute", "Final", "Omega",
   "Alpha", "Zenith"
 ];
-
-const RARITY_COLORS: Record<string, string> = {
-  Common: '#9CA3AF', Uncommon: '#22C55E', Rare: '#3B82F6', Legendary: '#A855F7',
-  Mythical: '#EC4899', Divine: '#F59E0B', Prismatic: '#06B6D4', Transcendent: '#8B5CF6',
-  Epic: '#EF4444', Unique: '#14B8A6', Heroic: '#F97316', Fabled: '#D946EF',
-  Ancient: '#78716C', Ethereal: '#A78BFA', Celestial: '#38BDF8', Astral: '#818CF8',
-  Galactic: '#E879F9', Infinite: '#FBBF24', Void: '#1E1B4B', Chaos: '#DC2626',
-  Order: '#2563EB', Reality: '#059669', Existence: '#7C3AED', Infinity: '#DB2777',
-  Beyond: '#9333EA', Absolute: '#C2410C', Final: '#1D4ED8', Omega: '#B91C1C',
-  Alpha: '#4338CA', Zenith: '#BE185D',
-};
 
 interface RNGGameProps {
   onRollComplete: () => void;

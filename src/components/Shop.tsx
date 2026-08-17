@@ -4,10 +4,9 @@ import { api } from '../../convex/_generated/api';
 
 interface ShopProps {
   email: string;
-  onBalanceChange: () => void;
 }
 
-const Shop = ({ email, onBalanceChange }: ShopProps) => {
+const Shop = ({ email }: ShopProps) => {
   const [buying, setBuying] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const buySingleBoost = useMutation(api.shop.buySingleLuckBoost);
@@ -26,7 +25,6 @@ const Shop = ({ email, onBalanceChange }: ShopProps) => {
       } else {
         setMessage(`Bought 1 minute of 1.5x luck! (${result.newBalance} LB left)`);
       }
-      onBalanceChange();
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Purchase failed');
     } finally {

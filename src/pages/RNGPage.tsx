@@ -70,10 +70,6 @@ const RNGPage = () => {
     setRollCounter(c => c + 1);
   }, []);
 
-  const handleBalanceChange = useCallback(() => {
-    // LuckBucks query auto-refreshes via Convex
-  }, []);
-
   if (!isLoggedIn) {
     return <AuthModal onLogin={handleLogin} />;
   }
@@ -104,7 +100,7 @@ const RNGPage = () => {
             {/* Shop below roll */}
             {email && (
               <>
-                <Shop email={email} onBalanceChange={handleBalanceChange} />
+                <Shop email={email} />
                 <CosmeticShop email={email} />
               </>
             )}

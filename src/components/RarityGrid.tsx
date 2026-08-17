@@ -92,4 +92,3 @@ const RarityGrid = ({ rarityCounts, onRarityClick, isLoading }: RarityGridProps)
 };
 
 export default RarityGrid;
-export { RARITIES, RARITY_COLORS };

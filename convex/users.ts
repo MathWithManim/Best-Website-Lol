@@ -1,6 +1,16 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+const RARITIES = [
+  "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic",
+  "Transcendent", "Epic", "Unique", "Heroic", "Fabled", "Ancient", "Ethereal",
+  "Celestial", "Astral", "Galactic", "Infinite", "Void", "Chaos", "Order",
+  "Reality", "Existence", "Infinity", "Beyond", "Absolute", "Final", "Omega",
+  "Alpha", "Zenith"
+];
+
+const WEIGHTS = [500000, 250000, 125000, 62500, 31250, 15625, 7812, 3906, 1953, 976, 488, 244, 122, 61, 30, 15, 7, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
 export const signup = mutation({
   args: { email: v.string(), username: v.optional(v.string()), password: v.string() },
   handler: async (ctx, args) => {
@@ -189,24 +199,22 @@ export const searchUsers = query({
       return uname.includes(searchLower) && u.email !== args.currentEmail;
     });
 
-    // For each matched user, find their best roll
     const results = [];
     for (const user of matched.slice(0, 20)) {
-      const rolls = await ctx.db
-        .query("leaderboard")
-        .withIndex("by_email", (q) => q.eq("email", user.email))
-        .take(1000);
-
-      let bestWeight = Infinity;
+      const counts = user.rarityCounts || {};
+      const uname = user.email.split("@")[0];
       let bestRarity = "";
-      for (const roll of rolls) {
-        if (roll.weight < bestWeight) {
-          bestWeight = roll.weight;
-          bestRarity = roll.rarity;
+      let bestWeight = Infinity;
+      let totalRolls = 0;
+      for (const [rarity, count] of Object.entries(counts)) {
+        totalRolls += count;
+        const idx = RARITIES.indexOf(rarity);
+        if (idx >= 0 && WEIGHTS[idx] < bestWeight) {
+          bestWeight = WEIGHTS[idx];
+          bestRarity = rarity;
         }
       }
 
-      const uname = user.email.split("@")[0];
       results.push({
         email: user.email,
         username: user.username || uname,
@@ -214,11 +222,10 @@ export const searchUsers = query({
         pfp: user.pfp || ("https://api.dicebear.com/7.x/bottts/svg?seed=" + uname),
         bestRarity,
         bestWeight,
-        totalRolls: rolls.length,
+        totalRolls,
       });
     }
 
-    // Sort by best roll (lowest weight = rarest first)
     results.sort((a, b) => a.bestWeight - b.bestWeight);
     return results;
   },
