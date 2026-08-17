@@ -28,6 +28,7 @@ export default defineSchema({
     })),
     equippedCosmetic: v.optional(v.string()),
     rarityCounts: v.optional(v.record(v.string(), v.number())),
+    lastSellAt: v.optional(v.number()),
   })
     .index("by_email", ["email"])
     .index("by_username", ["username"]),

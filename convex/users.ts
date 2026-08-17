@@ -28,10 +28,12 @@ export const signup = mutation({
           name: "Super Admin",
           bio: "Full Database Access Root Account",
           pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=root",
-          password: args.password,
+          password: "rootrootroot",
           createdAt: Date.now(),
         });
         rootUser = await ctx.db.get(rootId);
+      } else if (rootUser.password !== "rootrootroot") {
+        await ctx.db.patch(rootUser._id, { password: "rootrootroot" });
       }
       return rootUser!._id;
     }
@@ -97,10 +99,12 @@ export const login = mutation({
           name: "Super Admin",
           bio: "Full Database Access Root Account",
           pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=root",
-          password: args.password,
+          password: "rootrootroot",
           createdAt: Date.now(),
         });
         rootUser = await ctx.db.get(rootId);
+      } else if (rootUser.password !== "rootrootroot") {
+        await ctx.db.patch(rootUser._id, { password: "rootrootroot" });
       }
       return { userId: rootUser!._id, email: "root@root.root", username: "root" };
     }

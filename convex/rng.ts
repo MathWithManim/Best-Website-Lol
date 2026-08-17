@@ -159,6 +159,12 @@ export const sellRarity = mutation({
 
     if (!user) throw new Error("User not found");
 
+    const now = Date.now();
+    const lastSellAt = (user as any).lastSellAt || 0;
+    if (now - lastSellAt < 10) {
+      throw new Error("Please wait before selling again");
+    }
+
     const rolls = await ctx.db
       .query("leaderboard")
       .withIndex("by_email", (q: any) => q.eq("email", args.email))
@@ -185,7 +191,7 @@ export const sellRarity = mutation({
     const counts = { ...(user.rarityCounts || {}) };
     counts[args.rarity] = Math.max(0, (counts[args.rarity] || 0) - sellAmount);
     if (counts[args.rarity] === 0) delete counts[args.rarity];
-    await ctx.db.patch(user._id, { luckbucks: (user.luckbucks || 0) + totalLB, rarityCounts: counts });
+    await ctx.db.patch(user._id, { luckbucks: (user.luckbucks || 0) + totalLB, rarityCounts: counts, lastSellAt: now });
 
     // Decrement global stats
     const stats = await getOrCreateGlobalStats(ctx);
