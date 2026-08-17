@@ -14,9 +14,10 @@ const RARITIES = [
 
 interface RNGGameProps {
   onRollComplete: () => void;
+  equippedCosmetic?: string;
 }
 
-const RNGGame = ({ onRollComplete }: RNGGameProps) => {
+const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
   const roll = useMutation(api.rng.roll);
   const sessionToken = typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || undefined : undefined;
 
@@ -103,7 +104,18 @@ const RNGGame = ({ onRollComplete }: RNGGameProps) => {
 
         {/* Blur overlay during spin */}
         {rolling && (
-          <div className="absolute inset-0 z-5 pointer-events-none backdrop-blur-[1px]" />
+          <div className="absolute inset-0 z-5 pointer-events-none backdrop-blur-[1px] flex items-center justify-center">
+            {equippedCosmetic === 'cat' && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 0.5 }}
+                className="text-4xl"
+              >
+                🐱
+              </motion.div>
+            )}
+          </div>
         )}
 
         <div className="absolute inset-0 flex items-center justify-center">

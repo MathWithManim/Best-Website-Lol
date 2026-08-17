@@ -30,9 +30,10 @@ const RNGPage = () => {
   const sessionToken = typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || undefined : undefined;
   const userRarityCounts = useQuery(api.rng.getUserRarityCounts, sessionToken && isLoggedIn ? { sessionToken } : "skip");
   const rarityStats = useQuery(api.rng.getRarityStats);
+  const user = useQuery(api.users.getUser, email && sessionToken ? { email, sessionToken } : "skip");
   const luckBucks = useQuery(api.shop.getLuckBucks, sessionToken ? { sessionToken } : "skip");
 
-  const isLoading = userRarityCounts === undefined;
+  const isLoading = userRarityCounts === undefined || (isLoggedIn && user === undefined);
 
   // Get cached rarity data from localStorage for immediate display
   const getCachedCounts = (): Record<string, number> => {
@@ -113,7 +114,10 @@ const RNGPage = () => {
               </span>
             </div>
 
-            <RNGGame onRollComplete={handleRollComplete} />
+             <RNGGame 
+               onRollComplete={handleRollComplete} 
+               equippedCosmetic={user?.equippedCosmetic} 
+             />
 
             {/* Shop below roll */}
             {email && sessionToken && (
