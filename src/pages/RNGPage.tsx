@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import Breadcrumbs from '../components/Breadcrumbs';
 import AuthModal from '../components/AuthModal';
 import RNGGame from '../components/RNGGame';
 import RarityGrid from '../components/RarityGrid';
@@ -12,6 +13,13 @@ import { api } from '../../convex/_generated/api';
 import { encodeRarityData, decodeRarityData } from '../lib/crypto';
 
 const RNGPage = () => {
+  useEffect(() => {
+    document.title = 'RNG Game — Jasper Sona';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', 'Roll for random rarities, collect items, earn LuckBucks, and compete on the leaderboard.');
+    return () => { document.title = 'Jasper Sona'; };
+  }, []);
+
   const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRarity, setSelectedRarity] = useState('');
@@ -82,6 +90,7 @@ const RNGPage = () => {
   return (
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] dark:text-[#f4d5ad] transition-colors duration-300">
       <Navbar />
+      <Breadcrumbs />
       <main className="max-w-6xl mx-auto px-4 py-8 md:py-12">
         {/* Loading skeleton while Convex connects */}
         {luckBucks === undefined && userRarityCounts === undefined && (

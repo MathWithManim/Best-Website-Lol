@@ -79,12 +79,12 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
         </h2>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 font-mono text-sm rounded">
+          <div role="alert" className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 font-mono text-sm rounded">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {!isLogin && (
             <div>
               <label htmlFor="auth-username" className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Username</label>
@@ -95,7 +95,9 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full p-3 rounded-lg bg-bg dark:bg-[#1a120b] border border-primary/30 dark:border-[#f4d5ad]/30 text-primary dark:text-[#f4d5ad] font-mono focus:outline-none focus:border-accent"
                 placeholder="jasper_sona"
+                aria-describedby={!isLogin ? "auth-username-hint" : undefined}
               />
+              <p id="auth-username-hint" className="sr-only">Choose a display name for your profile</p>
             </div>
           )}
           <div>

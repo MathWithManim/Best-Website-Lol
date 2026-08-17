@@ -1,10 +1,20 @@
+import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import Breadcrumbs from '../components/Breadcrumbs';
 import Footer from '../components/Footer';
 
 const Privacy = () => {
+  useEffect(() => {
+    document.title = 'Privacy Policy — Jasper Sona';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', 'Read the privacy policy for the Jasper Sona website. Learn how we collect, use, and protect your data.');
+    return () => { document.title = 'Jasper Sona'; };
+  }, []);
+
   return (
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] dark:text-[#f4d5ad] transition-colors duration-300">
       <Navbar />
+      <Breadcrumbs />
       <main className="max-w-3xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-sans font-bold mb-8">Privacy Policy</h1>
         <div className="space-y-6 font-mono text-sm leading-relaxed">

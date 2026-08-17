@@ -184,6 +184,7 @@ const RNGGame = ({ onRollComplete }: RNGGameProps) => {
       <button
         onClick={handleRoll}
         disabled={rolling}
+        title="Execute a roll for a random rarity item"
         className="w-full py-4 px-8 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono text-lg font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer active:scale-95"
       >
         {rolling ? (

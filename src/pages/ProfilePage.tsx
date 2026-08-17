@@ -2,10 +2,18 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Navbar from '../components/Navbar';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { useNavigate } from 'react-router-dom';
 import { RARITY_COLORS } from '../components/RarityStatsModal';
 
 const ProfilePage = () => {
+  useEffect(() => {
+    document.title = 'Profile — Jasper Sona';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', 'Manage your profile, update your display name, username, bio, and search other users.');
+    return () => { document.title = 'Jasper Sona'; };
+  }, []);
+
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | null>(null);
   const [sessionToken, setSessionToken] = useState<string | null>(null);
@@ -88,13 +96,15 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] text-primary dark:text-[#f4d5ad] transition-colors duration-300">
       <Navbar />
+      <Breadcrumbs />
       <main className="max-w-2xl mx-auto p-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-sans font-bold">User Profile</h1>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 text-white font-mono rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
-          >
+            <button
+              onClick={handleLogout}
+              title="Log out of your account"
+              className="px-4 py-2 bg-red-600 text-white font-mono rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
+            >
             Log Out
           </button>
         </div>
@@ -154,12 +164,13 @@ const ProfilePage = () => {
           <div className="flex items-center gap-4">
             <button
               type="submit"
+              title="Save all profile changes"
               className="px-6 py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono rounded-lg font-bold hover:opacity-90 transition-opacity cursor-pointer"
             >
               Save Changes
             </button>
             {saved && <span className="text-green-600 dark:text-green-400 font-mono text-sm">Saved successfully!</span>}
-            {error && <span className="text-red-600 dark:text-red-400 font-mono text-sm">{error}</span>}
+            {error && <span role="alert" className="text-red-600 dark:text-red-400 font-mono text-sm">{error}</span>}
           </div>
         </form>
 
@@ -177,6 +188,7 @@ const ProfilePage = () => {
             />
             <button
               onClick={handleSearch}
+              title="Search for a user by username"
               className="px-6 py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono rounded-lg font-bold hover:opacity-90 transition-opacity cursor-pointer"
             >
               Search
@@ -204,7 +216,7 @@ const ProfilePage = () => {
                   >
                     <img
                       src={result.pfp}
-                      alt=""
+                      alt={`${result.username}'s avatar`}
                       className="w-10 h-10 rounded-full bg-bg dark:bg-[#2d1e14]"
                     />
                     <div className="flex-1 min-w-0">

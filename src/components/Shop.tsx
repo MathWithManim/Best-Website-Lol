@@ -54,6 +54,7 @@ const Shop = ({ sessionToken }: ShopProps) => {
           whileTap={{ scale: 0.98 }}
           onClick={() => handleBuy('single')}
           disabled={buying !== null || !!activeBoost}
+          title="Buy 1.5x luck for your next roll"
           className="w-full py-3 px-4 bg-green-600 text-white font-mono text-sm font-bold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between"
         >
           <span>1.5x Luck (next roll)</span>
@@ -68,6 +69,7 @@ const Shop = ({ sessionToken }: ShopProps) => {
           whileTap={{ scale: 0.98 }}
           onClick={() => handleBuy('minute')}
           disabled={buying !== null || !!activeBoost}
+          title="Buy 1.5x luck for 1 minute"
           className="w-full py-3 px-4 bg-blue-600 text-white font-mono text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between"
         >
           <span>1.5x Luck (1 min)</span>

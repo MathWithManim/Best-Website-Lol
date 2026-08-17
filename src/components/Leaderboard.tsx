@@ -60,7 +60,7 @@ const Leaderboard = () => {
               </span>
               <img
                 src={`https://api.dicebear.com/7.x/bottts/svg?seed=${entry.username}`}
-                alt=""
+                alt={`${entry.username}'s avatar`}
                 className="w-8 h-8 rounded-full bg-bg dark:bg-[#2d1e14]"
               />
               <div className="flex-1 min-w-0">

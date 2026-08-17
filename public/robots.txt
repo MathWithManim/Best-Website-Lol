@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /logout
+
+Sitemap: https://best-website-lol.vercel.app/sitemap.xml
