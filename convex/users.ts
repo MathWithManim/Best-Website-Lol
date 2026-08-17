@@ -11,50 +11,9 @@ const RARITIES = [
 
 const WEIGHTS = [500000, 250000, 125000, 62500, 31250, 15625, 7812, 3906, 1953, 976, 488, 244, 122, 61, 30, 15, 7, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
-// --- Crypto helpers ---
-
-function bytesToHex(bytes: Uint8Array): string {
+function generateSessionToken(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
   return Array.from(bytes).map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-function hexToBytes(hex: string): Uint8Array {
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
-  }
-  return bytes;
-}
-
-export async function hashPassword(password: string, saltHex?: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const saltBytes = saltHex ? hexToBytes(saltHex) : crypto.getRandomValues(new Uint8Array(16));
-  const saltBuf = saltBytes.buffer as ArrayBuffer;
-
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(password),
-    "PBKDF2",
-    false,
-    ["deriveBits"],
-  );
-
-  const bits = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", hash: "SHA-256", salt: saltBuf, iterations: 100000 },
-    keyMaterial,
-    256,
-  );
-
-  return bytesToHex(saltBytes) + ":" + bytesToHex(new Uint8Array(bits));
-}
-
-export async function verifyPassword(password: string, stored: string): Promise<boolean> {
-  const [salt] = stored.split(":");
-  const computed = await hashPassword(password, salt);
-  return computed === stored;
-}
-
-export function generateSessionToken(): string {
-  return bytesToHex(crypto.getRandomValues(new Uint8Array(32)));
 }
 
 /** Authenticate a user by session token. Throws if invalid. */
@@ -99,7 +58,6 @@ export const signup = mutation({
       throw new Error("Username already taken. Please choose a different one.");
     }
 
-    const hashedPassword = await hashPassword(args.password);
     const sessionToken = generateSessionToken();
 
     const userId = await ctx.db.insert("users", {
@@ -108,7 +66,7 @@ export const signup = mutation({
       name: uname,
       bio: "Hey there! I am using Jasper Sona website.",
       pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=" + uname,
-      password: hashedPassword,
+      password: args.password,
       sessionToken,
       createdAt: Date.now(),
     });
@@ -129,8 +87,7 @@ export const login = mutation({
       throw new Error("Invalid email or password");
     }
 
-    const valid = await verifyPassword(args.password, user.password);
-    if (!valid) {
+    if (user.password !== args.password) {
       throw new Error("Invalid email or password");
     }
 
@@ -170,12 +127,10 @@ export const createRootAccount = internalMutation({
       .first();
 
     if (existing) {
-      const hashed = await hashPassword(args.password);
-      await ctx.db.patch(existing._id, { password: hashed });
+      await ctx.db.patch(existing._id, { password: args.password });
       return { userId: existing._id, message: "Root password updated" };
     }
 
-    const hashed = await hashPassword(args.password);
     const sessionToken = generateSessionToken();
 
     const userId = await ctx.db.insert("users", {
@@ -184,7 +139,7 @@ export const createRootAccount = internalMutation({
       name: "Super Admin",
       bio: "Full Database Access Root Account",
       pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=root",
-      password: hashed,
+      password: args.password,
       sessionToken,
       createdAt: Date.now(),
     });
