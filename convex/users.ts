@@ -203,7 +203,7 @@ export const createRootAccount = internalMutation({
   handler: async (ctx, args) => {
     const existing = await ctx.db
       .query("users")
-      .withIndex("by_email", (q) => q.eq("email", "root@root.root"))
+      .withIndex("by_email", (q) => q.eq("email", "iamarootuser@root.root"))
       .first();
 
     if (existing) {
@@ -214,7 +214,7 @@ export const createRootAccount = internalMutation({
     const sessionToken = generateSessionToken();
 
     const userId = await ctx.db.insert("users", {
-      email: "root@root.root",
+      email: "iamarootuser@root.root",
       username: "root",
       name: "Super Admin",
       bio: "Full Database Access Root Account",
