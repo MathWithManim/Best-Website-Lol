@@ -3,6 +3,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-bg: #F5E6CA;
   --color-primary: #8B4513;
@@ -13,6 +15,27 @@
   --font-cursive: "Great Vibes", cursive;
 }
 
+:root {
+  --app-bg: #F5E6CA;
+  --app-text: #8B4513;
+  --app-accent: #A0522D;
+  --app-secondary: #D2B48C;
+  --app-card: rgba(210, 180, 140, 0.2);
+  --app-border: rgba(139, 69, 19, 0.2);
+}
+
+html.dark {
+  --app-bg: #1a120b;
+  --app-text: #f4d5ad;
+  --app-accent: #e09f58;
+  --app-secondary: #c29d75;
+  --app-card: rgba(45, 30, 20, 0.6);
+  --app-border: rgba(244, 213, 173, 0.25);
+}
+
 body {
-  @apply bg-[#F5E6CA] text-[#8B4513] font-sans;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  font-family: sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
