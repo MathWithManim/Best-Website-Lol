@@ -83,6 +83,13 @@ const RNGPage = () => {
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] dark:text-[#f4d5ad] transition-colors duration-300">
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 py-8 md:py-12">
+        {/* Loading skeleton while Convex connects */}
+        {luckBucks === undefined && userRarityCounts === undefined && (
+          <div className="flex flex-col items-center gap-4 py-12">
+            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+            <p className="font-mono text-sm text-primary/50 dark:text-[#f4d5ad]/50">Loading game data...</p>
+          </div>
+        )}
         <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
           {/* Left: Roll Area + Shop */}
           <div className="w-full md:w-2/5 flex flex-col items-center">

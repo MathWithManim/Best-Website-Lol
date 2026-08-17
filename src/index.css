@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap');
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -12,7 +12,7 @@
   --color-secondary: #D2B48C;
   --color-darker: #5D3A1A;
   --font-typewriter: "Special Elite", cursive;
-  --font-cursive: "Great Vibes", cursive;
+  --font-cursive: "Playfair Display", serif;
 }
 
 :root {
