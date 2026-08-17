@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { authenticate } from "./users";
 
 export const getLuckBucks = query({
   args: { email: v.string() },
@@ -27,14 +28,9 @@ export const getActiveBoost = query({
 
 // Buy 1.5x luck for next roll (5 LB)
 export const buySingleLuckBoost = mutation({
-  args: { email: v.string() },
+  args: { sessionToken: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .first();
-
-    if (!user) throw new Error("User not found");
+    const user = await authenticate(ctx, args.sessionToken);
 
     const lb = user.luckbucks || 0;
     if (lb < 5) throw new Error("Not enough LuckBucks (need 5)");
@@ -54,14 +50,9 @@ export const buySingleLuckBoost = mutation({
 
 // Buy 1 minute of luck boost (20 LB)
 export const buyMinuteLuckBoost = mutation({
-  args: { email: v.string() },
+  args: { sessionToken: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .first();
-
-    if (!user) throw new Error("User not found");
+    const user = await authenticate(ctx, args.sessionToken);
 
     const lb = user.luckbucks || 0;
     if (lb < 20) throw new Error("Not enough LuckBucks (need 20)");
@@ -105,19 +96,14 @@ export const getUserCosmetics = query({
 });
 
 export const buyCosmetic = mutation({
-  args: { email: v.string(), cosmeticId: v.string() },
+  args: { sessionToken: v.string(), cosmeticId: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .first();
-
-    if (!user) throw new Error("User not found");
+    const user = await authenticate(ctx, args.sessionToken);
 
     // Check if already owned
     const existing = await ctx.db
       .query("user_cosmetics")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .withIndex("by_email", (q) => q.eq("email", user.email))
       .take(100);
 
     if (existing.some(c => c.cosmeticId === args.cosmeticId)) {
@@ -135,7 +121,7 @@ export const buyCosmetic = mutation({
     }
 
     await ctx.db.insert("user_cosmetics", {
-      email: args.email,
+      email: user.email,
       cosmeticId: args.cosmeticId,
       purchasedAt: Date.now(),
     });
@@ -145,14 +131,9 @@ export const buyCosmetic = mutation({
 });
 
 export const equipCosmetic = mutation({
-  args: { email: v.string(), cosmeticId: v.string() },
+  args: { sessionToken: v.string(), cosmeticId: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .first();
-
-    if (!user) throw new Error("User not found");
+    const user = await authenticate(ctx, args.sessionToken);
 
     await ctx.db.patch(user._id, { equippedCosmetic: args.cosmeticId });
     return { success: true };

@@ -19,6 +19,7 @@ const RNGPage = () => {
   const [, setRollCounter] = useState(0);
 
   const email = typeof window !== 'undefined' ? localStorage.getItem('userEmail') || undefined : undefined;
+  const sessionToken = typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || undefined : undefined;
   const userRarityCounts = useQuery(api.rng.getUserRarityCounts, email && isLoggedIn ? { email } : "skip");
   const rarityStats = useQuery(api.rng.getRarityStats);
   const luckBucks = useQuery(api.shop.getLuckBucks, email ? { email } : "skip");
@@ -48,9 +49,10 @@ const RNGPage = () => {
     }
   }, [userRarityCounts, email]);
 
-  const handleLogin = (userEmail: string) => {
+  const handleLogin = (userEmail: string, token: string) => {
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('userEmail', userEmail);
+    localStorage.setItem('sessionToken', token);
     setIsLoggedIn(true);
   };
 
@@ -98,10 +100,10 @@ const RNGPage = () => {
             <RNGGame onRollComplete={handleRollComplete} />
 
             {/* Shop below roll */}
-            {email && (
+            {email && sessionToken && (
               <>
-                <Shop email={email} />
-                <CosmeticShop email={email} />
+                <Shop email={email} sessionToken={sessionToken} />
+                <CosmeticShop email={email} sessionToken={sessionToken} />
               </>
             )}
 
@@ -130,7 +132,7 @@ const RNGPage = () => {
         index={selectedIndex}
         stats={statsForSelected ? { count: statsForSelected.count, uniqueUsers: statsForSelected.uniqueUsers, chance: statsForSelected.chance } : null}
         userCount={userCountForSelected}
-        email={email || ''}
+        sessionToken={sessionToken || ''}
         onSellComplete={handleSellComplete}
       />
     </div>

@@ -4,9 +4,10 @@ import { api } from '../../convex/_generated/api';
 
 interface ShopProps {
   email: string;
+  sessionToken: string;
 }
 
-const Shop = ({ email }: ShopProps) => {
+const Shop = ({ email, sessionToken }: ShopProps) => {
   const [buying, setBuying] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const buySingleBoost = useMutation(api.shop.buySingleLuckBoost);
@@ -19,7 +20,7 @@ const Shop = ({ email }: ShopProps) => {
     setMessage(null);
     try {
       const mutation = type === 'single' ? buySingleBoost : buyMinuteBoost;
-      const result = await mutation({ email });
+      const result = await mutation({ sessionToken });
       if (type === 'single') {
         setMessage(`Bought 1.5x luck for next roll! (${result.newBalance} LB left)`);
       } else {

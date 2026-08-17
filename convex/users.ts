@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
 const RARITIES = [
@@ -11,34 +11,73 @@ const RARITIES = [
 
 const WEIGHTS = [500000, 250000, 125000, 62500, 31250, 15625, 7812, 3906, 1953, 976, 488, 244, 122, 61, 30, 15, 7, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
+// --- Crypto helpers ---
+
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function hexToBytes(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+  }
+  return bytes;
+}
+
+export async function hashPassword(password: string, saltHex?: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const saltBytes = saltHex ? hexToBytes(saltHex) : crypto.getRandomValues(new Uint8Array(16));
+  const saltBuf = saltBytes.buffer as ArrayBuffer;
+
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"],
+  );
+
+  const bits = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", hash: "SHA-256", salt: saltBuf, iterations: 100000 },
+    keyMaterial,
+    256,
+  );
+
+  return bytesToHex(saltBytes) + ":" + bytesToHex(new Uint8Array(bits));
+}
+
+export async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  const [salt] = stored.split(":");
+  const computed = await hashPassword(password, salt);
+  return computed === stored;
+}
+
+export function generateSessionToken(): string {
+  return bytesToHex(crypto.getRandomValues(new Uint8Array(32)));
+}
+
+/** Authenticate a user by session token. Throws if invalid. */
+export async function authenticate(ctx: { db: any }, sessionToken: string) {
+  const user = await ctx.db
+    .query("users")
+    .withIndex("by_sessionToken", (q: any) => q.eq("sessionToken", sessionToken))
+    .first();
+  if (!user) throw new Error("Not authenticated. Please log in.");
+  return user;
+}
+
+// --- Mutations ---
+
 export const signup = mutation({
   args: { email: v.string(), username: v.optional(v.string()), password: v.string() },
   handler: async (ctx, args) => {
-    // Special check for root admin
-    if (args.email === "root@root.root" || args.email === "root") {
-      let rootUser = await ctx.db
-        .query("users")
-        .withIndex("by_email", (q) => q.eq("email", "root@root.root"))
-        .first();
-
-      if (!rootUser) {
-        const rootId = await ctx.db.insert("users", {
-          email: "root@root.root",
-          username: "root",
-          name: "Super Admin",
-          bio: "Full Database Access Root Account",
-          pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=root",
-          password: "rootrootroot",
-          createdAt: Date.now(),
-        });
-        rootUser = await ctx.db.get(rootId);
-      } else if (rootUser.password !== "rootrootroot") {
-        await ctx.db.patch(rootUser._id, { password: "rootrootroot" });
-      }
-      return rootUser!._id;
-    }
-
     const uname = args.username || args.email.split("@")[0];
+
+    // Block signup with root email — root is created via internal mutation only
+    if (args.email === "root@root.root" || args.email === "root") {
+      throw new Error("Cannot create root account via signup.");
+    }
 
     // Check email uniqueness
     const existingEmail = await ctx.db
@@ -47,15 +86,7 @@ export const signup = mutation({
       .first();
 
     if (existingEmail) {
-      // Update password if account exists
-      await ctx.db.patch(existingEmail._id, {
-        username: existingEmail.username || uname,
-        name: existingEmail.name || uname,
-        bio: existingEmail.bio || "Hey there!",
-        pfp: existingEmail.pfp || ("https://api.dicebear.com/7.x/bottts/svg?seed=" + uname),
-        password: args.password,
-      });
-      return existingEmail._id;
+      throw new Error("Account already exists. Please log in.");
     }
 
     // Check username uniqueness
@@ -68,67 +99,97 @@ export const signup = mutation({
       throw new Error("Username already taken. Please choose a different one.");
     }
 
+    const hashedPassword = await hashPassword(args.password);
+    const sessionToken = generateSessionToken();
+
     const userId = await ctx.db.insert("users", {
       email: args.email,
       username: uname,
       name: uname,
       bio: "Hey there! I am using Jasper Sona website.",
       pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=" + uname,
-      password: args.password,
+      password: hashedPassword,
+      sessionToken,
       createdAt: Date.now(),
     });
 
-    return userId;
+    return { userId, sessionToken };
   },
 });
 
 export const login = mutation({
   args: { email: v.string(), password: v.string() },
   handler: async (ctx, args) => {
-    // Special check for root/root.root
-    if (args.email === "root@root.root" || args.email === "root") {
-      let rootUser = await ctx.db
-        .query("users")
-        .withIndex("by_email", (q) => q.eq("email", "root@root.root"))
-        .first();
-
-      if (!rootUser) {
-        const rootId = await ctx.db.insert("users", {
-          email: "root@root.root",
-          username: "root",
-          name: "Super Admin",
-          bio: "Full Database Access Root Account",
-          pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=root",
-          password: "rootrootroot",
-          createdAt: Date.now(),
-        });
-        rootUser = await ctx.db.get(rootId);
-      } else if (rootUser.password !== "rootrootroot") {
-        await ctx.db.patch(rootUser._id, { password: "rootrootroot" });
-      }
-      return { userId: rootUser!._id, email: "root@root.root", username: "root" };
-    }
-
     const user = await ctx.db
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
 
-    if (!user || user.password !== args.password) {
+    if (!user) {
       throw new Error("Invalid email or password");
     }
 
-    if (!user.username || !user.pfp) {
-      const uname = user.email.split("@")[0];
-      await ctx.db.patch(user._id, {
-        username: user.username || uname,
-        name: user.name || uname,
-        bio: user.bio || "Hey there!",
-        pfp: user.pfp || ("https://api.dicebear.com/7.x/bottts/svg?seed=" + uname),
-      });
+    const valid = await verifyPassword(args.password, user.password);
+    if (!valid) {
+      throw new Error("Invalid email or password");
     }
 
-    return { userId: user._id, email: user.email, username: user.username || user.email.split("@")[0] };
+    const sessionToken = generateSessionToken();
+    await ctx.db.patch(user._id, { sessionToken });
+
+    return {
+      userId: user._id,
+      email: user.email,
+      username: user.username || user.email.split("@")[0],
+      sessionToken,
+    };
+  },
+});
+
+export const logout = mutation({
+  args: { sessionToken: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_sessionToken", (q: any) => q.eq("sessionToken", args.sessionToken))
+      .first();
+    if (user) {
+      await ctx.db.patch(user._id, { sessionToken: undefined });
+    }
+    return { success: true };
+  },
+});
+
+// Internal: create root account (call from Convex dashboard only)
+export const createRootAccount = internalMutation({
+  args: { password: v.string() },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", "root@root.root"))
+      .first();
+
+    if (existing) {
+      const hashed = await hashPassword(args.password);
+      await ctx.db.patch(existing._id, { password: hashed });
+      return { userId: existing._id, message: "Root password updated" };
+    }
+
+    const hashed = await hashPassword(args.password);
+    const sessionToken = generateSessionToken();
+
+    const userId = await ctx.db.insert("users", {
+      email: "root@root.root",
+      username: "root",
+      name: "Super Admin",
+      bio: "Full Database Access Root Account",
+      pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=root",
+      password: hashed,
+      sessionToken,
+      createdAt: Date.now(),
+    });
+
+    return { userId, message: "Root account created" };
   },
 });
 
@@ -146,30 +207,26 @@ export const getUser = query({
 
     const uname = user.email.split("@")[0];
     return {
-      ...user,
       username: user.username || uname,
       name: user.name || uname,
       bio: user.bio || "Hey there!",
       pfp: user.pfp || ("https://api.dicebear.com/7.x/bottts/svg?seed=" + uname),
+      luckbucks: user.luckbucks || 0,
+      equippedCosmetic: user.equippedCosmetic,
     };
   },
 });
 
 export const updateProfile = mutation({
   args: {
-    email: v.string(),
+    sessionToken: v.string(),
     name: v.optional(v.string()),
     username: v.optional(v.string()),
     bio: v.optional(v.string()),
     pfp: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .first();
-
-    if (!user) throw new Error("User not found");
+    const user = await authenticate(ctx, args.sessionToken);
 
     // Check username uniqueness if changing username
     if (args.username && args.username !== user.username) {
@@ -189,7 +246,7 @@ export const updateProfile = mutation({
   },
 });
 
-// Search users by username
+// Search users by username — returns no email
 export const searchUsers = query({
   args: { query: v.string(), currentEmail: v.optional(v.string()) },
   handler: async (ctx, args) => {
@@ -220,7 +277,6 @@ export const searchUsers = query({
       }
 
       results.push({
-        email: user.email,
         username: user.username || uname,
         name: user.name || uname,
         pfp: user.pfp || ("https://api.dicebear.com/7.x/bottts/svg?seed=" + uname),

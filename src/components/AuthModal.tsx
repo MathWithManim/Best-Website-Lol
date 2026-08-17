@@ -5,7 +5,7 @@ import { api } from "../../convex/_generated/api";
 import DarkModeToggle from "./DarkModeToggle";
 
 interface AuthModalProps {
-  onLogin: (email: string) => void;
+  onLogin: (email: string, sessionToken: string) => void;
 }
 
 const AuthModal = ({ onLogin }: AuthModalProps) => {
@@ -31,10 +31,11 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
     const userEmail = email.trim();
 
     try {
+      let result;
       if (isLogin) {
-        await loginMutation({ email: userEmail, password });
+        result = await loginMutation({ email: userEmail, password });
       } else {
-        await signupMutation({
+        result = await signupMutation({
           email: userEmail,
           username: username || userEmail.split("@")[0],
           password,
@@ -48,8 +49,9 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
       }
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("userEmail", userEmail);
+      localStorage.setItem("sessionToken", result.sessionToken);
 
-      onLogin(userEmail);
+      onLogin(userEmail, result.sessionToken);
     } catch (err: unknown) {
       const raw = err instanceof Error ? err.message : "Something went wrong";
       if (raw.includes("Invalid email or password")) {

@@ -1,5 +1,6 @@
 import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
+import { authenticate } from "./users";
 
 const RARITIES = [
   "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic",
@@ -34,7 +35,7 @@ async function pruneUserLeaderboard(ctx: { db: any }, email: string, limit = 100
     .query("leaderboard")
     .withIndex("by_email", (q: any) => q.eq("email", email))
     .order("desc")
-    .take(limit + 50); // fetch a bit extra
+    .take(limit + 50);
 
   if (entries.length > limit) {
     const toDelete = entries.slice(limit);
@@ -45,37 +46,38 @@ async function pruneUserLeaderboard(ctx: { db: any }, email: string, limit = 100
 }
 
 export const roll = mutation({
-  args: { email: v.optional(v.string()) },
+  args: { sessionToken: v.string() },
   handler: async (ctx, args) => {
-    const email = args.email;
+    const user = await authenticate(ctx, args.sessionToken);
+
+    // 1-second cooldown between rolls
+    const now = Date.now();
+    const lastRollAt = (user as any).lastRollAt || 0;
+    if (now - lastRollAt < 1000) {
+      throw new Error("Please wait before rolling again");
+    }
+
     let weights = [...WEIGHTS];
     let boostApplied = false;
 
     // Check for active luck boost
-    if (email) {
-      const user = await ctx.db
-        .query("users")
-        .withIndex("by_email", (q: any) => q.eq("email", email))
-        .first();
+    if (user.activeLuckBoost && user.activeLuckBoost.expiresAt > now && user.activeLuckBoost.rollsLeft > 0) {
+      const multiplier = user.activeLuckBoost.multiplier;
+      weights = weights.map((w, i) =>
+        Math.round(w * (1 + (multiplier - 1) * (i / (RARITIES.length - 1))))
+      );
+      boostApplied = true;
 
-      if (user?.activeLuckBoost && user.activeLuckBoost.expiresAt > Date.now() && user.activeLuckBoost.rollsLeft > 0) {
-        const multiplier = user.activeLuckBoost.multiplier;
-        weights = weights.map((w, i) =>
-          Math.round(w * (1 + (multiplier - 1) * (i / (RARITIES.length - 1))))
-        );
-        boostApplied = true;
-
-        const newRollsLeft = user.activeLuckBoost.rollsLeft - 1;
-        if (newRollsLeft <= 0) {
-          await ctx.db.patch(user._id, { activeLuckBoost: undefined });
-        } else {
-          await ctx.db.patch(user._id, {
-            activeLuckBoost: { ...user.activeLuckBoost, rollsLeft: newRollsLeft }
-          });
-        }
-      } else if (user?.activeLuckBoost && user.activeLuckBoost.expiresAt <= Date.now()) {
+      const newRollsLeft = user.activeLuckBoost.rollsLeft - 1;
+      if (newRollsLeft <= 0) {
         await ctx.db.patch(user._id, { activeLuckBoost: undefined });
+      } else {
+        await ctx.db.patch(user._id, {
+          activeLuckBoost: { ...user.activeLuckBoost, rollsLeft: newRollsLeft }
+        });
       }
+    } else if (user.activeLuckBoost && user.activeLuckBoost.expiresAt <= now) {
+      await ctx.db.patch(user._id, { activeLuckBoost: undefined });
     }
 
     const totalWeight = weights.reduce((sum, w) => sum + w, 0);
@@ -94,39 +96,28 @@ export const roll = mutation({
       }
     }
 
-    // --- NO MORE main_rng insert ---
-
-    // Update global stats (O(1) read instead of full table scan)
+    // Update global stats
     const stats = await getOrCreateGlobalStats(ctx);
     const newCounts = { ...stats.counts };
     newCounts[rarityName] = (newCounts[rarityName] || 0) + 1;
     await ctx.db.patch(stats._id, { counts: newCounts, totalRolls: stats.totalRolls + 1 });
 
-    if (email) {
-      const user = await ctx.db
-        .query("users")
-        .withIndex("by_email", (q: any) => q.eq("email", email))
-        .first();
+    // Insert into leaderboard
+    await ctx.db.insert("leaderboard", {
+      email: user.email,
+      username: user.username || user.email.split("@")[0],
+      rarity: rarityName,
+      weight: rarityWeight,
+      timestamp: now,
+    });
 
-      // Insert into leaderboard (kept for leaderboard display + sell verification)
-      await ctx.db.insert("leaderboard", {
-        email: email,
-        username: user?.username || email.split("@")[0],
-        rarity: rarityName,
-        weight: rarityWeight,
-        timestamp: Date.now(),
-      });
+    // Update per-user rarity counts
+    const counts = { ...(user.rarityCounts || {}) };
+    counts[rarityName] = (counts[rarityName] || 0) + 1;
+    await ctx.db.patch(user._id, { rarityCounts: counts, lastRollAt: now });
 
-      // Update per-user rarity counts (O(1) read for grid display)
-      if (user) {
-        const counts = { ...(user.rarityCounts || {}) };
-        counts[rarityName] = (counts[rarityName] || 0) + 1;
-        await ctx.db.patch(user._id, { rarityCounts: counts });
-      }
-
-      // Prune old leaderboard entries (keep last 100 per user)
-      await pruneUserLeaderboard(ctx, email, 100);
-    }
+    // Prune old leaderboard entries (keep last 100 per user)
+    await pruneUserLeaderboard(ctx, user.email, 100);
 
     return { rarity: rarityName, boostApplied };
   },
@@ -144,30 +135,26 @@ export const getUserRarityCounts = query({
   },
 });
 
-// Sell rarities for LuckBucks
+// Sell rarities for LuckBucks — requires authentication
 export const sellRarity = mutation({
   args: {
-    email: v.string(),
+    sessionToken: v.string(),
     rarity: v.string(),
     amount: v.number(), // 1, 10, or -1 for all
   },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q: any) => q.eq("email", args.email))
-      .first();
+    const user = await authenticate(ctx, args.sessionToken);
 
-    if (!user) throw new Error("User not found");
-
+    // 1-second cooldown between sells
     const now = Date.now();
     const lastSellAt = (user as any).lastSellAt || 0;
-    if (now - lastSellAt < 10) {
+    if (now - lastSellAt < 1000) {
       throw new Error("Please wait before selling again");
     }
 
     const rolls = await ctx.db
       .query("leaderboard")
-      .withIndex("by_email", (q: any) => q.eq("email", args.email))
+      .withIndex("by_email", (q: any) => q.eq("email", user.email))
       .take(50000);
 
     const rarityRolls = rolls.filter((r: any) => r.rarity === args.rarity);
@@ -191,7 +178,11 @@ export const sellRarity = mutation({
     const counts = { ...(user.rarityCounts || {}) };
     counts[args.rarity] = Math.max(0, (counts[args.rarity] || 0) - sellAmount);
     if (counts[args.rarity] === 0) delete counts[args.rarity];
-    await ctx.db.patch(user._id, { luckbucks: (user.luckbucks || 0) + totalLB, rarityCounts: counts, lastSellAt: now });
+    await ctx.db.patch(user._id, {
+      luckbucks: (user.luckbucks || 0) + totalLB,
+      rarityCounts: counts,
+      lastSellAt: now,
+    });
 
     // Decrement global stats
     const stats = await getOrCreateGlobalStats(ctx);
@@ -219,7 +210,7 @@ export const getRarityStats = query({
       rarity,
       index: i,
       count: stats.counts[rarity] || 0,
-      uniqueUsers: 0, // not tracked in global_stats, set to 0 — only grid & sell use counts
+      uniqueUsers: 0,
       chance: (WEIGHTS[i] / totalWeight) * 100,
     }));
   },
@@ -229,7 +220,6 @@ export const getRarityStats = query({
 export const pruneAllLeaderboards = internalMutation({
   args: {},
   handler: async (ctx) => {
-    // Process users in batches to stay under transaction limits
     const users = await ctx.db.query("users").take(200);
     let totalPruned = 0;
 

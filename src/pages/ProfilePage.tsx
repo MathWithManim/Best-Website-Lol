@@ -8,15 +8,18 @@ import { RARITY_COLORS } from '../components/RarityStatsModal';
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | null>(null);
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
 
   useEffect(() => {
     const storedEmail = localStorage.getItem('userEmail');
-    if (!storedEmail) {
+    const storedToken = localStorage.getItem('sessionToken');
+    if (!storedEmail || !storedToken) {
       navigate('/rng');
     } else {
       setEmail(storedEmail);
+      setSessionToken(storedToken);
     }
   }, [navigate]);
 
@@ -47,10 +50,10 @@ const ProfilePage = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!sessionToken) return;
     setError(null);
     try {
-      await updateProfile({ email, name, username, bio, pfp });
+      await updateProfile({ sessionToken, name, username, bio, pfp });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -61,6 +64,7 @@ const ProfilePage = () => {
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('sessionToken');
     localStorage.removeItem('rarityData');
     navigate('/rng');
   };
@@ -188,7 +192,7 @@ const ProfilePage = () => {
                 const color = RARITY_COLORS[result.bestRarity] || '#9CA3AF';
                 return (
                   <div
-                    key={result.email}
+                    key={result.username}
                     className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 dark:bg-[#f4d5ad]/5 border border-primary/10 dark:border-[#f4d5ad]/10"
                   >
                     <img

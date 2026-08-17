@@ -18,7 +18,7 @@ interface RNGGameProps {
 
 const RNGGame = ({ onRollComplete }: RNGGameProps) => {
   const roll = useMutation(api.rng.roll);
-  const email = typeof window !== 'undefined' ? localStorage.getItem('userEmail') || undefined : undefined;
+  const sessionToken = typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || undefined : undefined;
 
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -70,7 +70,7 @@ const RNGGame = ({ onRollComplete }: RNGGameProps) => {
       } else {
         (async () => {
           try {
-            const outcome = await roll({ email });
+            const outcome = await roll({ sessionToken: sessionToken! });
             const rarity = (outcome as { rarity: string; boostApplied: boolean }).rarity;
             const boostApplied = (outcome as { rarity: string; boostApplied: boolean }).boostApplied;
             setResult(rarity);
@@ -88,7 +88,7 @@ const RNGGame = ({ onRollComplete }: RNGGameProps) => {
     };
 
     intervalRef.current = setTimeout(spin, 30);
-  }, [roll, email, onRollComplete]);
+  }, [roll, sessionToken, onRollComplete]);
 
   const currentRarity = RARITIES[displayIndex];
   const currentColor = RARITY_COLORS[currentRarity] || '#8B4513';

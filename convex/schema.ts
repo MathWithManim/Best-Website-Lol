@@ -18,7 +18,8 @@ export default defineSchema({
     name: v.optional(v.string()),
     bio: v.optional(v.string()),
     pfp: v.optional(v.string()),
-    password: v.string(),
+    password: v.string(), // hashed with scrypt
+    sessionToken: v.optional(v.string()),
     createdAt: v.number(),
     luckbucks: v.optional(v.number()),
     activeLuckBoost: v.optional(v.object({
@@ -29,9 +30,11 @@ export default defineSchema({
     equippedCosmetic: v.optional(v.string()),
     rarityCounts: v.optional(v.record(v.string(), v.number())),
     lastSellAt: v.optional(v.number()),
+    lastRollAt: v.optional(v.number()),
   })
     .index("by_email", ["email"])
-    .index("by_username", ["username"]),
+    .index("by_username", ["username"])
+    .index("by_sessionToken", ["sessionToken"]),
   user_cosmetics: defineTable({
     email: v.string(),
     cosmeticId: v.string(),

@@ -45,11 +45,11 @@ interface RarityStatsModalProps {
   index: number;
   stats: { count: number; uniqueUsers: number; chance: number } | null;
   userCount: number;
-  email: string;
+  sessionToken: string;
   onSellComplete: () => void;
 }
 
-const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, email, onSellComplete }: RarityStatsModalProps) => {
+const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, sessionToken, onSellComplete }: RarityStatsModalProps) => {
   const color = RARITY_COLORS[rarity] || '#9CA3AF';
   const valuePerItem = index >= 0 && index < RARITY_VALUES.length ? RARITY_VALUES[index] : 1;
   const [selling, setSelling] = useState(false);
@@ -61,7 +61,7 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, em
     setSelling(true);
     setSellResult(null);
     try {
-      const result = await sellRarity({ email, rarity, amount });
+      const result = await sellRarity({ sessionToken, rarity, amount });
       setSellResult(`Sold ${result.sold}x ${rarity} for ${result.earned} LB!`);
       onSellComplete();
     } catch (err) {

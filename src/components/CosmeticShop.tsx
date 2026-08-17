@@ -4,9 +4,10 @@ import { api } from '../../convex/_generated/api';
 
 interface CosmeticShopProps {
   email: string;
+  sessionToken: string;
 }
 
-const CosmeticShop = ({ email }: CosmeticShopProps) => {
+const CosmeticShop = ({ email, sessionToken }: CosmeticShopProps) => {
   const [buying, setBuying] = useState<string | null>(null);
   const [equipping, setEquipping] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -22,7 +23,7 @@ const CosmeticShop = ({ email }: CosmeticShopProps) => {
     setBuying(cosmeticId);
     setMessage(null);
     try {
-      await buyCosmetic({ email, cosmeticId });
+      await buyCosmetic({ sessionToken, cosmeticId });
       setMessage(`Purchased! Click equip to use it.`);
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Purchase failed');
@@ -36,7 +37,7 @@ const CosmeticShop = ({ email }: CosmeticShopProps) => {
     setEquipping(cosmeticId);
     setMessage(null);
     try {
-      await equipCosmetic({ email, cosmeticId });
+      await equipCosmetic({ sessionToken, cosmeticId });
       setMessage(`Equipped!`);
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Equip failed');
