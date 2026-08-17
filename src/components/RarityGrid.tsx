@@ -58,20 +58,27 @@ const RarityGrid = ({ rarityCounts, onRarityClick, isLoading }: RarityGridProps)
             onClick={() => unlocked && onRarityClick(rarity, index)}
             disabled={!unlocked}
             className={`
-              relative aspect-square rounded-xl flex flex-col items-center justify-center
-              border-2 cursor-pointer
+              relative aspect-square rounded-2xl flex flex-col items-center justify-center
+              border-2 cursor-pointer backdrop-blur-sm
               ${unlocked
-                ? 'active:scale-95'
-                : 'opacity-25 grayscale cursor-not-allowed'
+                ? 'active:scale-95 transition-all duration-300'
+                : 'opacity-40 grayscale-[0.8] cursor-not-allowed'
               }
             `}
             style={{
-              borderColor: unlocked ? color : undefined,
-              backgroundColor: unlocked ? `${color}15` : undefined,
-              boxShadow: unlocked ? `0 2px 8px ${color}30` : undefined,
+              borderColor: unlocked ? `${color}80` : '#374151',
+              backgroundColor: unlocked ? `${color}15` : '#1f2937',
+              boxShadow: unlocked ? `0 0 20px ${color}20` : undefined,
             }}
-            title={unlocked ? `${rarity} (${count})` : 'Locked'}
+            title={unlocked ? `${rarity} (Count: ${count})` : 'Locked'}
           >
+            {/* Ambient Glow for unlocked */}
+            {unlocked && (
+              <div 
+                className="absolute inset-0 rounded-2xl opacity-20"
+                style={{ background: `radial-gradient(circle at 50% 50%, ${color}, transparent)` }}
+              />
+            )}
             {/* Count badge */}
             {unlocked && count > 0 && (
               <motion.span
@@ -87,12 +94,12 @@ const RarityGrid = ({ rarityCounts, onRarityClick, isLoading }: RarityGridProps)
 
             {/* Lock icon for locked rarities */}
             {!unlocked && (
-              <span className="text-lg md:text-xl text-primary/40 dark:text-[#f4d5ad]/40">🔒</span>
+              <span className="text-xl md:text-2xl opacity-50">✨</span>
             )}
 
             <span
-              className="text-xl md:text-2xl font-bold font-typewriter"
-              style={{ color: unlocked ? color : undefined }}
+              className="text-lg md:text-xl font-bold font-typewriter"
+              style={{ color: unlocked ? color : '#4B5563' }}
             >
               {index + 1}
             </span>
