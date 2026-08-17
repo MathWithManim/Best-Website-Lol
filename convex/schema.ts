@@ -23,6 +23,7 @@ export default defineSchema({
     tokenCreatedAt: v.optional(v.number()),
     loginAttempts: v.optional(v.number()),
     lockoutUntil: v.optional(v.number()),
+    resetSecret: v.optional(v.string()), // Added resetSecret
     createdAt: v.number(),
     luckbucks: v.optional(v.number()),
     activeLuckBoost: v.optional(v.object({

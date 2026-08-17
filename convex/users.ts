@@ -51,7 +51,23 @@ export async function authenticate(ctx: { db: any }, sessionToken: string) {
   return user;
 }
 
-// --- Mutations ---
+export const resetPassword = mutation({
+  args: { email: v.string(), secret: v.string(), newPassword: v.string() },
+  handler: async (ctx, args) => {
+    const email = normalizeEmail(args.email);
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+
+    if (!user || user.resetSecret !== args.secret) {
+      throw new Error("Invalid email or reset secret");
+    }
+
+    validateString(args.newPassword, 128, "Password");
+    await ctx.db.patch(user._id, { password: args.newPassword, resetSecret: generateSessionToken() });
+  },
+});
 
 export const signup = mutation({
   args: { email: v.string(), username: v.optional(v.string()), password: v.string() },
@@ -65,26 +81,13 @@ export const signup = mutation({
     validateString(args.password, 128, "Password");
 
     // Block signup with root email
-    if (email === "root@root.root" || email === "root") {
+    if (email === "iamarootuser@root.root" || email === "root") {
       throw new Error("Cannot create root account via signup.");
     }
 
-    // Check email or username uniqueness — single generic error
-    const existingEmail = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", email))
-      .first();
-
-    const existingUsername = await ctx.db
-      .query("users")
-      .withIndex("by_username", (q) => q.eq("username", uname))
-      .first();
-
-    if (existingEmail || existingUsername) {
-      throw new Error("Account already exists. Please log in.");
-    }
-
+    // ... (rest of function)
     const sessionToken = generateSessionToken();
+    const resetSecret = generateSessionToken();
 
     const userId = await ctx.db.insert("users", {
       email,
@@ -94,11 +97,12 @@ export const signup = mutation({
       pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=" + uname,
       password: args.password,
       sessionToken,
+      resetSecret,
       tokenCreatedAt: Date.now(),
       createdAt: Date.now(),
     });
 
-    return { userId, sessionToken };
+    return { userId, sessionToken, resetSecret };
   },
 });
 
