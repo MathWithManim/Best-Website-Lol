@@ -26,6 +26,7 @@ const Navbar = () => {
             <li key={link.to}>
               <Link
                 to={link.to}
+                title={`Navigate to ${link.label}`}
                 className="relative hover:text-accent dark:hover:text-[#c98a6e] transition-colors"
               >
                 {link.label}

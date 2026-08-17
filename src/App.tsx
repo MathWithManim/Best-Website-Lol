@@ -1,23 +1,25 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { lazy, Suspense } from 'react';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
 import Footer from './components/Footer';
 import NotFound from './components/NotFound';
-import RNGPage from './pages/RNGPage';
-import ProfilePage from './pages/ProfilePage';
-import Logout from './pages/Logout';
-import RootAdmin from './pages/RootAdmin';
-import CookiePolicy from './pages/CookiePolicy';
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
 import ConvexClientProvider from './components/ConvexClientProvider';
 import ScrollProgress from './components/ScrollProgress';
 import CookieBanner from './components/CookieBanner';
 import FloatingContact from './components/FloatingContact';
 import ScrollUpButton from './components/ScrollUpButton';
-import MobileCTA from './components/MobileCTA';
 import Navbar from './components/Navbar';
+import MobileCTA from './components/MobileCTA';
+
+const RNGPage = lazy(() => import('./pages/RNGPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const RootAdmin = lazy(() => import('./pages/RootAdmin'));
+const Logout = lazy(() => import('./pages/Logout'));
+const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -44,26 +46,28 @@ function AnimatedRoutes() {
         transition={pageTransition}
         className="min-h-screen"
       >
-        <Routes location={location}>
-          <Route path="/" element={
-            <>
-              <Navbar />
-              <main id="main-content" className="max-w-7xl mx-auto md:flex md:items-center">
-                <Hero />
-                <Skills />
-              </main>
-              <Footer />
-            </>
-          } />
-           <Route path="/rng" element={<RNGPage />} />
-           <Route path="/profile" element={<ProfilePage />} />
-           <Route path="/logout" element={<Logout />} />
-           <Route path="/x8f9a2_rootadmin" element={<RootAdmin />} />
-           <Route path="/cookies" element={<CookiePolicy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-mono text-primary/50">Loading...</div>}>
+          <Routes location={location}>
+            <Route path="/" element={
+              <>
+                <Navbar />
+                <main id="main-content" className="max-w-7xl mx-auto md:flex md:items-center">
+                  <Hero />
+                  <Skills />
+                </main>
+                <Footer />
+              </>
+            } />
+            <Route path="/rng" element={<RNGPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/x8f9a2_rootadmin" element={<RootAdmin />} />
+            <Route path="/cookies" element={<CookiePolicy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </motion.div>
     </AnimatePresence>
   );
