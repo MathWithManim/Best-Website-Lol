@@ -23,13 +23,13 @@ const ProfilePage = () => {
     }
   }, [navigate]);
 
-  const user = useQuery(api.users.getUser, email ? { email } : "skip");
+  const user = useQuery(api.users.getUser, email && sessionToken ? { email, sessionToken } : "skip");
   const updateProfile = useMutation(api.users.updateProfile);
+  const logoutMutation = useMutation(api.users.logout);
 
-  // Reactive search: query fires whenever activeSearch changes
   const searchResults = useQuery(
     api.users.searchUsers,
-    activeSearch ? { query: activeSearch, currentEmail: email || undefined } : "skip"
+    activeSearch && sessionToken ? { query: activeSearch, sessionToken } : "skip"
   );
 
   const [name, setName] = useState('');
@@ -61,7 +61,10 @@ const ProfilePage = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (sessionToken) {
+      try { await logoutMutation({ sessionToken }); } catch { /* ignore */ }
+    }
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('sessionToken');

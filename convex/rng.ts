@@ -123,15 +123,12 @@ export const roll = mutation({
   },
 });
 
-// Get rarity counts for a user — reads from user doc, O(1)
+// Get rarity counts for a user — requires authentication
 export const getUserRarityCounts = query({
-  args: { email: v.string() },
+  args: { sessionToken: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q: any) => q.eq("email", args.email))
-      .first();
-    return user?.rarityCounts || {};
+    const user = await authenticate(ctx, args.sessionToken);
+    return user.rarityCounts || {};
   },
 });
 
@@ -161,6 +158,11 @@ export const sellRarity = mutation({
     const count = rarityRolls.length;
 
     if (count === 0) throw new Error("You don't have any of this rarity");
+
+    const VALID_AMOUNTS = [1, 10, -1];
+    if (!Number.isInteger(args.amount) || !VALID_AMOUNTS.includes(args.amount)) {
+      throw new Error("Invalid sell amount. Must be 1, 10, or -1 (all).");
+    }
 
     const sellAmount = args.amount === -1 ? count : Math.min(args.amount, count);
 

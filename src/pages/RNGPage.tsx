@@ -20,9 +20,9 @@ const RNGPage = () => {
 
   const email = typeof window !== 'undefined' ? localStorage.getItem('userEmail') || undefined : undefined;
   const sessionToken = typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || undefined : undefined;
-  const userRarityCounts = useQuery(api.rng.getUserRarityCounts, email && isLoggedIn ? { email } : "skip");
+  const userRarityCounts = useQuery(api.rng.getUserRarityCounts, sessionToken && isLoggedIn ? { sessionToken } : "skip");
   const rarityStats = useQuery(api.rng.getRarityStats);
-  const luckBucks = useQuery(api.shop.getLuckBucks, email ? { email } : "skip");
+  const luckBucks = useQuery(api.shop.getLuckBucks, sessionToken ? { sessionToken } : "skip");
 
   const isLoading = userRarityCounts === undefined;
 
@@ -102,7 +102,7 @@ const RNGPage = () => {
             {/* Shop below roll */}
             {email && sessionToken && (
               <>
-                <Shop email={email} sessionToken={sessionToken} />
+                <Shop sessionToken={sessionToken} />
                 <CosmeticShop email={email} sessionToken={sessionToken} />
               </>
             )}

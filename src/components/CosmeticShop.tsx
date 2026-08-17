@@ -13,7 +13,7 @@ const CosmeticShop = ({ email, sessionToken }: CosmeticShopProps) => {
   const [message, setMessage] = useState<string | null>(null);
 
   const cosmetics = useQuery(api.shop.getCosmetics);
-  const userCosmetics = useQuery(api.shop.getUserCosmetics, email ? { email } : "skip");
+  const userCosmetics = useQuery(api.shop.getUserCosmetics, sessionToken ? { sessionToken } : "skip");
   const user = useQuery(api.users.getUser, email ? { email } : "skip");
   const buyCosmetic = useMutation(api.shop.buyCosmetic);
   const equipCosmetic = useMutation(api.shop.equipCosmetic);

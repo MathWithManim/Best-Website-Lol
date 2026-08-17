@@ -3,16 +3,15 @@ import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
 interface ShopProps {
-  email: string;
   sessionToken: string;
 }
 
-const Shop = ({ email, sessionToken }: ShopProps) => {
+const Shop = ({ sessionToken }: ShopProps) => {
   const [buying, setBuying] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const buySingleBoost = useMutation(api.shop.buySingleLuckBoost);
   const buyMinuteBoost = useMutation(api.shop.buyMinuteLuckBoost);
-  const activeBoost = useQuery(api.shop.getActiveBoost, email ? { email } : "skip");
+  const activeBoost = useQuery(api.shop.getActiveBoost, sessionToken ? { sessionToken } : "skip");
 
   const handleBuy = async (type: 'single' | 'minute') => {
     if (buying) return;

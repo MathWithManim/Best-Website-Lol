@@ -37,7 +37,7 @@ const Leaderboard = () => {
           const color = RARITY_COLORS[entry.rarity] || '#9CA3AF';
           return (
             <div
-              key={entry.email}
+              key={entry.username + entry.rarity}
               className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 dark:bg-[#f4d5ad]/5 border border-primary/10 dark:border-[#f4d5ad]/10"
               style={i < 3 ? { borderColor: `${color}40`, boxShadow: `0 0 8px ${color}15` } : {}}
             >

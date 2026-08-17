@@ -18,8 +18,11 @@ export default defineSchema({
     name: v.optional(v.string()),
     bio: v.optional(v.string()),
     pfp: v.optional(v.string()),
-    password: v.string(), // hashed with scrypt
+    password: v.string(),
     sessionToken: v.optional(v.string()),
+    tokenCreatedAt: v.optional(v.number()),
+    loginAttempts: v.optional(v.number()),
+    lockoutUntil: v.optional(v.number()),
     createdAt: v.number(),
     luckbucks: v.optional(v.number()),
     activeLuckBoost: v.optional(v.object({

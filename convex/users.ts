@@ -11,18 +11,43 @@ const RARITIES = [
 
 const WEIGHTS = [500000, 250000, 125000, 62500, 31250, 15625, 7812, 3906, 1953, 976, 488, 244, 122, 61, 30, 15, 7, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
+// --- Constants ---
+const TOKEN_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_BASE_MS = 5 * 60 * 1000; // 5 minutes
+
+// --- Helpers ---
+
 function generateSessionToken(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(32));
   return Array.from(bytes).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-/** Authenticate a user by session token. Throws if invalid. */
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+function validateString(value: string, maxLen: number, label: string): void {
+  if (typeof value !== "string" || value.length === 0) {
+    throw new Error(`${label} is required`);
+  }
+  if (value.length > maxLen) {
+    throw new Error(`${label} must be ${maxLen} characters or less`);
+  }
+}
+
+/** Authenticate a user by session token. Throws if invalid or expired. */
 export async function authenticate(ctx: { db: any }, sessionToken: string) {
   const user = await ctx.db
     .query("users")
     .withIndex("by_sessionToken", (q: any) => q.eq("sessionToken", sessionToken))
     .first();
   if (!user) throw new Error("Not authenticated. Please log in.");
+
+  // Check token age
+  if (user.tokenCreatedAt && (Date.now() - user.tokenCreatedAt) > TOKEN_MAX_AGE_MS) {
+    throw new Error("Session expired. Please log in again.");
+  }
   return user;
 }
 
@@ -31,43 +56,45 @@ export async function authenticate(ctx: { db: any }, sessionToken: string) {
 export const signup = mutation({
   args: { email: v.string(), username: v.optional(v.string()), password: v.string() },
   handler: async (ctx, args) => {
-    const uname = args.username || args.email.split("@")[0];
+    const email = normalizeEmail(args.email);
+    const uname = (args.username || email.split("@")[0]).trim();
 
-    // Block signup with root email — root is created via internal mutation only
-    if (args.email === "root@root.root" || args.email === "root") {
+    // Input validation
+    validateString(email, 254, "Email");
+    validateString(uname, 30, "Username");
+    validateString(args.password, 128, "Password");
+
+    // Block signup with root email
+    if (email === "root@root.root" || email === "root") {
       throw new Error("Cannot create root account via signup.");
     }
 
-    // Check email uniqueness
+    // Check email or username uniqueness — single generic error
     const existingEmail = await ctx.db
       .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .withIndex("by_email", (q) => q.eq("email", email))
       .first();
 
-    if (existingEmail) {
-      throw new Error("Account already exists. Please log in.");
-    }
-
-    // Check username uniqueness
     const existingUsername = await ctx.db
       .query("users")
       .withIndex("by_username", (q) => q.eq("username", uname))
       .first();
 
-    if (existingUsername) {
-      throw new Error("Username already taken. Please choose a different one.");
+    if (existingEmail || existingUsername) {
+      throw new Error("Account already exists. Please log in.");
     }
 
     const sessionToken = generateSessionToken();
 
     const userId = await ctx.db.insert("users", {
-      email: args.email,
+      email,
       username: uname,
       name: uname,
       bio: "Hey there! I am using Jasper Sona website.",
       pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=" + uname,
       password: args.password,
       sessionToken,
+      tokenCreatedAt: Date.now(),
       createdAt: Date.now(),
     });
 
@@ -78,21 +105,40 @@ export const signup = mutation({
 export const login = mutation({
   args: { email: v.string(), password: v.string() },
   handler: async (ctx, args) => {
+    const email = normalizeEmail(args.email);
+    validateString(email, 254, "Email");
+
     const user = await ctx.db
       .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .withIndex("by_email", (q) => q.eq("email", email))
       .first();
 
-    if (!user) {
+    // Generic error for both cases
+    if (!user || user.password !== args.password) {
+      // Rate limit: track failed attempts on the user doc (if user exists)
+      if (user) {
+        const attempts = (user.loginAttempts || 0) + 1;
+        const lockoutUntil = attempts >= MAX_LOGIN_ATTEMPTS
+          ? Date.now() + LOCKOUT_BASE_MS * Math.pow(2, Math.min(attempts - MAX_LOGIN_ATTEMPTS, 5))
+          : undefined;
+        await ctx.db.patch(user._id, { loginAttempts: attempts, lockoutUntil });
+      }
       throw new Error("Invalid email or password");
     }
 
-    if (user.password !== args.password) {
-      throw new Error("Invalid email or password");
+    // Check lockout
+    if (user.lockoutUntil && user.lockoutUntil > Date.now()) {
+      const waitMin = Math.ceil((user.lockoutUntil - Date.now()) / 60000);
+      throw new Error(`Too many failed attempts. Try again in ${waitMin} minute${waitMin > 1 ? 's' : ''}.`);
     }
 
     const sessionToken = generateSessionToken();
-    await ctx.db.patch(user._id, { sessionToken });
+    await ctx.db.patch(user._id, {
+      sessionToken,
+      tokenCreatedAt: Date.now(),
+      loginAttempts: 0,
+      lockoutUntil: undefined,
+    });
 
     return {
       userId: user._id,
@@ -111,7 +157,7 @@ export const logout = mutation({
       .withIndex("by_sessionToken", (q: any) => q.eq("sessionToken", args.sessionToken))
       .first();
     if (user) {
-      await ctx.db.patch(user._id, { sessionToken: undefined });
+      await ctx.db.patch(user._id, { sessionToken: undefined, tokenCreatedAt: undefined });
     }
     return { success: true };
   },
@@ -141,6 +187,7 @@ export const createRootAccount = internalMutation({
       pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=root",
       password: args.password,
       sessionToken,
+      tokenCreatedAt: Date.now(),
       createdAt: Date.now(),
     });
 
@@ -149,13 +196,25 @@ export const createRootAccount = internalMutation({
 });
 
 export const getUser = query({
-  args: { email: v.optional(v.string()) },
+  args: { email: v.optional(v.string()), sessionToken: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const email = args.email;
     if (!email) return null;
+
+    // If sessionToken provided, verify it matches the requested email
+    if (args.sessionToken) {
+      const viewer = await ctx.db
+        .query("users")
+        .withIndex("by_sessionToken", (q: any) => q.eq("sessionToken", args.sessionToken))
+        .first();
+      if (!viewer || viewer.email !== normalizeEmail(email)) {
+        throw new Error("Not authorized to view this profile");
+      }
+    }
+
     const user = await ctx.db
       .query("users")
-      .withIndex("by_email", (q) => q.eq("email", email))
+      .withIndex("by_email", (q) => q.eq("email", normalizeEmail(email)))
       .first();
 
     if (!user) return null;
@@ -183,36 +242,59 @@ export const updateProfile = mutation({
   handler: async (ctx, args) => {
     const user = await authenticate(ctx, args.sessionToken);
 
-    // Check username uniqueness if changing username
-    if (args.username && args.username !== user.username) {
-      const existing = await ctx.db
-        .query("users")
-        .withIndex("by_username", (q) => q.eq("username", args.username!))
-        .first();
-      if (existing) throw new Error("Username already taken");
+    // Input validation
+    if (args.name !== undefined) validateString(args.name, 50, "Name");
+    if (args.username !== undefined) {
+      validateString(args.username, 30, "Username");
+      const newUname = args.username.trim().toLowerCase();
+      if (newUname !== user.username) {
+        const existing = await ctx.db
+          .query("users")
+          .withIndex("by_username", (q) => q.eq("username", newUname))
+          .first();
+        if (existing) throw new Error("Username already taken");
+      }
+    }
+    if (args.bio !== undefined) validateString(args.bio, 500, "Bio");
+    if (args.pfp !== undefined) {
+      validateString(args.pfp, 500, "Profile picture URL");
+      // Only allow https URLs for profile pictures
+      if (args.pfp && !args.pfp.startsWith("https://") && !args.pfp.startsWith("http://localhost")) {
+        throw new Error("Profile picture must be an HTTPS URL");
+      }
     }
 
     await ctx.db.patch(user._id, {
       ...(args.name !== undefined && { name: args.name }),
-      ...(args.username !== undefined && { username: args.username }),
+      ...(args.username !== undefined && { username: args.username.trim() }),
       ...(args.bio !== undefined && { bio: args.bio }),
       ...(args.pfp !== undefined && { pfp: args.pfp }),
     });
   },
 });
 
-// Search users by username — returns no email
+// Search users by username — requires sessionToken
 export const searchUsers = query({
-  args: { query: v.string(), currentEmail: v.optional(v.string()) },
+  args: { query: v.string(), sessionToken: v.optional(v.string()) },
   handler: async (ctx, args) => {
     if (!args.query || args.query.length < 1) return [];
 
-    const allUsers = await ctx.db.query("users").take(500);
+    // Auth-gate: only logged-in users can search
+    let currentEmail: string | undefined;
+    if (args.sessionToken) {
+      const viewer = await ctx.db
+        .query("users")
+        .withIndex("by_sessionToken", (q: any) => q.eq("sessionToken", args.sessionToken))
+        .first();
+      if (viewer) currentEmail = viewer.email;
+    }
+
+    const allUsers = await ctx.db.query("users").take(200);
     const searchLower = args.query.toLowerCase();
 
     const matched = allUsers.filter(u => {
       const uname = (u.username || u.email.split("@")[0]).toLowerCase();
-      return uname.includes(searchLower) && u.email !== args.currentEmail;
+      return uname.includes(searchLower) && u.email !== currentEmail;
     });
 
     const results = [];
