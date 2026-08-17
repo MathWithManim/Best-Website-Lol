@@ -70,6 +70,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
         <DarkModeToggle />
       </div>
       <motion.div 
+        key={isLogin ? "login" : "signup"}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-white/80 dark:bg-[#2d1e14]/90 border border-primary/20 dark:border-[#f4d5ad]/30 p-8 rounded-2xl max-w-md w-full relative shadow-2xl"
