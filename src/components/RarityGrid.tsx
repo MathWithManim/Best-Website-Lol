@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { RARITY_COLORS } from './RarityStatsModal';
 
 const RARITIES = [
@@ -38,15 +39,29 @@ const RarityGrid = ({ rarityCounts, onRarityClick, isLoading }: RarityGridProps)
         const color = RARITY_COLORS[rarity] || '#9CA3AF';
 
         return (
-          <button
+          <motion.button
             key={rarity}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{
+              delay: index * 0.03,
+              duration: 0.3,
+              ease: 'easeOut',
+            }}
+            whileHover={unlocked ? {
+              scale: 1.08,
+              y: -4,
+              boxShadow: `0 8px 24px ${color}35`,
+            } : {}}
+            whileTap={unlocked ? { scale: 0.95 } : {}}
             onClick={() => unlocked && onRarityClick(rarity, index)}
             disabled={!unlocked}
             className={`
               relative aspect-square rounded-xl flex flex-col items-center justify-center
-              border-2 transition-all duration-200 cursor-pointer
+              border-2 cursor-pointer
               ${unlocked
-                ? 'hover:-translate-y-2 hover:scale-105 hover:shadow-xl active:scale-95'
+                ? 'active:scale-95'
                 : 'opacity-25 grayscale cursor-not-allowed'
               }
             `}
@@ -59,12 +74,15 @@ const RarityGrid = ({ rarityCounts, onRarityClick, isLoading }: RarityGridProps)
           >
             {/* Count badge */}
             {unlocked && count > 0 && (
-              <span
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 15, delay: index * 0.03 + 0.2 }}
                 className="absolute -top-1 -right-1 min-w-[20px] h-5 flex items-center justify-center rounded-full text-[10px] font-bold font-mono text-white px-1 z-10"
                 style={{ backgroundColor: color }}
               >
                 {count}
-              </span>
+              </motion.span>
             )}
 
             {/* Lock icon for locked rarities */}
@@ -84,7 +102,7 @@ const RarityGrid = ({ rarityCounts, onRarityClick, isLoading }: RarityGridProps)
             >
               {rarity}
             </span>
-          </button>
+          </motion.button>
         );
       })}
     </div>

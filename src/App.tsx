@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
 import Footer from './components/Footer';
@@ -16,31 +17,62 @@ import FloatingContact from './components/FloatingContact';
 import ScrollUpButton from './components/ScrollUpButton';
 import Navbar from './components/Navbar';
 
+const pageVariants = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -12 },
+};
+
+const pageTransition = {
+  duration: 0.25,
+  ease: [0.4, 0, 0.2, 1] as const,
+};
+
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        transition={pageTransition}
+        className="min-h-screen"
+      >
+        <Routes location={location}>
+          <Route path="/" element={
+            <>
+              <Navbar />
+              <main className="max-w-7xl mx-auto md:flex md:items-center">
+                <Hero />
+                <Skills />
+              </main>
+              <Footer />
+            </>
+          } />
+          <Route path="/rng" element={<RNGPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 function App() {
   return (
     <ConvexClientProvider>
       <BrowserRouter>
         <div className="min-h-screen bg-[#F5E6CA] dark:bg-[#1a120b] dark:text-[#f4d5ad] relative transition-colors duration-300">
           <ScrollProgress />
-          <Routes>
-            <Route path="/" element={
-              <>
-                <Navbar />
-                <main className="max-w-7xl mx-auto md:flex md:items-center">
-                  <Hero />
-                  <Skills />
-                </main>
-                <Footer />
-              </>
-            } />
-            <Route path="/rng" element={<RNGPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/cookies" element={<CookiePolicy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AnimatedRoutes />
           <CookieBanner />
           <FloatingContact />
           <ScrollUpButton />
