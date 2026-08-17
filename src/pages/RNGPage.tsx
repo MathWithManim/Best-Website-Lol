@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import AuthModal from '../components/AuthModal';
 import RNGGame from '../components/RNGGame';
@@ -9,13 +9,14 @@ import CosmeticShop from '../components/CosmeticShop';
 import Leaderboard from '../components/Leaderboard';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { decodeRarityData } from '../lib/crypto';
+import { encodeRarityData, decodeRarityData } from '../lib/crypto';
 
 const RNGPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRarity, setSelectedRarity] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [, setRollCounter] = useState(0);
 
   const email = typeof window !== 'undefined' ? localStorage.getItem('userEmail') || undefined : undefined;
   const userRarityCounts = useQuery(api.rng.getUserRarityCounts, email && isLoggedIn ? { email } : "skip");
@@ -31,12 +32,21 @@ const RNGPage = () => {
       if (encoded) {
         return decodeRarityData(encoded) || {};
       }
-    } catch {}
+    } catch { /* ignore */ }
     return {};
   };
 
   // Use server data when available, fallback to cache
   const displayCounts = userRarityCounts || getCachedCounts();
+
+  // Sync server data back to localStorage cache whenever it arrives
+  useEffect(() => {
+    if (userRarityCounts && email) {
+      try {
+        localStorage.setItem('rarityData', encodeRarityData(userRarityCounts));
+      } catch { /* ignore */ }
+    }
+  }, [userRarityCounts, email]);
 
   const handleLogin = (userEmail: string) => {
     localStorage.setItem('isLoggedIn', 'true');
@@ -51,16 +61,17 @@ const RNGPage = () => {
   };
 
   const handleRollComplete = useCallback(() => {
-    // Invalidate cache by removing it, server data will refresh
-    // The cache will be updated by the next getUserRarityCounts query
+    // Bump counter to force re-render; Convex query auto-refreshes
+    setRollCounter(c => c + 1);
   }, []);
 
   const handleSellComplete = useCallback(() => {
-    // Cache will be refreshed on next query
+    // Bump counter to force re-render; Convex query auto-refreshes
+    setRollCounter(c => c + 1);
   }, []);
 
   const handleBalanceChange = useCallback(() => {
-    // Balance refreshes automatically via Convex query
+    // LuckBucks query auto-refreshes via Convex
   }, []);
 
   if (!isLoggedIn) {

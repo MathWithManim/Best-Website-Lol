@@ -8,17 +8,8 @@ import { RARITY_COLORS } from '../components/RarityStatsModal';
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Array<{
-    email: string;
-    username: string;
-    name: string;
-    pfp: string;
-    bestRarity: string;
-    bestWeight: number;
-    totalRolls: number;
-  }> | null>(null);
-  const [searching, setSearching] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [activeSearch, setActiveSearch] = useState('');
 
   useEffect(() => {
     const storedEmail = localStorage.getItem('userEmail');
@@ -31,6 +22,12 @@ const ProfilePage = () => {
 
   const user = useQuery(api.users.getUser, email ? { email } : "skip");
   const updateProfile = useMutation(api.users.updateProfile);
+
+  // Reactive search: query fires whenever activeSearch changes
+  const searchResults = useQuery(
+    api.users.searchUsers,
+    activeSearch ? { query: activeSearch, currentEmail: email || undefined } : "skip"
+  );
 
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -68,11 +65,9 @@ const ProfilePage = () => {
     navigate('/rng');
   };
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim() || !email) return;
-    setSearching(true);
-    setSearchResults(null);
-    setSearching(false);
+  const handleSearch = () => {
+    if (!searchInput.trim()) return;
+    setActiveSearch(searchInput.trim());
   };
 
   if (!user) {
@@ -163,22 +158,27 @@ const ProfilePage = () => {
           <div className="flex gap-2 mb-4">
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="Search by username..."
               className="flex-1 p-3 rounded-lg bg-bg dark:bg-[#2d1e14] border border-primary/30 dark:border-[#f4d5ad]/30 font-mono text-sm text-primary dark:text-[#f4d5ad] focus:outline-none focus:border-accent"
             />
             <button
               onClick={handleSearch}
-              disabled={searching}
-              className="px-6 py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono rounded-lg font-bold hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+              className="px-6 py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono rounded-lg font-bold hover:opacity-90 transition-opacity cursor-pointer"
             >
-              {searching ? '...' : 'Search'}
+              Search
             </button>
           </div>
 
-          {searchResults && searchResults.length === 0 && (
+          {/* Loading state while search is in flight */}
+          {activeSearch && searchResults === undefined && (
+            <p className="text-center text-sm font-mono text-primary/50 dark:text-[#f4d5ad]/50">Searching...</p>
+          )}
+
+          {/* Results */}
+          {activeSearch && searchResults !== undefined && searchResults.length === 0 && (
             <p className="text-center text-sm font-mono text-primary/50 dark:text-[#f4d5ad]/50">No users found.</p>
           )}
 
