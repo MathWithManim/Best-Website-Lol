@@ -6,6 +6,8 @@ import Skills from './components/Skills';
 import Footer from './components/Footer';
 import NotFound from './components/NotFound';
 import ConvexClientProvider from './components/ConvexClientProvider';
+import { UserProvider } from './components/UserProvider';
+import { CosmeticThemeProvider } from './components/CosmeticThemeProvider';
 import ScrollProgress from './components/ScrollProgress';
 import CookieBanner from './components/CookieBanner';
 import FloatingContact from './components/FloatingContact';
@@ -76,19 +78,23 @@ function AnimatedRoutes() {
 function App() {
   return (
     <ConvexClientProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-[#F5E6CA] dark:bg-[#1a120b] dark:text-[#f4d5ad] relative transition-colors duration-300">
-          <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-bg focus:rounded-lg focus:font-mono focus:text-sm">
-            Skip to main content
-          </a>
-          <ScrollProgress />
-          <AnimatedRoutes />
-          <CookieBanner />
-          <FloatingContact />
-          <ScrollUpButton />
-          <MobileCTA />
-        </div>
-      </BrowserRouter>
+      <UserProvider>
+        <CosmeticThemeProvider>
+          <BrowserRouter>
+            <div className="min-h-screen bg-[#F5E6CA] dark:bg-[#1a120b] dark:text-[#f4d5ad] relative transition-colors duration-300">
+              <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-bg focus:rounded-lg focus:font-mono focus:text-sm">
+                Skip to main content
+              </a>
+              <ScrollProgress />
+              <AnimatedRoutes />
+              <CookieBanner />
+              <FloatingContact />
+              <ScrollUpButton />
+              <MobileCTA />
+            </div>
+          </BrowserRouter>
+        </CosmeticThemeProvider>
+      </UserProvider>
     </ConvexClientProvider>
   );
 }

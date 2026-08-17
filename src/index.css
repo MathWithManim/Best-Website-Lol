@@ -6,11 +6,11 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-bg: #F5E6CA;
-  --color-primary: #8B4513;
-  --color-accent: #A0522D;
-  --color-secondary: #D2B48C;
-  --color-darker: #5D3A1A;
+  --color-bg: var(--app-bg);
+  --color-primary: var(--app-primary);
+  --color-accent: var(--app-accent);
+  --color-secondary: var(--app-secondary);
+  --color-darker: var(--app-darker);
   --font-typewriter: "Special Elite", cursive;
   --font-cursive: "Playfair Display", serif;
 }

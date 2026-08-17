@@ -63,9 +63,30 @@ export const buyMinuteLuckBoost = mutation({
 });
 
 const COSMETICS = [
-  { id: "cat", name: "Cat", icon: "🐱", price: 0, description: "Meow! A cute cat cosmetic." },
-  { id: "math", name: "Math", icon: "📐", price: 0, description: "For the math enthusiasts." },
-  { id: "bird", name: "Bird", icon: "🐦", price: 0, description: "Soar high with this bird." },
+  { 
+    id: "cat", 
+    name: "Cat", 
+    icon: "🐱", 
+    price: 0, 
+    description: "Meow! A cute cat cosmetic.",
+    theme: { bg: "#FFF5F7", primary: "#F472B6", accent: "#EC4899" }
+  },
+  { 
+    id: "math", 
+    name: "Math", 
+    icon: "📐", 
+    price: 0, 
+    description: "For the math enthusiasts.",
+    theme: { bg: "#F0FDF4", primary: "#22C55E", accent: "#16A34A" }
+  },
+  { 
+    id: "bird", 
+    name: "Bird", 
+    icon: "🐦", 
+    price: 0, 
+    description: "Soar high with this bird.",
+    theme: { bg: "#EFF6FF", primary: "#3B82F6", accent: "#2563EB" }
+  },
 ];
 
 export const getCosmetics = query({
