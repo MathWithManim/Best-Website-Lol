@@ -15,6 +15,6 @@ export const getLeaderboard = query({
     }
     // Sort by weight ascending (rarest first)
     const sorted = [...bestRolls.values()].sort((a, b) => a.weight - b.weight);
-    return sorted.slice(0, 50);
+    return sorted.slice(0, 10);
   },
 });
