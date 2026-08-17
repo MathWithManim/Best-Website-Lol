@@ -1,63 +1,131 @@
-import { useState, useEffect } from 'react';
-import RNGGame from '../components/RNGGame';
-import RarityTable from '../components/RarityTable';
+import { useState, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import AuthModal from '../components/AuthModal';
-import { motion, AnimatePresence } from 'framer-motion';
+import RNGGame from '../components/RNGGame';
+import RarityGrid from '../components/RarityGrid';
+import RarityStatsModal from '../components/RarityStatsModal';
+import Shop from '../components/Shop';
+import CosmeticShop from '../components/CosmeticShop';
+import Leaderboard from '../components/Leaderboard';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { decodeRarityData } from '../lib/crypto';
 
 const RNGPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedRarity, setSelectedRarity] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  useEffect(() => {
-    const logged = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(logged);
-  }, []);
+  const email = typeof window !== 'undefined' ? localStorage.getItem('userEmail') || undefined : undefined;
+  const userRarityCounts = useQuery(api.rng.getUserRarityCounts, email && isLoggedIn ? { email } : "skip");
+  const rarityStats = useQuery(api.rng.getRarityStats);
+  const luckBucks = useQuery(api.shop.getLuckBucks, email ? { email } : "skip");
 
-  const handleLogin = (email: string) => {
+  const isLoading = userRarityCounts === undefined;
+
+  // Get cached rarity data from localStorage for immediate display
+  const getCachedCounts = (): Record<string, number> => {
+    try {
+      const encoded = localStorage.getItem('rarityData');
+      if (encoded) {
+        return decodeRarityData(encoded) || {};
+      }
+    } catch {}
+    return {};
+  };
+
+  // Use server data when available, fallback to cache
+  const displayCounts = userRarityCounts || getCachedCounts();
+
+  const handleLogin = (userEmail: string) => {
     localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userEmail', email);
+    localStorage.setItem('userEmail', userEmail);
     setIsLoggedIn(true);
   };
+
+  const handleRarityClick = (rarity: string, index: number) => {
+    setSelectedRarity(rarity);
+    setSelectedIndex(index);
+    setModalOpen(true);
+  };
+
+  const handleRollComplete = useCallback(() => {
+    // Invalidate cache by removing it, server data will refresh
+    // The cache will be updated by the next getUserRarityCounts query
+  }, []);
+
+  const handleSellComplete = useCallback(() => {
+    // Cache will be refreshed on next query
+  }, []);
+
+  const handleBalanceChange = useCallback(() => {
+    // Balance refreshes automatically via Convex query
+  }, []);
 
   if (!isLoggedIn) {
     return <AuthModal onLogin={handleLogin} />;
   }
 
-  return (
-    <div className="min-h-screen bg-bg">
-      <Navbar />
-      <main className="p-10 flex flex-col md:flex-row gap-10 items-start justify-center">
-        <div className="w-full md:w-1/2 flex flex-col items-center">
-          <h1 className="text-4xl font-sans font-bold mb-8 text-primary">RNG Game</h1>
-          <RNGGame />
-        </div>
-        
-        {/* Desktop Sidebar */}
-        <div className="hidden md:block w-1/3 bg-secondary/5 p-6 rounded-lg border border-primary/20">
-          <RarityTable />
-        </div>
+  const statsForSelected = rarityStats?.find(s => s.rarity === selectedRarity) || null;
+  const userCountForSelected = displayCounts[selectedRarity] || 0;
 
-        {/* Mobile Modal Trigger */}
-        <button 
-          className="md:hidden fixed bottom-6 right-6 px-4 py-2 bg-accent text-bg rounded-full font-mono shadow-lg hover:scale-105 transition-transform"
-          onClick={() => setIsModalOpen(true)}
-        >
-          View Rarities
-        </button>
+  return (
+    <div className="min-h-screen bg-bg dark:bg-[#1a120b] dark:text-[#f4d5ad] transition-colors duration-300">
+      <Navbar />
+      <main className="max-w-6xl mx-auto px-4 py-8 md:py-12">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+          {/* Left: Roll Area + Shop */}
+          <div className="w-full md:w-2/5 flex flex-col items-center">
+            <h1 className="text-3xl md:text-4xl font-sans font-bold mb-6 text-primary dark:text-[#f4d5ad] text-center">
+              RNG Game
+            </h1>
+
+            {/* LuckBucks balance */}
+            <div className="mb-4 px-4 py-2 rounded-lg bg-accent/10 dark:bg-[#c98a6e]/10 border border-accent/20 dark:border-[#c98a6e]/20">
+              <span className="font-mono text-sm text-primary dark:text-[#f4d5ad]">
+                💰 {luckBucks !== undefined ? luckBucks.toLocaleString() : '...'} LuckBucks
+              </span>
+            </div>
+
+            <RNGGame onRollComplete={handleRollComplete} />
+
+            {/* Shop below roll */}
+            {email && (
+              <>
+                <Shop email={email} onBalanceChange={handleBalanceChange} />
+                <CosmeticShop email={email} />
+              </>
+            )}
+
+            {/* Leaderboard */}
+            <Leaderboard />
+          </div>
+
+          {/* Right: Rarity Grid */}
+          <div className="w-full md:w-3/5">
+            <h2 className="text-xl md:text-2xl font-sans font-bold mb-4 text-primary dark:text-[#f4d5ad] text-center">
+              Rarity Collection
+            </h2>
+            <RarityGrid
+              rarityCounts={displayCounts}
+              onRarityClick={handleRarityClick}
+              isLoading={isLoading}
+            />
+          </div>
+        </div>
       </main>
 
-      <AnimatePresence>
-        {isModalOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-bg/90 p-6 flex flex-col items-center z-50 md:hidden"
-          >
-            <button className="self-end mb-4 text-primary font-mono" onClick={() => setIsModalOpen(false)}>Close</button>
-            <RarityTable />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <RarityStatsModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        rarity={selectedRarity}
+        index={selectedIndex}
+        stats={statsForSelected ? { count: statsForSelected.count, uniqueUsers: statsForSelected.uniqueUsers, chance: statsForSelected.chance } : null}
+        userCount={userCountForSelected}
+        email={email || ''}
+        onSellComplete={handleSellComplete}
+      />
     </div>
   );
 };

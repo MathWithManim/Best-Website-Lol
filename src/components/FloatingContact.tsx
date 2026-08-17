@@ -12,7 +12,7 @@ const FloatingContact = () => {
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="mb-3 p-4 bg-secondary/10 border border-primary/20 rounded-xl shadow-xl font-mono text-xs text-primary bg-bg/95 backdrop-blur"
+            className="mb-3 p-4 bg-secondary/10 dark:bg-[#2d1e14] border border-primary/20 dark:border-[#f4d5ad]/20 rounded-xl shadow-xl font-mono text-xs text-primary dark:text-[#f4d5ad] bg-bg/95 dark:bg-[#2d1e14]/95 backdrop-blur"
           >
             <p className="font-bold mb-1">Contact Info:</p>
             <p className="mb-1">Email: <a href="mailto:mathmanim09@gmail.com" className="text-accent underline">mathmanim09@gmail.com</a></p>

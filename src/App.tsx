@@ -1,16 +1,20 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
 import Footer from './components/Footer';
 import NotFound from './components/NotFound';
 import RNGPage from './pages/RNGPage';
 import ProfilePage from './pages/ProfilePage';
+import Logout from './pages/Logout';
+import CookiePolicy from './pages/CookiePolicy';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 import ConvexClientProvider from './components/ConvexClientProvider';
 import ScrollProgress from './components/ScrollProgress';
 import CookieBanner from './components/CookieBanner';
 import FloatingContact from './components/FloatingContact';
 import ScrollUpButton from './components/ScrollUpButton';
+import Navbar from './components/Navbar';
 
 function App() {
   return (
@@ -31,6 +35,10 @@ function App() {
             } />
             <Route path="/rng" element={<RNGPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/cookies" element={<CookiePolicy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <CookieBanner />

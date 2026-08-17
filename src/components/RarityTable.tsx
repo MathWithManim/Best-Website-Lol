@@ -33,12 +33,12 @@ const RARITIES = [
 
 const RarityTable = () => (
   <div className="w-full">
-    <h3 className="font-mono text-xl text-accent mb-4">Rarities & Chances</h3>
+    <h3 className="font-mono text-xl text-accent dark:text-[#c98a6e] mb-4">Rarities & Chances</h3>
     <div className="space-y-1 font-mono text-sm max-h-96 overflow-y-auto">
       {RARITIES.map((r, i) => (
-        <div key={i} className="flex justify-between border-b border-primary/10 py-1">
-          <span className="text-primary">{r.name}</span>
-          <span className="text-secondary">{r.chance}</span>
+        <div key={i} className="flex justify-between border-b border-primary/10 dark:border-[#f4d5ad]/10 py-1">
+          <span className="text-primary dark:text-[#f4d5ad]">{r.name}</span>
+          <span className="text-secondary dark:text-[#d2b48c]">{r.chance}</span>
         </div>
       ))}
     </div>

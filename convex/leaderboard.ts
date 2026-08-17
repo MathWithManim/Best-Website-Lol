@@ -1,28 +1,20 @@
-import { mutation, query } from "./_generated/server";
-import { v } from "convex/values";
+import { query } from "./_generated/server";
 
-// Record roll on leaderboard
-export const recordRoll = mutation({
-  args: { email: v.string(), username: v.string(), rarity: v.string(), weight: v.number() },
-  handler: async (ctx, args) => {
-    await ctx.db.insert("leaderboard", {
-      email: args.email,
-      username: args.username,
-      rarity: args.rarity,
-      weight: args.weight,
-      timestamp: Date.now(),
-    });
-  },
-});
-
-// Get top rolls leaderboard
+// Get top rolls leaderboard - deduplicated by user (best roll per user)
 export const getLeaderboard = query({
   args: {},
   handler: async (ctx) => {
-    // Return top 10 rarest rolls sorted by lowest weight (or highest rarity weight)
-    const rolls = await ctx.db.query("leaderboard").order("desc").collect();
-    // Sort by weight ascending (smaller weight = rarer)
-    rolls.sort((a, b) => a.weight - b.weight);
-    return rolls.slice(0, 10);
+    const rolls = await ctx.db.query("leaderboard").take(50000);
+    // Deduplicate: keep only the best (lowest weight = rarest) roll per user
+    const bestRolls = new Map<string, (typeof rolls)[0]>();
+    for (const roll of rolls) {
+      const existing = bestRolls.get(roll.email);
+      if (!existing || roll.weight < existing.weight) {
+        bestRolls.set(roll.email, roll);
+      }
+    }
+    // Sort by weight ascending (rarest first)
+    const sorted = [...bestRolls.values()].sort((a, b) => a.weight - b.weight);
+    return sorted.slice(0, 50);
   },
 });

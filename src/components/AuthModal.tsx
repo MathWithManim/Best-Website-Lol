@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import DarkModeToggle from "./DarkModeToggle";
 
 interface AuthModalProps {
   onLogin: (email: string) => void;
@@ -29,6 +30,16 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
     const userEmail = email.trim();
 
     try {
+      if (isLogin) {
+        await loginMutation({ email: userEmail, password });
+      } else {
+        await signupMutation({
+          email: userEmail,
+          username: username || userEmail.split("@")[0],
+          password,
+        });
+      }
+
       const storedAccounts = JSON.parse(localStorage.getItem("savedAccounts") || "[]");
       if (!storedAccounts.includes(userEmail)) {
         storedAccounts.push(userEmail);
@@ -37,32 +48,28 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("userEmail", userEmail);
 
-      if (isLogin) {
-        loginMutation({ email: userEmail, password }).catch((err) =>
-          console.warn("Background Convex login sync warning:", err)
-        );
-      } else {
-        signupMutation({
-          email: userEmail,
-          username: username || userEmail.split("@")[0],
-          password,
-        }).catch((err) =>
-          console.warn("Background Convex signup sync warning:", err)
-        );
-      }
-
       onLogin(userEmail);
-    } catch (err: any) {
-      setError(err.message || "Authentication failed");
+    } catch (err: unknown) {
+      const raw = err instanceof Error ? err.message : "Something went wrong";
+      if (raw.includes("Invalid email or password")) {
+        setError("Wrong email or password. Try again.");
+      } else if (raw.includes("already exists")) {
+        setError("Account already exists. Try logging in instead.");
+      } else {
+        setError("Something went wrong. Try again.");
+      }
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-bg/95 flex flex-col items-center justify-center z-50 p-6">
+    <div className="fixed inset-0 bg-bg/95 dark:bg-[#1a120b]/95 flex flex-col items-center justify-center z-50 p-6">
+      <div className="absolute top-6 right-6">
+        <DarkModeToggle />
+      </div>
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-secondary/10 border border-primary/20 p-8 rounded-2xl max-w-md w-full relative shadow-2xl"
+        className="bg-white/80 dark:bg-[#2d1e14]/90 border border-primary/20 dark:border-[#f4d5ad]/30 p-8 rounded-2xl max-w-md w-full relative shadow-2xl"
       >
         <h2 className="text-3xl font-bold font-sans text-primary dark:text-[#f4d5ad] mb-6 text-center">
           {isLogin ? "Welcome Back" : "Create Account"}

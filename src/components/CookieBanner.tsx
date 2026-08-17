@@ -23,7 +23,7 @@ const CookieBanner = () => {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 50, opacity: 0 }}
-          className="fixed bottom-0 left-0 right-0 bg-primary text-bg p-4 flex flex-col md:flex-row items-center justify-between gap-4 z-50 shadow-lg font-mono text-sm"
+          className="fixed bottom-0 left-0 right-0 bg-primary dark:bg-[#2d1e14] text-bg dark:text-[#f4d5ad] p-4 flex flex-col md:flex-row items-center justify-between gap-4 z-50 shadow-lg font-mono text-sm border-t border-primary/20 dark:border-[#f4d5ad]/20"
         >
           <p>We use cookies to ensure you get the best experience on our site.</p>
           <button 

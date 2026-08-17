@@ -8,10 +8,9 @@
  * @module
  */
 
-import type * as authSecurity from "../authSecurity.js";
 import type * as leaderboard from "../leaderboard.js";
 import type * as rng from "../rng.js";
-import type * as test from "../test.js";
+import type * as shop from "../shop.js";
 import type * as users from "../users.js";
 
 import type {
@@ -21,10 +20,9 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  authSecurity: typeof authSecurity;
   leaderboard: typeof leaderboard;
   rng: typeof rng;
-  test: typeof test;
+  shop: typeof shop;
   users: typeof users;
 }>;
 

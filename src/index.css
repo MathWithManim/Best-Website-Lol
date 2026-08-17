@@ -39,3 +39,30 @@ body {
   font-family: sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Custom scrollbar - square/grid themed */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #2d1e14;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb {
+  background: #8B4513;
+  border-radius: 2px;
+  border: 2px solid #2d1e14;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A0522D;
+}
+::-webkit-scrollbar-corner {
+  background: #2d1e14;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8B4513 #2d1e14;
+}

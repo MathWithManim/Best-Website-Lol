@@ -32,11 +32,11 @@ const Hero = () => {
         whileHover={{ scale: 1.05 }}
         transition={{ type: "spring", stiffness: 300 }}
       >
-        <h1 className="text-primary font-cursive flex items-center justify-center">
+        <h1 className="text-primary dark:text-[#f4d5ad] font-cursive flex items-center justify-center">
           {jasperText}
-          <span className="animate-pulse ml-1 text-accent">|</span>
+          <span className="animate-pulse ml-1 text-accent dark:text-[#c98a6e]">|</span>
         </h1>
-        <h1 className="text-accent font-cursive flex items-center justify-center">
+        <h1 className="text-accent dark:text-[#c98a6e] font-cursive flex items-center justify-center">
           {sonaText}
         </h1>
       </motion.div>

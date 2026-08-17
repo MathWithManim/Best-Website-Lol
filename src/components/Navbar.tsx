@@ -9,13 +9,12 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-40 backdrop-blur bg-[#F5E6CA]/90 dark:bg-[#1a120b]/90 flex items-center justify-between p-6 text-[#8B4513] dark:text-[#f4d5ad] border-b border-[#8B4513]/20 dark:border-[#f4d5ad]/20">
       <Link to="/" className="font-typewriter text-2xl font-bold">JASPER SONA</Link>
-      
+
       <div className="hidden md:flex items-center gap-6">
         <ul className="flex gap-6 font-typewriter items-center">
           <li><Link to="/">Home</Link></li>
           <li><Link to="/rng">RNG Game</Link></li>
           {isLoggedIn && <li><Link to="/profile">Profile</Link></li>}
-          <li>Contact</li>
         </ul>
         <DarkModeToggle />
       </div>
@@ -32,7 +31,6 @@ const Navbar = () => {
           <li><Link to="/" onClick={() => setIsOpen(false)}>Home</Link></li>
           <li><Link to="/rng" onClick={() => setIsOpen(false)}>RNG Game</Link></li>
           {isLoggedIn && <li><Link to="/profile" onClick={() => setIsOpen(false)}>Profile</Link></li>}
-          <li>Contact</li>
         </ul>
       </div>
     </nav>
