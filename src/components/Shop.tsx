@@ -53,7 +53,7 @@ const Shop = ({ sessionToken }: ShopProps) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleBuy('single')}
-          disabled={buying !== null || !!activeBoost}
+          disabled={buying !== null}
           title="Buy 1.5x luck for your next roll"
           className="w-full py-3 px-4 bg-green-600 text-white font-mono text-sm font-bold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between"
         >

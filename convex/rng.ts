@@ -21,12 +21,19 @@ async function getOrCreateGlobalStats(ctx: { db: any }) {
 
   const counts: Record<string, number> = {};
   for (const r of RARITIES) counts[r] = 0;
-  const _id = await ctx.db.insert("global_stats", {
-    docId: "main",
-    counts,
-    totalRolls: 0,
-  });
-  return await ctx.db.get(_id);
+
+  // Only insert if it's a mutation context
+  if (ctx.db.insert) {
+    const _id = await ctx.db.insert("global_stats", {
+      docId: "main",
+      counts,
+      totalRolls: 0,
+    });
+    return await ctx.db.get(_id);
+  }
+
+  // If it's a query context, just return the default
+  return { counts, totalRolls: 0 };
 }
 
 /** Cap leaderboard entries per user — keeps only the most recent `limit` entries. */

@@ -163,6 +163,40 @@ export const logout = mutation({
   },
 });
 
+/** Verify if the caller is root */
+export async function requireRoot(ctx: { db: any }, sessionToken: string) {
+  const user = await authenticate(ctx, sessionToken);
+  if (user.email !== "root@root.root") {
+    throw new Error("Unauthorized: Root access required");
+  }
+  return user;
+}
+
+// --- Admin Mutations ---
+export const listUsers = query({
+  args: { sessionToken: v.string() },
+  handler: async (ctx, args) => {
+    await requireRoot(ctx, args.sessionToken);
+    return await ctx.db.query("users").collect();
+  },
+});
+
+export const updateUserStats = mutation({
+  args: { sessionToken: v.string(), userId: v.id("users"), luckbucks: v.number() },
+  handler: async (ctx, args) => {
+    await requireRoot(ctx, args.sessionToken);
+    await ctx.db.patch(args.userId, { luckbucks: args.luckbucks });
+  },
+});
+
+export const deleteUser = mutation({
+  args: { sessionToken: v.string(), userId: v.id("users") },
+  handler: async (ctx, args) => {
+    await requireRoot(ctx, args.sessionToken);
+    await ctx.db.delete(args.userId);
+  },
+});
+
 // Internal: create root account (call from Convex dashboard only)
 export const createRootAccount = internalMutation({
   args: { password: v.string() },

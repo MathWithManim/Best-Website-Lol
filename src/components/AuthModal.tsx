@@ -102,7 +102,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
             </div>
           )}
           <div>
-            <label htmlFor="auth-email" className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Email / Root</label>
+            <label htmlFor="auth-email" className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Email</label>
             <input 
               id="auth-email"
               type="text" 

@@ -7,6 +7,7 @@ import NotFound from './components/NotFound';
 import RNGPage from './pages/RNGPage';
 import ProfilePage from './pages/ProfilePage';
 import Logout from './pages/Logout';
+import RootAdmin from './pages/RootAdmin';
 import CookiePolicy from './pages/CookiePolicy';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -54,10 +55,11 @@ function AnimatedRoutes() {
               <Footer />
             </>
           } />
-          <Route path="/rng" element={<RNGPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/cookies" element={<CookiePolicy />} />
+           <Route path="/rng" element={<RNGPage />} />
+           <Route path="/profile" element={<ProfilePage />} />
+           <Route path="/logout" element={<Logout />} />
+           <Route path="/x8f9a2_rootadmin" element={<RootAdmin />} />
+           <Route path="/cookies" element={<CookiePolicy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
