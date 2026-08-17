@@ -13,7 +13,6 @@ const WEIGHTS = [500000, 250000, 125000, 62500, 31250, 15625, 7812, 3906, 1953, 
 
 // --- Constants ---
 const TOKEN_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-const MAX_LOGIN_ATTEMPTS = 5;
 const LOCKOUT_BASE_MS = 5 * 60 * 1000; // 5 minutes
 
 // --- Helpers ---
@@ -85,7 +84,31 @@ export const signup = mutation({
       throw new Error("Cannot create root account via signup.");
     }
 
-    // ... (rest of function)
+    // Rate limit check
+    const attempts = await ctx.db
+      .query("login_attempts")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+
+    if (attempts && attempts.lockoutUntil > Date.now()) {
+      throw new Error("Account is temporarily locked. Try again later.");
+    }
+
+    // Check email or username uniqueness
+    const existingEmail = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+
+    const existingUsername = await ctx.db
+      .query("users")
+      .withIndex("by_username", (q) => q.eq("username", uname))
+      .first();
+
+    if (existingEmail || existingUsername) {
+      throw new Error("Account already exists. Please log in.");
+    }
+
     const sessionToken = generateSessionToken();
     const resetSecret = generateSessionToken();
 
@@ -102,6 +125,11 @@ export const signup = mutation({
       createdAt: Date.now(),
     });
 
+    // Reset attempts on successful signup
+    if (attempts) {
+      await ctx.db.delete(attempts._id);
+    }
+
     return { userId, sessionToken, resetSecret };
   },
 });
@@ -112,6 +140,16 @@ export const login = mutation({
     const email = normalizeEmail(args.email);
     validateString(email, 254, "Email");
 
+    const attempts = await ctx.db
+      .query("login_attempts")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+
+    if (attempts && attempts.lockoutUntil > Date.now()) {
+      const waitMin = Math.ceil((attempts.lockoutUntil - Date.now()) / 60000);
+      throw new Error(`Too many failed attempts. Try again in ${waitMin} minute${waitMin > 1 ? 's' : ''}.`);
+    }
+
     const user = await ctx.db
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", email))
@@ -119,29 +157,27 @@ export const login = mutation({
 
     // Generic error for both cases
     if (!user || user.password !== args.password) {
-      // Rate limit: track failed attempts on the user doc (if user exists)
-      if (user) {
-        const attempts = (user.loginAttempts || 0) + 1;
-        const lockoutUntil = attempts >= MAX_LOGIN_ATTEMPTS
-          ? Date.now() + LOCKOUT_BASE_MS * Math.pow(2, Math.min(attempts - MAX_LOGIN_ATTEMPTS, 5))
-          : undefined;
-        await ctx.db.patch(user._id, { loginAttempts: attempts, lockoutUntil });
+      // Rate limit: increment failed attempts
+      const newCount = (attempts?.count || 0) + 1;
+      const lockoutUntil = Date.now() + LOCKOUT_BASE_MS * Math.pow(2, Math.min(newCount - 1, 5));
+
+      if (attempts) {
+        await ctx.db.patch(attempts._id, { count: newCount, lockoutUntil });
+      } else {
+        await ctx.db.insert("login_attempts", { email, count: newCount, lockoutUntil });
       }
       throw new Error("Invalid email or password");
     }
 
-    // Check lockout
-    if (user.lockoutUntil && user.lockoutUntil > Date.now()) {
-      const waitMin = Math.ceil((user.lockoutUntil - Date.now()) / 60000);
-      throw new Error(`Too many failed attempts. Try again in ${waitMin} minute${waitMin > 1 ? 's' : ''}.`);
+    // Reset attempts on successful login
+    if (attempts) {
+      await ctx.db.delete(attempts._id);
     }
 
     const sessionToken = generateSessionToken();
     await ctx.db.patch(user._id, {
       sessionToken,
       tokenCreatedAt: Date.now(),
-      loginAttempts: 0,
-      lockoutUntil: undefined,
     });
 
     return {

@@ -39,6 +39,12 @@ export default defineSchema({
     .index("by_email", ["email"])
     .index("by_username", ["username"])
     .index("by_sessionToken", ["sessionToken"]),
+  login_attempts: defineTable({
+    email: v.string(),
+    count: v.number(),
+    lockoutUntil: v.number(),
+  })
+    .index("by_email", ["email"]),
   user_cosmetics: defineTable({
     email: v.string(),
     cosmeticId: v.string(),
