@@ -107,8 +107,9 @@ const ProfilePage = () => {
               className="w-20 h-20 rounded-full border-2 border-accent bg-bg dark:bg-[#2d1e14] object-cover"
             />
             <div className="flex-1 w-full">
-              <label className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Profile Picture URL</label>
+              <label htmlFor="profile-pfp" className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Profile Picture URL</label>
               <input
+                id="profile-pfp"
                 type="text"
                 value={pfp}
                 onChange={(e) => setPfp(e.target.value)}
@@ -118,8 +119,9 @@ const ProfilePage = () => {
           </div>
 
           <div>
-            <label className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Display Name</label>
+            <label htmlFor="profile-name" className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Display Name</label>
             <input
+              id="profile-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -128,8 +130,9 @@ const ProfilePage = () => {
           </div>
 
           <div>
-            <label className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Username</label>
+            <label htmlFor="profile-username" className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Username</label>
             <input
+              id="profile-username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -138,8 +141,9 @@ const ProfilePage = () => {
           </div>
 
           <div>
-            <label className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Bio</label>
+            <label htmlFor="profile-bio" className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Bio</label>
             <textarea
+              id="profile-bio"
               rows={4}
               value={bio}
               onChange={(e) => setBio(e.target.value)}

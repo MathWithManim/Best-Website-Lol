@@ -30,7 +30,7 @@ const DarkModeToggle = () => {
   return (
     <button
       onClick={toggleDarkMode}
-      className="px-3 py-1.5 rounded-lg border border-primary/30 dark:border-[#f4d5ad]/30 bg-secondary/20 dark:bg-secondary/10 text-primary dark:text-[#f4d5ad] font-mono text-sm hover:scale-105 transition-all cursor-pointer"
+      className="px-3 py-1.5 rounded-lg border border-primary/30 dark:border-[#f4d5ad]/30 bg-secondary/20 dark:bg-secondary/10 text-primary dark:text-[#f4d5ad] font-mono text-sm hover:scale-105 transition-colors cursor-pointer"
       title="Toggle Dark / Light Mode"
     >
       {isDark ? '☀️ Light' : '🌙 Dark'}

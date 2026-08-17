@@ -87,8 +87,9 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <div>
-              <label className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Username</label>
+              <label htmlFor="auth-username" className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Username</label>
               <input 
+                id="auth-username"
                 type="text" 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -98,8 +99,9 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
             </div>
           )}
           <div>
-            <label className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Email / Root</label>
+            <label htmlFor="auth-email" className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Email / Root</label>
             <input 
+              id="auth-email"
               type="text" 
               required 
               value={email}
@@ -109,9 +111,10 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
             />
           </div>
           <div>
-            <label className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Password</label>
+            <label htmlFor="auth-password" className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Password</label>
             <div className="relative">
               <input 
+                id="auth-password"
                 type={showPassword ? "text" : "password"}
                 required 
                 value={password}
@@ -121,6 +124,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
               />
               <button
                 type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-primary/40 dark:text-[#f4d5ad]/40 hover:text-primary dark:hover:text-[#f4d5ad] transition-colors cursor-pointer"
               >

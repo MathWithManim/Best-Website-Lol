@@ -120,8 +120,8 @@ const RNGGame = ({ onRollComplete }: RNGGameProps) => {
                 <motion.div
                   className="absolute -inset-8 rounded-full opacity-30 blur-xl pointer-events-none"
                   style={{ backgroundColor: RARITY_COLORS[result] || '#8B4513' }}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: [0, 1.5, 1] }}
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: [0.8, 1.5, 1] }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                 />
                 <div
@@ -184,7 +184,7 @@ const RNGGame = ({ onRollComplete }: RNGGameProps) => {
       <button
         onClick={handleRoll}
         disabled={rolling}
-        className="w-full py-4 px-8 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono text-lg font-bold rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer active:scale-95"
+        className="w-full py-4 px-8 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono text-lg font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer active:scale-95"
       >
         {rolling ? (
           <span className="flex items-center justify-center gap-2">

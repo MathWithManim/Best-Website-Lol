@@ -39,9 +39,7 @@ async function pruneUserLeaderboard(ctx: { db: any }, email: string, limit = 100
 
   if (entries.length > limit) {
     const toDelete = entries.slice(limit);
-    for (const entry of toDelete) {
-      await ctx.db.delete(entry._id);
-    }
+    await Promise.all(toDelete.map((entry: any) => ctx.db.delete(entry._id)));
   }
 }
 
@@ -172,9 +170,7 @@ export const sellRarity = mutation({
 
     // Delete the sold leaderboard entries
     const toDelete = rarityRolls.slice(0, sellAmount);
-    for (const entry of toDelete) {
-      await ctx.db.delete(entry._id);
-    }
+    await Promise.all(toDelete.map((entry: any) => ctx.db.delete(entry._id)));
 
     // Decrement per-user rarity counts
     const counts = { ...(user.rarityCounts || {}) };
@@ -235,10 +231,8 @@ export const pruneAllLeaderboards = internalMutation({
 
       if (entries.length > 100) {
         const toDelete = entries.slice(100);
-        for (const entry of toDelete) {
-          await ctx.db.delete(entry._id);
-          totalPruned++;
-        }
+        await Promise.all(toDelete.map((entry: any) => ctx.db.delete(entry._id)));
+        totalPruned += toDelete.length;
       }
     }
 

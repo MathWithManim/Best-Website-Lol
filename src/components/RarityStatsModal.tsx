@@ -114,7 +114,7 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, se
               <motion.div
                 className="text-5xl font-bold font-typewriter mb-2"
                 style={{ color }}
-                initial={{ scale: 0 }}
+                initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}
               >
@@ -181,6 +181,7 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, se
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleSell(1)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSell(1); } }}
                     disabled={selling}
                     className="flex-1 py-2 px-3 bg-accent dark:bg-[#c98a6e] text-bg dark:text-[#1a120b] font-mono text-sm font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
                   >
@@ -188,6 +189,7 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, se
                   </button>
                   <button
                     onClick={() => handleSell(10)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSell(10); } }}
                     disabled={selling || userCount < 10}
                     className="flex-1 py-2 px-3 bg-accent dark:bg-[#c98a6e] text-bg dark:text-[#1a120b] font-mono text-sm font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
                   >
@@ -195,6 +197,7 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, se
                   </button>
                   <button
                     onClick={() => handleSell(-1)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSell(-1); } }}
                     disabled={selling}
                     className="flex-1 py-2 px-3 bg-red-600 text-white font-mono text-sm font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
                   >
