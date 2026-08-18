@@ -100,10 +100,10 @@ const RNGPage = () => {
             <p className="font-mono text-sm text-primary/50 dark:text-[#f4d5ad]/50">Loading game data...</p>
           </div>
         )}
-        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start bg-black/20 dark:bg-black/40 p-6 md:p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
           {/* Left: Roll Area + Shop */}
           <div className="w-full md:w-2/5 flex flex-col items-center">
-            <h1 className="text-3xl md:text-4xl font-sans font-bold mb-6 text-primary dark:text-[#f4d5ad] text-center">
+            <h1 className="text-3xl md:text-4xl font-sans font-bold mb-6 text-white text-center drop-shadow-lg">
               RNG Game
             </h1>
 

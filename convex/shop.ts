@@ -66,26 +66,26 @@ const COSMETICS = [
   { 
     id: "cat", 
     name: "Cat", 
-    icon: "🐱", 
+    icon: "CAT", 
     price: 0, 
     description: "Meow! A cute cat cosmetic.",
-    theme: { bg: "#FFF5F7", primary: "#F472B6", accent: "#EC4899" }
+    theme: { bg: "#1F2937", primary: "#F472B6", accent: "#EC4899" }
   },
   { 
     id: "math", 
     name: "Math", 
-    icon: "📐", 
+    icon: "MAT", 
     price: 0, 
     description: "For the math enthusiasts.",
-    theme: { bg: "#F0FDF4", primary: "#22C55E", accent: "#16A34A" }
+    theme: { bg: "#1F2937", primary: "#22C55E", accent: "#16A34A" }
   },
   { 
     id: "bird", 
     name: "Bird", 
-    icon: "🐦", 
+    icon: "BRD", 
     price: 0, 
     description: "Soar high with this bird.",
-    theme: { bg: "#EFF6FF", primary: "#3B82F6", accent: "#2563EB" }
+    theme: { bg: "#1F2937", primary: "#3B82F6", accent: "#2563EB" }
   },
 ];
 

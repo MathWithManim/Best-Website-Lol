@@ -46,34 +46,26 @@ const Shop = ({ sessionToken }: ShopProps) => {
       </motion.h3>
       <div className="space-y-2">
         <motion.button
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1, duration: 0.3 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleBuy('single')}
           disabled={buying !== null}
           title="Buy 1.5x luck for your next roll"
-          className="w-full py-3 px-4 bg-green-600 text-white font-mono text-sm font-bold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between"
+          className="w-full py-3 px-4 bg-emerald-600 text-white font-mono text-sm font-bold rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between border border-emerald-500/30"
         >
           <span>1.5x Luck (next roll)</span>
-          <span className="text-green-200">5 LB</span>
+          <span className="text-emerald-200">5 LB</span>
         </motion.button>
         <motion.button
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.18, duration: 0.3 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleBuy('minute')}
-          disabled={buying !== null || !!activeBoost}
+          disabled={buying !== null}
           title="Buy 1.5x luck for 1 minute"
-          className="w-full py-3 px-4 bg-blue-600 text-white font-mono text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between"
+          className="w-full py-3 px-4 bg-sky-600 text-white font-mono text-sm font-bold rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between border border-sky-500/30"
         >
           <span>1.5x Luck (1 min)</span>
-          <span className="text-blue-200">20 LB</span>
+          <span className="text-sky-200">20 LB</span>
         </motion.button>
       </div>
       <AnimatePresence>

@@ -97,14 +97,17 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
       {/* Slot Machine Reel */}
-      <div className="relative w-full h-40 md:h-52 overflow-hidden rounded-2xl border-2 border-primary/30 dark:border-[#f4d5ad]/30 bg-white/50 dark:bg-[#1a120b]/80 shadow-inner">
-        <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-bg dark:from-[#1a120b] to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-bg dark:from-[#1a120b] to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-14 border-y-2 border-accent/40 dark:border-[#c98a6e]/40 z-10 pointer-events-none" />
+      <div className="relative w-full h-40 md:h-52 overflow-hidden rounded-2xl border-4 border-primary dark:border-[#f4d5ad] bg-[#0a0a0a] shadow-2xl">
+        {/* Neon Border Effect */}
+        <div className="absolute inset-0 z-0 border-2 border-accent dark:border-[#c98a6e] opacity-20" />
+        
+        <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-16 border-y-4 border-accent dark:border-[#c98a6e] z-10 pointer-events-none bg-accent/10 shadow-[0_0_15px_rgba(160,82,45,0.5)]" />
 
         {/* Blur overlay during spin */}
         {rolling && (
-          <div className="absolute inset-0 z-5 pointer-events-none backdrop-blur-[1px] flex items-center justify-center">
+          <div className="absolute inset-0 z-5 pointer-events-none backdrop-blur-[2px] flex items-center justify-center">
             {equippedCosmetic === 'cat' && (
               <motion.div
                 initial={{ scale: 0 }}
@@ -123,39 +126,39 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
             {showResult && result ? (
               <motion.div
                 key="result"
-                initial={{ scale: 2, opacity: 0, rotate: -10 }}
+                initial={{ scale: 0.5, opacity: 0, rotate: -20 }}
                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 12, mass: 0.8 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10, mass: 0.5 }}
                 className="text-center relative"
               >
-                {/* Glow ring for result */}
+                {/* Intense Glow ring for result */}
                 <motion.div
-                  className="absolute -inset-8 rounded-full opacity-30 blur-xl pointer-events-none"
+                  className="absolute -inset-10 rounded-full opacity-60 blur-2xl pointer-events-none"
                   style={{ backgroundColor: RARITY_COLORS[result] || '#8B4513' }}
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: [0.8, 1.5, 1] }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: [1, 2, 1], opacity: [0, 0.8, 0] }}
+                  transition={{ duration: 0.8, delay: 0.1 }}
                 />
                 <div
-                  className="text-6xl md:text-7xl font-bold font-typewriter relative z-10"
-                  style={{ color: RARITY_COLORS[result] || '#8B4513' }}
+                  className="text-7xl md:text-8xl font-bold font-typewriter relative z-10 drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]"
+                  style={{ color: '#fff' }}
                 >
                   {RARITIES.indexOf(result) + 1}
                 </div>
                 <div
-                  className="text-lg md:text-xl font-mono mt-1 relative z-10"
-                  style={{ color: RARITY_COLORS[result] || '#A0522D' }}
+                  className="text-xl md:text-2xl font-mono mt-2 relative z-10 px-4 py-1 bg-black/50 rounded-lg text-white font-bold"
+                  style={{ textShadow: `0 0 10px ${RARITY_COLORS[result]}` }}
                 >
                   {result}
                 </div>
                 {boostActive && (
                   <motion.div
-                    className="text-xs font-mono text-green-500 mt-2 relative z-10"
+                    className="text-xs font-mono text-green-400 mt-2 relative z-10 font-bold bg-black/50 px-2 py-0.5 rounded"
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
                   >
-                    ⚡ Boost Applied!
+                    ⚡ BOOSTED!
                   </motion.div>
                 )}
               </motion.div>

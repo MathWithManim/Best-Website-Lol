@@ -59,15 +59,15 @@ const RarityGrid = ({ rarityCounts, onRarityClick, isLoading }: RarityGridProps)
             disabled={!unlocked}
             className={`
               relative aspect-square rounded-2xl flex flex-col items-center justify-center
-              border-2 cursor-pointer backdrop-blur-sm
+              border-2 cursor-pointer backdrop-blur-sm transition-all duration-300
               ${unlocked
-                ? 'active:scale-95 transition-all duration-300'
-                : 'opacity-40 grayscale-[0.8] cursor-not-allowed'
+                ? 'active:scale-95'
+                : 'opacity-30 grayscale-[1] cursor-not-allowed bg-black/20 border-white/5'
               }
             `}
             style={{
-              borderColor: unlocked ? `${color}80` : '#374151',
-              backgroundColor: unlocked ? `${color}15` : '#1f2937',
+              borderColor: unlocked ? `${color}40` : undefined,
+              backgroundColor: unlocked ? `${color}10` : undefined,
               boxShadow: unlocked ? `0 0 20px ${color}20` : undefined,
             }}
             title={unlocked ? `${rarity} (Count: ${count})` : 'Locked'}

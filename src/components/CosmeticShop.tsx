@@ -61,19 +61,21 @@ const CosmeticShop = ({ email, sessionToken }: CosmeticShopProps) => {
               key={cosmetic.id}
               className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 dark:bg-[#f4d5ad]/5 border border-primary/10 dark:border-[#f4d5ad]/10"
             >
-              <span className="text-2xl">{cosmetic.icon}</span>
+              <span className="w-12 h-12 flex items-center justify-center font-mono text-[10px] font-bold bg-black/40 text-white rounded-lg border border-white/10">
+                {cosmetic.icon}
+              </span>
               <div className="flex-1 min-w-0">
-                <div className="font-mono text-sm font-bold text-primary dark:text-[#f4d5ad]">{cosmetic.name}</div>
-                <div className="text-xs font-mono text-primary/50 dark:text-[#f4d5ad]/50">{cosmetic.description}</div>
+                <div className="font-mono text-sm font-bold text-white">{cosmetic.name}</div>
+                <div className="text-xs font-mono text-white/50">{cosmetic.description}</div>
               </div>
               {owned ? (
                 <button
                   onClick={() => handleEquip(cosmetic.id)}
                   disabled={equipping !== null || equipped}
-                  className={`px-3 py-1.5 font-mono text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+                  className={`px-3 py-1.5 font-mono text-xs font-bold rounded-lg transition-all cursor-pointer ${
                     equipped
-                      ? 'bg-green-600 text-white'
-                      : 'bg-primary/20 dark:bg-[#f4d5ad]/20 text-primary dark:text-[#f4d5ad] hover:bg-primary/30 dark:hover:bg-[#f4d5ad]/30'
+                      ? 'bg-accent text-white shadow-lg'
+                      : 'bg-white/10 text-white hover:bg-white/20'
                   } disabled:opacity-50`}
                 >
                   {equipped ? 'Equipped' : 'Equip'}
@@ -82,7 +84,7 @@ const CosmeticShop = ({ email, sessionToken }: CosmeticShopProps) => {
                 <button
                   onClick={() => handleBuy(cosmetic.id)}
                   disabled={buying !== null}
-                  className="px-3 py-1.5 bg-accent text-bg dark:text-[#1a120b] font-mono text-xs font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                  className="px-3 py-1.5 bg-accent text-white font-mono text-xs font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
                 >
                   {buying === cosmetic.id ? '...' : cosmetic.price === 0 ? 'Free' : `${cosmetic.price} LB`}
                 </button>
@@ -92,7 +94,7 @@ const CosmeticShop = ({ email, sessionToken }: CosmeticShopProps) => {
         })}
       </div>
       {message && (
-        <div className="mt-2 text-center text-xs font-mono text-primary dark:text-[#f4d5ad]">{message}</div>
+        <div className="mt-2 text-center text-xs font-mono text-white/70">{message}</div>
       )}
     </div>
   );
