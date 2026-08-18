@@ -71,7 +71,8 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
       } else {
         (async () => {
           try {
-            const outcome = await roll({ sessionToken: sessionToken! });
+            if (!sessionToken) throw new Error("Not authenticated");
+            const outcome = await roll({ sessionToken });
             const rarity = (outcome as { rarity: string; boostApplied: boolean }).rarity;
             const boostApplied = (outcome as { rarity: string; boostApplied: boolean }).boostApplied;
             setResult(rarity);
