@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import AuthModal from '../components/AuthModal';
@@ -100,7 +101,20 @@ const RNGPage = () => {
             <p className="font-mono text-sm text-primary/50 dark:text-[#f4d5ad]/50">Loading game data...</p>
           </div>
         )}
-        <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start bg-black/20 dark:bg-black/40 p-6 md:p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
+        <div className="relative flex flex-col md:flex-row gap-8 md:gap-12 items-start bg-black/20 dark:bg-black/40 p-6 md:p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
+          {/* Animated Glow Border */}
+          <motion.div
+            className="absolute inset-0 rounded-3xl pointer-events-none border border-accent/20"
+            animate={{
+              boxShadow: [
+                "0 0 0px rgba(160, 82, 45, 0.1)",
+                "0 0 20px rgba(160, 82, 45, 0.2)",
+                "0 0 0px rgba(160, 82, 45, 0.1)",
+              ],
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          />
+
           {/* Left: Roll Area + Shop */}
           <div className="w-full md:w-2/5 flex flex-col items-center">
             <h1 className="text-3xl md:text-4xl font-sans font-bold mb-6 text-white text-center drop-shadow-lg">
@@ -133,14 +147,16 @@ const RNGPage = () => {
 
           {/* Right: Rarity Grid */}
           <div className="w-full md:w-3/5">
-            <h2 className="text-xl md:text-2xl font-sans font-bold mb-4 text-primary dark:text-[#f4d5ad] text-center">
+            <h2 className="text-xl md:text-2xl font-sans font-bold mb-6 text-white text-center drop-shadow-lg">
               Rarity Collection
             </h2>
-            <RarityGrid
-              rarityCounts={displayCounts}
-              onRarityClick={handleRarityClick}
-              isLoading={isLoading}
-            />
+            <div className="bg-black/20 dark:bg-black/40 p-6 md:p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
+              <RarityGrid
+                rarityCounts={displayCounts}
+                onRarityClick={handleRarityClick}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
         </div>
       </main>
