@@ -19,7 +19,9 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
     // Simple, non-verified email/password auth to get started
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: true,
+      // Email verification requires a configured sendVerificationEmail (SMTP) provider.
+      // Without one, signups get emailVerified:false and are hard-locked out — keep off until email is wired up.
+      requireEmailVerification: false,
     },
     plugins: [
       // The cross domain plugin is required for client side frameworks
