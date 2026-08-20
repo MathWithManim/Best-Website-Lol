@@ -1,19 +1,25 @@
 import { createContext, type ReactNode, useState, useEffect } from 'react';
-import { useUser } from './UserProvider';
+import { useUser } from '../lib/useUser';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
-const CosmeticThemeContext = createContext<any>(null);
+interface CosmeticTheme {
+  bg: string;
+  primary: string;
+  accent: string;
+}
+
+const CosmeticThemeContext = createContext<CosmeticTheme | null>(null);
 
 export const CosmeticThemeProvider = ({ children }: { children: ReactNode }) => {
   const user = useUser();
   const cosmetics = useQuery(api.shop.getCosmetics);
-  const [theme, setTheme] = useState<any>(null);
+  const [theme, setTheme] = useState<CosmeticTheme | null>(null);
   
   useEffect(() => {
     const equipped = user?.equippedCosmetic;
-    const cosmeticTheme = cosmetics?.find((c: any) => c.id === equipped)?.theme;
-    setTheme(cosmeticTheme);
+    const cosmeticTheme = cosmetics?.find((c) => c.id === equipped)?.theme;
+    setTheme(cosmeticTheme || null);
   }, [user, cosmetics]);
 
   const themeStyle = theme ? {

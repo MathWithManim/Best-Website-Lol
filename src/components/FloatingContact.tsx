@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 const FloatingContact = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,7 +8,7 @@ const FloatingContact = () => {
     <div className="fixed bottom-6 left-6 z-40">
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -17,7 +17,7 @@ const FloatingContact = () => {
             <p className="font-bold mb-1">Contact Info:</p>
             <p className="mb-1">Email: <a href="mailto:mathmanim09@gmail.com" className="text-accent underline">mathmanim09@gmail.com</a></p>
             <p>TikTok: <a href="https://tiktok.com/@mathwowamazing" target="_blank" rel="noreferrer" className="text-accent underline">@mathwowamazing</a></p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 

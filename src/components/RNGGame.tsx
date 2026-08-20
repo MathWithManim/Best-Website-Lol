@@ -1,25 +1,19 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { RARITY_COLORS } from './RarityStatsModal';
-
-const RARITIES = [
-  "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic",
-  "Transcendent", "Epic", "Unique", "Heroic", "Fabled", "Ancient", "Ethereal",
-  "Celestial", "Astral", "Galactic", "Infinite", "Void", "Chaos", "Order",
-  "Reality", "Existence", "Infinity", "Beyond", "Absolute", "Final", "Omega",
-  "Alpha", "Zenith"
-];
+import { RARITIES, RARITY_COLORS } from '../lib/rarities';
 
 interface RNGGameProps {
   onRollComplete: () => void;
   equippedCosmetic?: string;
+  rollCost: number;
+  luckBucks: number;
+  totalRarities: number;
 }
 
-const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
+const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalRarities }: RNGGameProps) => {
   const roll = useMutation(api.rng.roll);
-  const sessionToken = typeof window !== 'undefined' ? localStorage.getItem('sessionToken') || undefined : undefined;
 
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -37,18 +31,11 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
   }, []);
 
   const handleRoll = useCallback(async () => {
-    const lastRoll = localStorage.getItem('lastRollTime');
-    if (lastRoll && Date.now() - Number(lastRoll) < 1000) {
-      setError("Please wait a moment before rolling again.");
-      return;
-    }
-
     setRolling(true);
     setResult(null);
     setShowResult(false);
     setError(null);
     setBoostActive(false);
-    localStorage.setItem('lastRollTime', String(Date.now()));
 
     // Slot machine: rapid cycle with exponential deceleration
     let currentIndex = 0;
@@ -63,7 +50,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
       const eased = 1 - Math.pow(1 - progress, 3);
       const speed = 30 + eased * 350;
 
-      currentIndex = (currentIndex + 1) % RARITIES.length;
+      currentIndex = (currentIndex + 1) % totalRarities;
       setDisplayIndex(currentIndex);
 
       if (progress < 1) {
@@ -71,8 +58,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
       } else {
         (async () => {
           try {
-            if (!sessionToken) throw new Error("Not authenticated");
-            const outcome = await roll({ sessionToken });
+            const outcome = await roll();
             const rarity = (outcome as { rarity: string; boostApplied: boolean }).rarity;
             const boostApplied = (outcome as { rarity: string; boostApplied: boolean }).boostApplied;
             setResult(rarity);
@@ -90,7 +76,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
     };
 
     intervalRef.current = setTimeout(spin, 30);
-  }, [roll, sessionToken, onRollComplete]);
+  }, [roll, onRollComplete, totalRarities]);
 
   const currentRarity = RARITIES[displayIndex];
   const currentColor = RARITY_COLORS[currentRarity] || '#8B4513';
@@ -110,14 +96,14 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
         {rolling && (
           <div className="absolute inset-0 z-5 pointer-events-none backdrop-blur-[2px] flex items-center justify-center">
             {equippedCosmetic === 'cat' && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+              <m.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: [0.95, 1.2, 1], rotate: [0, 10, -10, 0], opacity: 1 }}
                 transition={{ repeat: Infinity, duration: 0.5 }}
                 className="text-4xl"
               >
                 🐱
-              </motion.div>
+              </m.div>
             )}
           </div>
         )}
@@ -125,7 +111,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
         <div className="absolute inset-0 flex items-center justify-center">
           <AnimatePresence mode="wait">
             {showResult && result ? (
-              <motion.div
+              <m.div
                 key="result"
                 initial={{ scale: 0.5, opacity: 0, rotate: -20 }}
                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -133,7 +119,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
                 className="text-center relative"
               >
                 {/* Intense Glow ring for result */}
-                <motion.div
+                <m.div
                   className="absolute -inset-10 rounded-full opacity-60 blur-2xl pointer-events-none"
                   style={{ backgroundColor: RARITY_COLORS[result] || '#8B4513' }}
                   initial={{ scale: 0.5, opacity: 0 }}
@@ -153,18 +139,18 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
                   {result}
                 </div>
                 {boostActive && (
-                  <motion.div
+                  <m.div
                     className="text-xs font-mono text-green-400 mt-2 relative z-10 font-bold bg-black/50 px-2 py-0.5 rounded"
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
                   >
                     ⚡ BOOSTED!
-                  </motion.div>
+                  </m.div>
                 )}
-              </motion.div>
+              </m.div>
             ) : (
-              <motion.div
+              <m.div
                 key={displayIndex}
                 initial={{ y: rolling ? -30 : 0, opacity: rolling ? 0.5 : 1 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -185,7 +171,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
                 >
                   {currentRarity}
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </div>
@@ -199,8 +185,8 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
 
       <button
         onClick={handleRoll}
-        disabled={rolling}
-        title="Execute a roll for a random rarity item"
+        disabled={rolling || luckBucks < rollCost}
+        title={rollCost === 0 ? 'Execute a free roll' : `Execute a roll (costs ${rollCost} LuckBucks)`}
         className="w-full py-4 px-8 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono text-lg font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer active:scale-95"
       >
         {rolling ? (
@@ -211,8 +197,12 @@ const RNGGame = ({ onRollComplete, equippedCosmetic }: RNGGameProps) => {
             </svg>
             Rolling...
           </span>
+        ) : luckBucks < rollCost ? (
+          `Need ${rollCost.toLocaleString()} LuckBucks`
+        ) : rollCost === 0 ? (
+          'Execute Roll (FREE)'
         ) : (
-          'Execute Roll'
+          `Execute Roll (${rollCost} LuckBucks)`
         )}
       </button>
     </div>

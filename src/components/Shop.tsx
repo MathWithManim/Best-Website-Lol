@@ -1,18 +1,15 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
-interface ShopProps {
-  sessionToken: string;
-}
-
-const Shop = ({ sessionToken }: ShopProps) => {
+const Shop = () => {
   const [buying, setBuying] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const buySingleBoost = useMutation(api.shop.buySingleLuckBoost);
   const buyMinuteBoost = useMutation(api.shop.buyMinuteLuckBoost);
-  const activeBoost = useQuery(api.shop.getActiveBoost, sessionToken ? { sessionToken } : "skip");
+  const activeBoostData = useQuery(api.shop.getActiveBoost);
+  const activeBoost = activeBoostData && activeBoostData.expiresAt > Date.now() ? activeBoostData : null;
 
   const handleBuy = async (type: 'single' | 'minute') => {
     if (buying) return;
@@ -20,7 +17,7 @@ const Shop = ({ sessionToken }: ShopProps) => {
     setMessage(null);
     try {
       const mutation = type === 'single' ? buySingleBoost : buyMinuteBoost;
-      const result = await mutation({ sessionToken });
+      const result = await mutation();
       if (type === 'single') {
         setMessage(`Bought 1.5x luck for next roll! (${result.newBalance} LB left)`);
       } else {
@@ -35,7 +32,7 @@ const Shop = ({ sessionToken }: ShopProps) => {
 
   return (
     <div className="w-full max-w-sm mx-auto mt-6">
-      <motion.h3
+      <m.h3
         initial={{ opacity: 0, y: 8 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -43,9 +40,9 @@ const Shop = ({ sessionToken }: ShopProps) => {
         className="text-sm font-mono text-primary/70 dark:text-[#f4d5ad]/70 text-center mb-3"
       >
         Shop
-      </motion.h3>
+      </m.h3>
       <div className="space-y-2">
-        <motion.button
+        <m.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleBuy('single')}
@@ -55,8 +52,8 @@ const Shop = ({ sessionToken }: ShopProps) => {
         >
           <span>1.5x Luck (next roll)</span>
           <span className="text-emerald-200">5 LB</span>
-        </motion.button>
-        <motion.button
+        </m.button>
+        <m.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => handleBuy('minute')}
@@ -66,30 +63,31 @@ const Shop = ({ sessionToken }: ShopProps) => {
         >
           <span>1.5x Luck (1 min)</span>
           <span className="text-sky-200">20 LB</span>
-        </motion.button>
+        </m.button>
       </div>
       <AnimatePresence>
         {activeBoost && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+          <m.div
+            initial={{ opacity: 0, scaleY: 0, y: -4 }}
+            animate={{ opacity: 1, scaleY: 1, y: 0 }}
+            exit={{ opacity: 0, scaleY: 0, y: -4 }}
+            style={{ transformOrigin: 'top' }}
             className="mt-2 text-center text-xs font-mono text-green-500 dark:text-green-400 overflow-hidden"
           >
             ⚡ Active: 1.5x luck ({activeBoost.rollsLeft > 100 ? '1 min' : `${activeBoost.rollsLeft} roll${activeBoost.rollsLeft !== 1 ? 's' : ''}`})
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
       <AnimatePresence>
         {message && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             className="mt-2 text-center text-xs font-mono text-primary dark:text-[#f4d5ad]"
           >
             {message}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

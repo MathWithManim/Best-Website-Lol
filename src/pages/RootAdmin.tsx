@@ -1,25 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { useNavigate } from 'react-router-dom';
+import { useUser } from '../lib/useUser';
 
 const RootAdmin = () => {
-  const navigate = useNavigate();
-  const sessionToken = localStorage.getItem('sessionToken');
-  const [editingLuckBucks, setEditingLuckBucks] = useState<Record<string, number>>({});
-  
-  const users = useQuery(api.users.listUsers, sessionToken ? { sessionToken } : "skip");
+  const user = useUser();
+  const editingLuckBucks = useRef<Record<string, number>>({});
+
+  const users = useQuery(api.users.listUsers);
   const updateStats = useMutation(api.users.updateUserStats);
   const deleteUser = useMutation(api.users.deleteUser);
 
-  useEffect(() => {
-    // Basic frontend check, though the backend enforces security
-    if (localStorage.getItem('userEmail') !== 'root@root.root') {
-      navigate('/rng');
-    }
-  }, [navigate]);
+  if (user?.email !== 'root@root.root') {
+    return <div className="min-h-screen bg-bg dark:bg-[#1a120b] p-8 text-center text-primary dark:text-[#f4d5ad] font-mono">Access denied.</div>;
+  }
 
-  if (!users) return <div className="p-8 text-center">Loading admin...</div>;
+  if (users === undefined) return <div className="p-8 text-center">Loading admin...</div>;
 
   return (
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] p-8 text-primary dark:text-[#f4d5ad]">
@@ -43,19 +39,35 @@ const RootAdmin = () => {
                   <input
                     type="number"
                     defaultValue={user.luckbucks || 0}
-                    onChange={(e) => setEditingLuckBucks({ ...editingLuckBucks, [user._id]: parseInt(e.target.value) })}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      if (raw === "") {
+                        const next = { ...editingLuckBucks.current };
+                        delete next[user._id];
+                        editingLuckBucks.current = next;
+                        return;
+                      }
+                      const parsed = Number(raw);
+                      if (!Number.isNaN(parsed)) {
+                        editingLuckBucks.current = {
+                          ...editingLuckBucks.current,
+                          [user._id]: parsed,
+                        };
+                      }
+                    }}
+                    aria-label={`LuckBucks for ${user.username}`}
                     className="bg-bg dark:bg-[#2d1e14] p-2 rounded-lg border border-primary/20 w-32 font-mono"
                   />
                 </td>
                 <td className="p-4 flex gap-3">
                   <button
-                    onClick={() => updateStats({ sessionToken: sessionToken!, userId: user._id, luckbucks: editingLuckBucks[user._id] || user.luckbucks || 0 })}
+                    onClick={() => updateStats({ userId: user._id, luckbucks: editingLuckBucks.current[user._id] ?? user.luckbucks ?? 0 })}
                     className="px-4 py-2 bg-accent text-bg rounded-lg text-sm font-bold hover:opacity-90"
                   >
                     Save
                   </button>
                   <button
-                    onClick={() => deleteUser({ sessionToken: sessionToken!, userId: user._id })}
+                    onClick={() => deleteUser({ userId: user._id })}
                     className="px-4 py-2 bg-red-600/10 text-red-600 rounded-lg text-sm font-bold hover:bg-red-600 hover:text-white transition-colors"
                   >
                     Delete

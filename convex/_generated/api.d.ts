@@ -8,9 +8,13 @@
  * @module
  */
 
+import type * as admin from "../admin.js";
+import type * as auth from "../auth.js";
 import type * as crons from "../crons.js";
+import type * as http from "../http.js";
 import type * as leaderboard from "../leaderboard.js";
 import type * as rng from "../rng.js";
+import type * as shared from "../shared.js";
 import type * as shop from "../shop.js";
 import type * as users from "../users.js";
 
@@ -21,9 +25,13 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  admin: typeof admin;
+  auth: typeof auth;
   crons: typeof crons;
+  http: typeof http;
   leaderboard: typeof leaderboard;
   rng: typeof rng;
+  shared: typeof shared;
   shop: typeof shop;
   users: typeof users;
 }>;
@@ -54,4 +62,6 @@ export declare const internal: FilterApi<
   FunctionReference<any, "internal">
 >;
 
-export declare const components: {};
+export declare const components: {
+  betterAuth: import("@convex-dev/better-auth/_generated/component.js").ComponentApi<"betterAuth">;
+};

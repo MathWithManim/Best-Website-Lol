@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Hero = () => {
@@ -28,13 +28,13 @@ const Hero = () => {
 
   return (
     <section className="flex flex-col items-center justify-center min-h-[60vh] md:h-[calc(100vh-80px)] p-6">
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="text-7xl md:text-9xl lg:text-[12rem] font-bold text-center"
       >
-        <motion.h1
+        <m.h1
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
@@ -42,26 +42,26 @@ const Hero = () => {
         >
           {jasperText}
           <span className="animate-pulse ml-1 text-accent dark:text-[#c98a6e]">|</span>
-        </motion.h1>
-        <motion.h1
+        </m.h1>
+        <m.h1
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
           className="text-accent dark:text-[#c98a6e] font-cursive flex items-center justify-center"
         >
           {sonaText}
-        </motion.h1>
-      </motion.div>
+        </m.h1>
+      </m.div>
 
       {/* CTA above the fold */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.5 }}
         className="mt-8 flex flex-col items-center gap-4"
       >
         <Link
-          to="/rng"
+          to="/#rng"
           className="px-8 py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono text-sm font-bold rounded-xl hover:opacity-90 transition-opacity active:scale-95"
           title="Start playing the RNG gacha game"
         >
@@ -70,12 +70,12 @@ const Hero = () => {
         <p className="font-mono text-xs text-primary/40 dark:text-[#f4d5ad]/40">
           Roll for rare items. Collect them all.
         </p>
-      </motion.div>
+      </m.div>
 
       {/* Subtle floating particles behind the name */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[...Array(6)].map((_, i) => (
-          <motion.div
+          <m.div
             key={i}
             className="absolute w-1 h-1 rounded-full bg-accent/20 dark:bg-[#c98a6e]/20"
             style={{

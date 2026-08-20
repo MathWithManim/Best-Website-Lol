@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery, useMutation, useConvexAuth } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useNavigate } from 'react-router-dom';
-import { RARITY_COLORS } from '../components/RarityStatsModal';
+import { useUser } from '../lib/useUser';
+import { authClient } from '../lib/auth-client';
+import { RARITY_COLORS } from '../lib/rarities';
 
 const ProfilePage = () => {
   useEffect(() => {
@@ -15,29 +17,22 @@ const ProfilePage = () => {
   }, []);
 
   const navigate = useNavigate();
-  const [email, setEmail] = useState<string | null>(null);
-  const [sessionToken, setSessionToken] = useState<string | null>(null);
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const user = useUser();
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem('userEmail');
-    const storedToken = localStorage.getItem('sessionToken');
-    if (!storedEmail || !storedToken) {
-      navigate('/rng');
-    } else {
-      setEmail(storedEmail);
-      setSessionToken(storedToken);
+    if (!isLoading && !isAuthenticated) {
+      navigate('/');
     }
-  }, [navigate]);
+  }, [isLoading, isAuthenticated, navigate]);
 
-  const user = useQuery(api.users.getUser, email && sessionToken ? { email, sessionToken } : "skip");
   const updateProfile = useMutation(api.users.updateProfile);
-  const logoutMutation = useMutation(api.users.logout);
 
   const searchResults = useQuery(
     api.users.searchUsers,
-    activeSearch && sessionToken ? { query: activeSearch, sessionToken } : "skip"
+    activeSearch ? { query: activeSearch } : "skip"
   );
 
   const [name, setName] = useState('');
@@ -58,10 +53,9 @@ const ProfilePage = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sessionToken) return;
     setError(null);
     try {
-      await updateProfile({ sessionToken, name, username, bio, pfp });
+      await updateProfile({ name, username, bio, pfp });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -70,14 +64,12 @@ const ProfilePage = () => {
   };
 
   const handleLogout = async () => {
-    if (sessionToken) {
-      try { await logoutMutation({ sessionToken }); } catch { /* ignore */ }
-    }
-    localStorage.removeItem('isLoggedIn');
+    try { await authClient.signOut(); } catch { /* ignore */ }
     localStorage.removeItem('userEmail');
     localStorage.removeItem('sessionToken');
+    localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('rarityData');
-    navigate('/rng');
+    navigate('/');
   };
 
   const handleSearch = () => {
@@ -85,7 +77,7 @@ const ProfilePage = () => {
     setActiveSearch(searchInput.trim());
   };
 
-  if (!user) {
+  if (isLoading || !user) {
     return (
       <div className="min-h-screen bg-bg dark:bg-[#1a120b] flex items-center justify-center font-mono text-primary dark:text-[#f4d5ad]">
         Loading profile...
@@ -178,7 +170,9 @@ const ProfilePage = () => {
         <div className="mt-12">
           <h2 className="text-2xl font-sans font-bold mb-4">Search Users</h2>
           <div className="flex gap-2 mb-4">
+            <label htmlFor="user-search" className="sr-only">Search users by username</label>
             <input
+              id="user-search"
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}

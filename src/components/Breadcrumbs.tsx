@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom';
 
 const routeLabels: Record<string, string> = {
   '/': 'Home',
-  '/rng': 'RNG Game',
   '/profile': 'Profile',
   '/terms': 'Terms & Conditions',
   '/privacy': 'Privacy Policy',

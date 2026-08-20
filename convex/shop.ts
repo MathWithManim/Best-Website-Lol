@@ -1,29 +1,39 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
-import { authenticate } from "./users";
+import { getAppUser, getIdentityEmail } from "./users";
 
 export const getLuckBucks = query({
-  args: { sessionToken: v.string() },
-  handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
-    return user.luckbucks || 0;
+  args: {},
+  handler: async (ctx: QueryCtx) => {
+    const email = await getIdentityEmail(ctx);
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+    return user?.luckbucks || 0;
   },
 });
 
 export const getActiveBoost = query({
-  args: { sessionToken: v.string() },
-  handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
-    if (!user.activeLuckBoost) return null;
-    if (user.activeLuckBoost.expiresAt <= Date.now()) return null;
-    return user.activeLuckBoost;
+  args: {},
+  handler: async (ctx: QueryCtx) => {
+    const email = await getIdentityEmail(ctx);
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+    return user?.activeLuckBoost || null;
   },
 });
 
 export const buySingleLuckBoost = mutation({
-  args: { sessionToken: v.string() },
-  handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
+  args: {},
+  handler: async (ctx: MutationCtx) => {
+    const user = await getAppUser(ctx);
+
+    if (user.activeLuckBoost) {
+      throw new Error("A luck boost is already active");
+    }
 
     const lb = user.luckbucks || 0;
     if (lb < 5) throw new Error("Not enough LuckBucks (need 5)");
@@ -42,9 +52,13 @@ export const buySingleLuckBoost = mutation({
 });
 
 export const buyMinuteLuckBoost = mutation({
-  args: { sessionToken: v.string() },
-  handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
+  args: {},
+  handler: async (ctx: MutationCtx) => {
+    const user = await getAppUser(ctx);
+
+    if (user.activeLuckBoost) {
+      throw new Error("A luck boost is already active");
+    }
 
     const lb = user.luckbucks || 0;
     if (lb < 20) throw new Error("Not enough LuckBucks (need 20)");
@@ -97,21 +111,21 @@ export const getCosmetics = query({
 });
 
 export const getUserCosmetics = query({
-  args: { sessionToken: v.string() },
-  handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
+  args: {},
+  handler: async (ctx: QueryCtx) => {
+    const email = await getIdentityEmail(ctx);
     const cosmetics = await ctx.db
       .query("user_cosmetics")
-      .withIndex("by_email", (q) => q.eq("email", user.email))
-      .take(100);
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .collect();
     return cosmetics.map(c => c.cosmeticId);
   },
 });
 
 export const buyCosmetic = mutation({
-  args: { sessionToken: v.string(), cosmeticId: v.string() },
+  args: { cosmeticId: v.string() },
   handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
+    const user = await getAppUser(ctx);
 
     const cosmetic = COSMETICS.find(c => c.id === args.cosmeticId);
     if (!cosmetic) throw new Error("Invalid cosmetic");
@@ -119,7 +133,7 @@ export const buyCosmetic = mutation({
     const existing = await ctx.db
       .query("user_cosmetics")
       .withIndex("by_email", (q) => q.eq("email", user.email))
-      .take(100);
+      .collect();
 
     if (existing.some(c => c.cosmeticId === args.cosmeticId)) {
       throw new Error("Already owned");
@@ -143,9 +157,9 @@ export const buyCosmetic = mutation({
 });
 
 export const equipCosmetic = mutation({
-  args: { sessionToken: v.string(), cosmeticId: v.string() },
+  args: { cosmeticId: v.string() },
   handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
+    const user = await getAppUser(ctx);
 
     // Validate cosmetic exists in catalog
     if (!COSMETICS.some(c => c.id === args.cosmeticId)) {
@@ -156,7 +170,7 @@ export const equipCosmetic = mutation({
     const owned = await ctx.db
       .query("user_cosmetics")
       .withIndex("by_email", (q) => q.eq("email", user.email))
-      .take(100);
+      .collect();
 
     if (!owned.some(c => c.cosmeticId === args.cosmeticId)) {
       throw new Error("You don't own this cosmetic");

@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { m } from "framer-motion";
+import { authClient } from "../lib/auth-client";
 import DarkModeToggle from "./DarkModeToggle";
 
 interface AuthModalProps {
-  onLogin: (email: string, sessionToken: string) => void;
+  onLogin?: (email: string) => void;
 }
 
 const AuthModal = ({ onLogin }: AuthModalProps) => {
@@ -15,52 +14,49 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const loginMutation = useMutation(api.users.login);
-  const signupMutation = useMutation(api.users.signup);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (!email || !password) {
-      setError("Please enter both email/username and password.");
+      setError("Please enter both email and password.");
       return;
     }
 
     const userEmail = email.trim();
-
+    setSubmitting(true);
     try {
       let result;
       if (isLogin) {
-        result = await loginMutation({ email: userEmail, password });
+        result = await authClient.signIn.email({ email: userEmail, password });
       } else {
-        result = await signupMutation({
+        result = await authClient.signUp.email({
           email: userEmail,
-          username: username || userEmail.split("@")[0],
           password,
+          name: username || userEmail.split("@")[0],
         });
       }
 
-      const storedAccounts = JSON.parse(localStorage.getItem("savedAccounts") || "[]");
+      if (result.error) throw result.error;
+
+      const storedAccounts = JSON.parse(localStorage.getItem("savedAccounts:v1") || "[]");
       if (!storedAccounts.includes(userEmail)) {
         storedAccounts.push(userEmail);
-        localStorage.setItem("savedAccounts", JSON.stringify(storedAccounts));
+        localStorage.setItem("savedAccounts:v1", JSON.stringify(storedAccounts));
       }
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("userEmail", userEmail);
-      localStorage.setItem("sessionToken", result.sessionToken);
 
-      onLogin(userEmail, result.sessionToken);
+      onLogin?.(userEmail);
     } catch (err: unknown) {
-      const raw = err instanceof Error ? err.message : "Something went wrong";
-      if (raw.includes("Invalid email or password")) {
-        setError("Wrong email or password. Try again.");
-      } else if (raw.includes("already exists")) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Try again.";
+      if (message.toLowerCase().includes("already exists") || message.toLowerCase().includes("account")) {
         setError("Account already exists. Try logging in instead.");
       } else {
-        setError("Something went wrong. Try again.");
+        setError(message);
       }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -69,7 +65,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
       <div className="absolute top-6 right-6">
         <DarkModeToggle />
       </div>
-      <motion.div 
+      <m.div 
         key={isLogin ? "login" : "signup"}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -146,9 +142,10 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
           </div>
           <button 
             type="submit"
-            className="w-full py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono rounded-lg hover:opacity-95 transition-opacity font-bold mt-2 cursor-pointer"
+            disabled={submitting}
+            className="w-full py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono rounded-lg hover:opacity-95 transition-opacity font-bold mt-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLogin ? "Login" : "Sign Up"}
+            {submitting ? (isLogin ? "Logging in..." : "Creating account...") : (isLogin ? "Login" : "Sign Up")}
           </button>
         </form>
 
@@ -163,7 +160,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
             {isLogin ? "Sign Up" : "Login"}
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 };

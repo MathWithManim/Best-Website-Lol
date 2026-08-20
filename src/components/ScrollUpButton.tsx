@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+};
 
 const ScrollUpButton = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -17,17 +24,10 @@ const ScrollUpButton = () => {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.button
+        <m.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
@@ -36,7 +36,7 @@ const ScrollUpButton = () => {
           title="Scroll to top"
         >
           ↑
-        </motion.button>
+        </m.button>
       )}
     </AnimatePresence>
   );

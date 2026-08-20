@@ -3,15 +3,17 @@ import { query } from "./_generated/server";
 export const getLeaderboard = query({
   args: {},
   handler: async (ctx) => {
-    const rolls = await ctx.db.query("leaderboard").take(50000);
-    const bestRolls = new Map<string, (typeof rolls)[0]>();
-    for (const roll of rolls) {
-      const existing = bestRolls.get(roll.username);
-      if (!existing || roll.weight < existing.weight) {
-        bestRolls.set(roll.username, roll);
+    const seen = new Set<string>();
+    const top10: { username: string; rarity: string; weight: number }[] = [];
+
+    for await (const roll of ctx.db.query("leaderboard").withIndex("by_weight")) {
+      if (!seen.has(roll.email)) {
+        seen.add(roll.email);
+        top10.push({ username: roll.username, rarity: roll.rarity, weight: roll.weight });
+        if (top10.length === 10) break;
       }
     }
-    const sorted = [...bestRolls.values()].sort((a, b) => a.weight - b.weight);
-    return sorted.slice(0, 10).map(({ username, rarity, weight }) => ({ username, rarity, weight }));
+
+    return top10;
   },
 });

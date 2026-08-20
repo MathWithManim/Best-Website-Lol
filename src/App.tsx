@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { lazy, Suspense } from 'react';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
@@ -14,8 +14,8 @@ import FloatingContact from './components/FloatingContact';
 import ScrollUpButton from './components/ScrollUpButton';
 import Navbar from './components/Navbar';
 import MobileCTA from './components/MobileCTA';
+import RNGSection from './components/RNGSection';
 
-const RNGPage = lazy(() => import('./pages/RNGPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const RootAdmin = lazy(() => import('./pages/RootAdmin'));
 const Logout = lazy(() => import('./pages/Logout'));
@@ -39,7 +39,7 @@ function AnimatedRoutes() {
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      <m.div
         key={location.pathname}
         variants={pageVariants}
         initial="initial"
@@ -57,10 +57,10 @@ function AnimatedRoutes() {
                   <Hero />
                   <Skills />
                 </main>
+                <RNGSection />
                 <Footer />
               </>
             } />
-            <Route path="/rng" element={<RNGPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/x8f9a2_rootadmin" element={<RootAdmin />} />
@@ -70,7 +70,7 @@ function AnimatedRoutes() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 }

@@ -18,12 +18,15 @@ export default defineSchema({
     name: v.optional(v.string()),
     bio: v.optional(v.string()),
     pfp: v.optional(v.string()),
-    password: v.string(),
+    // Password/auth fields are vestigial since Better Auth owns authentication
+    // (stored in the betterAuth component's own tables). Kept optional so legacy
+    // rows remain readable during the transition.
+    password: v.optional(v.string()),
     sessionToken: v.optional(v.string()),
     tokenCreatedAt: v.optional(v.number()),
     loginAttempts: v.optional(v.number()),
     lockoutUntil: v.optional(v.number()),
-    resetSecret: v.optional(v.string()), // Added resetSecret
+    resetSecret: v.optional(v.string()),
     createdAt: v.number(),
     luckbucks: v.optional(v.number()),
     activeLuckBoost: v.optional(v.object({
@@ -35,16 +38,13 @@ export default defineSchema({
     rarityCounts: v.optional(v.record(v.string(), v.number())),
     lastSellAt: v.optional(v.number()),
     lastRollAt: v.optional(v.number()),
+    // Rebirth / progression
+    rebirthCount: v.optional(v.number()),
+    rollCount: v.optional(v.number()),
+    completedGame: v.optional(v.boolean()),
   })
     .index("by_email", ["email"])
-    .index("by_username", ["username"])
-    .index("by_sessionToken", ["sessionToken"]),
-  login_attempts: defineTable({
-    email: v.string(),
-    count: v.number(),
-    lockoutUntil: v.number(),
-  })
-    .index("by_email", ["email"]),
+    .index("by_username", ["username"]),
   user_cosmetics: defineTable({
     email: v.string(),
     cosmeticId: v.string(),

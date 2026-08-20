@@ -1,18 +1,16 @@
-import { mutation, query, internalMutation } from "./_generated/server";
+import { mutation, query, internalMutation, type MutationCtx, type QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
-import { authenticate } from "./users";
-
-const RARITIES = [
-  "Common", "Uncommon", "Rare", "Legendary", "Mythical", "Divine", "Prismatic",
-  "Transcendent", "Epic", "Unique", "Heroic", "Fabled", "Ancient", "Ethereal",
-  "Celestial", "Astral", "Galactic", "Infinite", "Void", "Chaos", "Order",
-  "Reality", "Existence", "Infinity", "Beyond", "Absolute", "Final", "Omega",
-  "Alpha", "Zenith"
-];
-
-const WEIGHTS = [500000, 250000, 125000, 62500, 31250, 15625, 7812, 3906, 1953, 976, 488, 244, 122, 61, 30, 15, 7, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-
-export const RARITY_VALUES = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 100, 150, 200, 300, 400, 500, 750, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000, 50000, 100000];
+import { getAppUser, getIdentityEmail } from "./users";
+import {
+  RARITIES,
+  WEIGHTS,
+  RARITY_VALUES,
+  rollCostFor,
+  totalRaritiesFor,
+  RARITIES_PER_REBIRTH,
+  MAX_REBIRTHS,
+  TOTAL_RARITIES,
+} from "./shared";
 
 /** Get or create the global stats singleton */
 async function getOrCreateGlobalStats(ctx: { db: any }) {
@@ -36,40 +34,40 @@ async function getOrCreateGlobalStats(ctx: { db: any }) {
   return { counts, totalRolls: 0 };
 }
 
-/** Cap leaderboard entries per user — keeps only the most recent `limit` entries. */
-async function pruneUserLeaderboard(ctx: { db: any }, email: string, limit = 100) {
-  const entries = await ctx.db
-    .query("leaderboard")
-    .withIndex("by_email", (q: any) => q.eq("email", email))
-    .order("desc")
-    .take(limit + 50);
-
-  if (entries.length > limit) {
-    const toDelete = entries.slice(limit);
-    await Promise.all(toDelete.map((entry: any) => ctx.db.delete(entry._id)));
-  }
-}
-
 export const roll = mutation({
-  args: { sessionToken: v.string() },
-  handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
+  args: {},
+  handler: async (ctx: MutationCtx) => {
+    const user = await getAppUser(ctx);
+
+    if (user.completedGame) {
+      throw new Error("You have completed the game. There is nothing left.");
+    }
 
     // 1-second cooldown between rolls
     const now = Date.now();
-    const lastRollAt = (user as any).lastRollAt || 0;
+    const lastRollAt = user.lastRollAt || 0;
     if (now - lastRollAt < 1000) {
       throw new Error("Please wait before rolling again");
     }
 
-    let weights = [...WEIGHTS];
+    // Roll cost: first roll free, then ladder cycles 1(x10), 2(x5), 4(x3), 8(x1)
+    const rollCount = user.rollCount || 0;
+    const cost = rollCostFor(rollCount);
+    const luckbucks = user.luckbucks || 0;
+    if (luckbucks < cost) {
+      throw new Error(`Not enough LuckBucks (need ${cost})`);
+    }
+
+    const unlocked = totalRaritiesFor(user.rebirthCount || 0);
+
+    let weights = [...WEIGHTS].slice(0, unlocked);
     let boostApplied = false;
 
     // Check for active luck boost
     if (user.activeLuckBoost && user.activeLuckBoost.expiresAt > now && user.activeLuckBoost.rollsLeft > 0) {
       const multiplier = user.activeLuckBoost.multiplier;
       weights = weights.map((w, i) =>
-        Math.round(w * (1 + (multiplier - 1) * (i / (RARITIES.length - 1))))
+        Math.round(w * (1 + (multiplier - 1) * (i / (unlocked - 1))))
       );
       boostApplied = true;
 
@@ -89,10 +87,10 @@ export const roll = mutation({
     const random = Math.random() * totalWeight;
 
     let currentWeight = 0;
-    let rarityName = RARITIES[RARITIES.length - 1];
-    let rarityWeight = weights[weights.length - 1];
+    let rarityName = RARITIES[unlocked - 1];
+    let rarityWeight = weights[unlocked - 1];
 
-    for (let i = 0; i < RARITIES.length; i++) {
+    for (let i = 0; i < unlocked; i++) {
       currentWeight += weights[i];
       if (random < currentWeight) {
         rarityName = RARITIES[i];
@@ -107,61 +105,66 @@ export const roll = mutation({
     newCounts[rarityName] = (newCounts[rarityName] || 0) + 1;
     await ctx.db.patch(stats._id, { counts: newCounts, totalRolls: stats.totalRolls + 1 });
 
-    // Insert into leaderboard
-    await ctx.db.insert("leaderboard", {
-      email: user.email,
-      username: user.username || user.email.split("@")[0],
-      rarity: rarityName,
-      weight: rarityWeight,
-      timestamp: now,
-    });
+    // Only insert into leaderboard for the rarest rolls (hall of fame)
+    const rarityIndex = RARITIES.indexOf(rarityName);
+    if (rarityIndex >= RARITIES.length - 10) {
+      await ctx.db.insert("leaderboard", {
+        email: user.email,
+        username: user.username || user.email.split("@")[0],
+        rarity: rarityName,
+        weight: rarityWeight,
+        timestamp: now,
+      });
+    }
 
-    // Update per-user rarity counts
+    // Update per-user rarity counts (this is the real inventory)
     const counts = { ...(user.rarityCounts || {}) };
     counts[rarityName] = (counts[rarityName] || 0) + 1;
-    await ctx.db.patch(user._id, { rarityCounts: counts, lastRollAt: now });
+    const distinctCaught = Object.keys(counts).length;
+    const nextRollCount = rollCount + 1;
+    const completedGame = distinctCaught >= TOTAL_RARITIES;
+    await ctx.db.patch(user._id, {
+      rarityCounts: counts,
+      lastRollAt: now,
+      luckbucks: luckbucks - cost,
+      rollCount: nextRollCount,
+      ...(completedGame && { completedGame: true }),
+    });
 
-    // Prune old leaderboard entries (keep last 100 per user)
-    await pruneUserLeaderboard(ctx, user.email, 100);
-
-    return { rarity: rarityName, boostApplied };
+    return { rarity: rarityName, boostApplied, cost, completedGame };
   },
 });
 
 // Get rarity counts for a user — requires authentication
 export const getUserRarityCounts = query({
-  args: { sessionToken: v.string() },
-  handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
-    return user.rarityCounts || {};
+  args: {},
+  handler: async (ctx: QueryCtx) => {
+    const email = await getIdentityEmail(ctx);
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+    return user?.rarityCounts || {};
   },
 });
 
 // Sell rarities for LuckBucks — requires authentication
 export const sellRarity = mutation({
   args: {
-    sessionToken: v.string(),
     rarity: v.string(),
     amount: v.number(), // 1, 10, or -1 for all
   },
   handler: async (ctx, args) => {
-    const user = await authenticate(ctx, args.sessionToken);
+    const user = await getAppUser(ctx);
 
     // 1-second cooldown between sells
     const now = Date.now();
-    const lastSellAt = (user as any).lastSellAt || 0;
+    const lastSellAt = user.lastSellAt || 0;
     if (now - lastSellAt < 1000) {
       throw new Error("Please wait before selling again");
     }
 
-    const rolls = await ctx.db
-      .query("leaderboard")
-      .withIndex("by_email", (q: any) => q.eq("email", user.email))
-      .take(50000);
-
-    const rarityRolls = rolls.filter((r: any) => r.rarity === args.rarity);
-    const count = rarityRolls.length;
-
+    const count = user.rarityCounts?.[args.rarity] || 0;
     if (count === 0) throw new Error("You don't have any of this rarity");
 
     const VALID_AMOUNTS = [1, 10, -1];
@@ -174,10 +177,6 @@ export const sellRarity = mutation({
     const rarityIndex = RARITIES.indexOf(args.rarity);
     const valuePerItem = rarityIndex >= 0 ? RARITY_VALUES[rarityIndex] : 1;
     const totalLB = sellAmount * valuePerItem;
-
-    // Delete the sold leaderboard entries
-    const toDelete = rarityRolls.slice(0, sellAmount);
-    await Promise.all(toDelete.map((entry: any) => ctx.db.delete(entry._id)));
 
     // Decrement per-user rarity counts
     const counts = { ...(user.rarityCounts || {}) };
@@ -193,7 +192,7 @@ export const sellRarity = mutation({
     const stats = await getOrCreateGlobalStats(ctx);
     const newCounts = { ...stats.counts };
     newCounts[args.rarity] = Math.max(0, (newCounts[args.rarity] || 0) - sellAmount);
-    await ctx.db.patch(stats._id, { counts: newCounts, totalRolls: Math.max(0, stats.totalRolls - sellAmount) });
+    await ctx.db.patch(stats._id, { counts: newCounts });
 
     return {
       sold: sellAmount,
@@ -201,6 +200,40 @@ export const sellRarity = mutation({
       newBalance: (user.luckbucks || 0) + totalLB,
       remaining: count - sellAmount,
     };
+  },
+});
+
+// Rebirth: requires 10 distinct rarities caught per rebirth tier. Each rebirth
+// unlocks 10 more rarities at the end of the roster (up to 500 total).
+export const rebirth = mutation({
+  args: {},
+  handler: async (ctx: MutationCtx) => {
+    const user = await getAppUser(ctx);
+
+    if (user.completedGame) {
+      throw new Error("You have completed the game. There is nothing left.");
+    }
+
+    const rebirthCount = user.rebirthCount || 0;
+    if (rebirthCount >= MAX_REBIRTHS) {
+      throw new Error("Maximum rebirths reached");
+    }
+
+    const distinctCaught = Object.keys(user.rarityCounts || {}).length;
+    const required = (rebirthCount + 1) * RARITIES_PER_REBIRTH;
+    if (distinctCaught < required) {
+      throw new Error(`Rebirth requires ${required} distinct rarities (you have ${distinctCaught})`);
+    }
+
+    const newRebirthCount = rebirthCount + 1;
+    const unlocked = totalRaritiesFor(newRebirthCount);
+    const completedGame = unlocked >= TOTAL_RARITIES && distinctCaught >= TOTAL_RARITIES;
+    await ctx.db.patch(user._id, {
+      rebirthCount: newRebirthCount,
+      ...(completedGame && { completedGame: true }),
+    });
+
+    return { rebirthCount: newRebirthCount, totalRarities: unlocked, completedGame };
   },
 });
 
@@ -221,28 +254,17 @@ export const getRarityStats = query({
   },
 });
 
-// --- Internal mutation for cron cleanup ---
 export const pruneAllLeaderboards = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const users = await ctx.db.query("users").take(200);
-    let totalPruned = 0;
+    const all = await ctx.db.query("leaderboard").withIndex("by_weight").collect();
 
-    for (const user of users) {
-      if (!user.email) continue;
-      const entries = await ctx.db
-        .query("leaderboard")
-        .withIndex("by_email", (q: any) => q.eq("email", user.email))
-        .order("desc")
-        .take(150);
-
-      if (entries.length > 100) {
-        const toDelete = entries.slice(100);
-        await Promise.all(toDelete.map((entry: any) => ctx.db.delete(entry._id)));
-        totalPruned += toDelete.length;
-      }
+    if (all.length > 100) {
+      const toDelete = all.slice(100);
+      await Promise.all(toDelete.map((entry: any) => ctx.db.delete(entry._id)));
+      return { entriesPruned: toDelete.length };
     }
 
-    return { usersProcessed: users.length, entriesPruned: totalPruned };
+    return { entriesPruned: 0 };
   },
 });

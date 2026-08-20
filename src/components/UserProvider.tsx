@@ -1,20 +1,21 @@
-import { createContext, useContext, type ReactNode } from 'react';
-import { useQuery } from 'convex/react';
+import { type ReactNode } from 'react';
+import { useConvexAuth, useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-
-const UserContext = createContext<any>(null);
+import { UserContext } from '../lib/useUser';
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const sessionToken = localStorage.getItem('sessionToken');
-  const email = localStorage.getItem('userEmail');
-  
-  const user = useQuery(api.users.getUser, email && sessionToken ? { email, sessionToken } : "skip");
-  
+  const { isAuthenticated, isLoading } = useConvexAuth();
+
+  const user = useQuery(
+    api.users.getCurrentUser,
+    isAuthenticated ? {} : 'skip'
+  );
+
+  const value = isLoading || (!isAuthenticated && user === undefined) ? undefined : (isAuthenticated ? user ?? null : null);
+
   return (
-    <UserContext.Provider value={user}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );
 };
-
-export const useUser = () => useContext(UserContext);

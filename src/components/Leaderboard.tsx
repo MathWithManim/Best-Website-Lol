@@ -1,7 +1,9 @@
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { RARITY_COLORS } from './RarityStatsModal';
+import { RARITY_COLORS, RARITY_INDEX } from '../lib/rarities';
+
+const MEDALS = ['🥇', '🥈', '🥉'];
 
 const Leaderboard = () => {
   const leaderboard = useQuery(api.leaderboard.getLeaderboard);
@@ -28,11 +30,9 @@ const Leaderboard = () => {
     );
   }
 
-  const medals = ['🥇', '🥈', '🥉'];
-
   return (
     <div className="w-full max-w-sm mx-auto mt-8">
-      <motion.h3
+      <m.h3
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -40,12 +40,12 @@ const Leaderboard = () => {
         className="text-lg font-sans font-bold text-primary dark:text-[#f4d5ad] text-center mb-4"
       >
         Leaderboard
-      </motion.h3>
+      </m.h3>
       <div className="space-y-2">
-        {leaderboard.map((entry, i) => {
+        {leaderboard.slice(0, 10).map((entry, i) => {
           const color = RARITY_COLORS[entry.rarity] || '#9CA3AF';
           return (
-            <motion.div
+            <m.div
               key={entry.username + entry.rarity}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -56,7 +56,7 @@ const Leaderboard = () => {
               style={i < 3 ? { borderColor: `${color}40`, boxShadow: `0 0 8px ${color}15` } : {}}
             >
               <span className="text-lg font-bold w-8 text-center">
-                {i < 3 ? medals[i] : <span className="text-sm text-primary/40 dark:text-[#f4d5ad]/40 font-mono">#{i + 1}</span>}
+                {i < 3 ? MEDALS[i] : <span className="text-sm text-primary/40 dark:text-[#f4d5ad]/40 font-mono">#{i + 1}</span>}
               </span>
               <img
                 src={`https://api.dicebear.com/7.x/bottts/svg?seed=${entry.username}`}
@@ -70,20 +70,12 @@ const Leaderboard = () => {
                 <div className="font-mono text-sm font-bold" style={{ color }}>{entry.rarity}</div>
                 <div className="text-[10px] font-mono text-primary/40 dark:text-[#f4d5ad]/40">#{RARITY_INDEX[entry.rarity] + 1}</div>
               </div>
-            </motion.div>
+            </m.div>
           );
         })}
       </div>
     </div>
   );
-};
-
-const RARITY_INDEX: Record<string, number> = {
-  Common: 0, Uncommon: 1, Rare: 2, Legendary: 3, Mythical: 4, Divine: 5, Prismatic: 6,
-  Transcendent: 7, Epic: 8, Unique: 9, Heroic: 10, Fabled: 11, Ancient: 12, Ethereal: 13,
-  Celestial: 14, Astral: 15, Galactic: 16, Infinite: 17, Void: 18, Chaos: 19, Order: 20,
-  Reality: 21, Existence: 22, Infinity: 23, Beyond: 24, Absolute: 25, Final: 26, Omega: 27,
-  Alpha: 28, Zenith: 29,
 };
 
 export default Leaderboard;
