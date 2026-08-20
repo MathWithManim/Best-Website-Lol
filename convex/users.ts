@@ -55,6 +55,7 @@ export async function getAppUser(ctx: MutationCtx) {
   const id = await ctx.db.insert("users", {
     email,
     username: uname,
+    usernameLower: uname.toLowerCase(),
     name: uname,
     bio: "Hey there! I am using Jasper Sona website.",
     pfp: "https://api.dicebear.com/7.x/bottts/svg?seed=" + uname,
@@ -120,11 +121,12 @@ export const updateProfile = mutation({
     if (args.name !== undefined) validateString(args.name, 50, "Name");
     if (args.username !== undefined) {
       validateString(args.username, 30, "Username");
-      const newUname = args.username.trim().toLowerCase();
-      if (newUname !== user.username) {
+      const newUname = args.username.trim();
+      const newUnameLower = newUname.toLowerCase();
+      if (newUnameLower !== (user.usernameLower || (user.username || "").toLowerCase())) {
         const existing = await ctx.db
           .query("users")
-          .withIndex("by_username", (q) => q.eq("username", newUname))
+          .withIndex("by_usernameLower", (q) => q.eq("usernameLower", newUnameLower))
           .first();
         if (existing) throw new Error("Username already taken");
       }
@@ -148,7 +150,10 @@ export const updateProfile = mutation({
 
     await ctx.db.patch(user._id, {
       ...(args.name !== undefined && { name: args.name }),
-      ...(args.username !== undefined && { username: args.username.trim() }),
+      ...(args.username !== undefined && {
+        username: args.username.trim(),
+        usernameLower: args.username.trim().toLowerCase(),
+      }),
       ...(args.bio !== undefined && { bio: args.bio }),
       ...(args.pfp !== undefined && { pfp: args.pfp }),
     });

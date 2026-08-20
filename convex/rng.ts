@@ -12,26 +12,26 @@ import {
   TOTAL_RARITIES,
 } from "./shared";
 
-/** Get or create the global stats singleton */
-async function getOrCreateGlobalStats(ctx: { db: any }) {
-  const existing = await ctx.db.query("global_stats").first();
+/** Get or create the global stats singleton (mutations only) */
+async function getOrCreateGlobalStats(ctx: MutationCtx) {
+  const existing = await ctx.db
+    .query("global_stats")
+    .withIndex("by_docId", (q) => q.eq("docId", "main"))
+    .first();
   if (existing) return existing;
 
   const counts: Record<string, number> = {};
   for (const r of RARITIES) counts[r] = 0;
 
-  // Only insert if it's a mutation context
-  if (ctx.db.insert) {
-    const _id = await ctx.db.insert("global_stats", {
-      docId: "main",
-      counts,
-      totalRolls: 0,
-    });
-    return await ctx.db.get(_id);
-  }
-
-  // If it's a query context, just return the default
-  return { counts, totalRolls: 0 };
+  const _id = await ctx.db.insert("global_stats", {
+    docId: "main",
+    counts,
+    totalRolls: 0,
+    uniqueUsers: {},
+  });
+  const created = await ctx.db.get(_id);
+  if (!created) throw new Error("Failed to create global stats");
+  return created;
 }
 
 export const roll = mutation({
@@ -103,7 +103,18 @@ export const roll = mutation({
     const stats = await getOrCreateGlobalStats(ctx);
     const newCounts = { ...stats.counts };
     newCounts[rarityName] = (newCounts[rarityName] || 0) + 1;
-    await ctx.db.patch(stats._id, { counts: newCounts, totalRolls: stats.totalRolls + 1 });
+    const isFirstCatch = !(user.rarityCounts && user.rarityCounts[rarityName] > 0);
+    const patch: {
+      counts: Record<string, number>;
+      totalRolls: number;
+      uniqueUsers?: Record<string, number>;
+    } = { counts: newCounts, totalRolls: stats.totalRolls + 1 };
+    if (isFirstCatch) {
+      const newUnique = { ...(stats.uniqueUsers || {}) };
+      newUnique[rarityName] = (newUnique[rarityName] || 0) + 1;
+      patch.uniqueUsers = newUnique;
+    }
+    await ctx.db.patch(stats._id, patch);
 
     // Only insert into leaderboard for the rarest rolls (hall of fame)
     const rarityIndex = RARITIES.indexOf(rarityName);
@@ -241,14 +252,19 @@ export const rebirth = mutation({
 export const getRarityStats = query({
   args: {},
   handler: async (ctx) => {
-    const stats = await getOrCreateGlobalStats(ctx);
+    const stats = await ctx.db
+      .query("global_stats")
+      .withIndex("by_docId", (q) => q.eq("docId", "main"))
+      .first();
+    const counts = stats?.counts || {};
+    const uniqueUsers = stats?.uniqueUsers || {};
     const totalWeight = WEIGHTS.reduce((sum, w) => sum + w, 0);
 
     return RARITIES.map((rarity, i) => ({
       rarity,
       index: i,
-      count: stats.counts[rarity] || 0,
-      uniqueUsers: 0,
+      count: counts[rarity] || 0,
+      uniqueUsers: uniqueUsers[rarity] || 0,
       chance: (WEIGHTS[i] / totalWeight) * 100,
     }));
   },

@@ -15,6 +15,7 @@ export default defineSchema({
   users: defineTable({
     email: v.string(),
     username: v.optional(v.string()),
+    usernameLower: v.optional(v.string()),
     name: v.optional(v.string()),
     bio: v.optional(v.string()),
     pfp: v.optional(v.string()),
@@ -44,7 +45,8 @@ export default defineSchema({
     completedGame: v.optional(v.boolean()),
   })
     .index("by_email", ["email"])
-    .index("by_username", ["username"]),
+    .index("by_username", ["username"])
+    .index("by_usernameLower", ["usernameLower"]),
   user_cosmetics: defineTable({
     email: v.string(),
     cosmeticId: v.string(),
@@ -54,5 +56,6 @@ export default defineSchema({
     docId: v.string(),
     counts: v.record(v.string(), v.number()),
     totalRolls: v.number(),
-  }),
+    uniqueUsers: v.optional(v.record(v.string(), v.number())),
+  }).index("by_docId", ["docId"]),
 });

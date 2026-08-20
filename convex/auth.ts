@@ -19,7 +19,7 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
     // Simple, non-verified email/password auth to get started
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: false,
+      requireEmailVerification: true,
     },
     plugins: [
       // The cross domain plugin is required for client side frameworks
