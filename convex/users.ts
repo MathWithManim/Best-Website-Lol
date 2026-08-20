@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { RARITIES, WEIGHTS, rollCostFor, totalRaritiesFor } from "./shared";
 
 // --- Constants ---
-const ROOT_EMAIL = "root@root.root";
+const ROOT_EMAIL = process.env.ROOT_EMAIL ?? "";
 
 // --- Helpers ---
 
