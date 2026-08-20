@@ -26,7 +26,6 @@ const RNGSection = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRarity, setSelectedRarity] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [, setRollCounter] = useState(0);
   const [rebirthError, setRebirthError] = useState<string | null>(null);
   const rebirth = useMutation(api.rng.rebirth);
 
@@ -59,13 +58,9 @@ const RNGSection = () => {
     setModalOpen(true);
   };
 
-  const handleRollComplete = useCallback(() => {
-    setRollCounter(c => c + 1);
-  }, []);
-
-  const handleSellComplete = useCallback(() => {
-    setRollCounter(c => c + 1);
-  }, []);
+  // Convex queries are reactive, so the grid and reel refresh on their own.
+  const handleRollComplete = useCallback(() => {}, []);
+  const handleSellComplete = useCallback(() => {}, []);
 
   const handleRebirth = useCallback(async () => {
     setRebirthError(null);
@@ -106,6 +101,7 @@ const RNGSection = () => {
                 rollCost={user?.nextRollCost ?? 0}
                 luckBucks={luckBucks ?? 0}
                 totalRarities={user?.totalRarities ?? 50}
+                rarityCounts={displayCounts}
               />
               {user && user.rebirthCount < 45 && (
                 <div className="mt-4 w-full flex flex-col items-center gap-2">

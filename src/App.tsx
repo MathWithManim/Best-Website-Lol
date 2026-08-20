@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, m } from 'framer-motion';
+import { AnimatePresence, m, MotionConfig } from 'framer-motion';
 import { lazy, Suspense } from 'react';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
@@ -8,6 +8,8 @@ import NotFound from './components/NotFound';
 import ConvexClientProvider from './components/ConvexClientProvider';
 import { UserProvider } from './components/UserProvider';
 import { CosmeticThemeProvider } from './components/CosmeticThemeProvider';
+import { useSettings } from './lib/settings';
+import { SettingsProvider } from './components/SettingsProvider';
 import ScrollProgress from './components/ScrollProgress';
 import CookieBanner from './components/CookieBanner';
 import FloatingContact from './components/FloatingContact';
@@ -17,6 +19,7 @@ import MobileCTA from './components/MobileCTA';
 import RNGSection from './components/RNGSection';
 
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const RootAdmin = lazy(() => import('./pages/RootAdmin'));
 const Logout = lazy(() => import('./pages/Logout'));
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
@@ -62,6 +65,7 @@ function AnimatedRoutes() {
               </>
             } />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/x8f9a2_rootadmin" element={<RootAdmin />} />
             <Route path="/cookies" element={<CookiePolicy />} />
@@ -75,25 +79,36 @@ function AnimatedRoutes() {
   );
 }
 
+function AppShell() {
+  const { settings } = useSettings();
+  return (
+    <MotionConfig reducedMotion={settings.reduceMotion ? 'always' : 'user'}>
+      <BrowserRouter>
+        <div className="min-h-screen bg-[#F5E6CA] dark:bg-[#1a120b] dark:text-[#f4d5ad] relative transition-colors duration-300">
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-bg focus:rounded-lg focus:font-mono focus:text-sm">
+            Skip to main content
+          </a>
+          <ScrollProgress />
+          <AnimatedRoutes />
+          <CookieBanner />
+          <FloatingContact />
+          <ScrollUpButton />
+          <MobileCTA />
+        </div>
+      </BrowserRouter>
+    </MotionConfig>
+  );
+}
+
 function App() {
   return (
     <ConvexClientProvider>
       <UserProvider>
-        <CosmeticThemeProvider>
-          <BrowserRouter>
-            <div className="min-h-screen bg-[#F5E6CA] dark:bg-[#1a120b] dark:text-[#f4d5ad] relative transition-colors duration-300">
-              <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-bg focus:rounded-lg focus:font-mono focus:text-sm">
-                Skip to main content
-              </a>
-              <ScrollProgress />
-              <AnimatedRoutes />
-              <CookieBanner />
-              <FloatingContact />
-              <ScrollUpButton />
-              <MobileCTA />
-            </div>
-          </BrowserRouter>
-        </CosmeticThemeProvider>
+        <SettingsProvider>
+          <CosmeticThemeProvider>
+            <AppShell />
+          </CosmeticThemeProvider>
+        </SettingsProvider>
       </UserProvider>
     </ConvexClientProvider>
   );

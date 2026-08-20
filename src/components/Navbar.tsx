@@ -8,6 +8,7 @@ const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/#rng', label: 'RNG Game' },
   { to: '/profile', label: 'Profile', authOnly: true },
+  { to: '/settings', label: '⚙️ Settings', authOnly: true },
 ];
 
 const Navbar = () => {

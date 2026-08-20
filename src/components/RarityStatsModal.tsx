@@ -45,7 +45,7 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, on
       }
     },
     disabled: selling || disabled,
-    className: "flex-1 py-2 px-3 font-mono text-sm font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer",
+    baseClassName: "flex-1 py-2 px-3 font-mono text-sm font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer",
   });
 
   return (
@@ -88,6 +88,7 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, on
 
             <button
               onClick={onClose}
+              aria-label="Close"
               className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary/10 dark:bg-[#f4d5ad]/10 flex items-center justify-center text-primary dark:text-[#f4d5ad] hover:bg-primary/20 dark:hover:bg-[#f4d5ad]/20 transition-colors cursor-pointer z-10"
             >
               x
@@ -164,19 +165,19 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, on
                 <div className="flex gap-2">
                   <button
                     {...sellButtonProps(1)}
-                    className={`${sellButtonProps(1).className} bg-accent dark:bg-[#c98a6e] text-bg dark:text-[#1a120b]`}
+                    className={`${sellButtonProps(1).baseClassName} bg-accent dark:bg-[#c98a6e] text-bg dark:text-[#1a120b]`}
                   >
                     1x ({valuePerItem} LB)
                   </button>
                   <button
                     {...sellButtonProps(10, userCount < 10)}
-                    className={`${sellButtonProps(10, userCount < 10).className} bg-accent dark:bg-[#c98a6e] text-bg dark:text-[#1a120b]`}
+                    className={`${sellButtonProps(10, userCount < 10).baseClassName} bg-accent dark:bg-[#c98a6e] text-bg dark:text-[#1a120b]`}
                   >
                     10x ({valuePerItem * 10} LB)
                   </button>
                   <button
                     {...sellButtonProps(-1)}
-                    className={`${sellButtonProps(-1).className} bg-red-600 text-white`}
+                    className={`${sellButtonProps(-1).baseClassName} bg-red-600 text-white`}
                   >
                     All ({userCount * valuePerItem} LB)
                   </button>

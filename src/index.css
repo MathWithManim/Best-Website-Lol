@@ -17,18 +17,22 @@
 
 :root {
   --app-bg: #F5E6CA;
+  --app-primary: #8B4513;
   --app-text: #8B4513;
   --app-accent: #A0522D;
   --app-secondary: #D2B48C;
+  --app-darker: #5D3A1A;
   --app-card: rgba(210, 180, 140, 0.2);
   --app-border: rgba(139, 69, 19, 0.2);
 }
 
 html.dark {
   --app-bg: #1a120b;
+  --app-primary: #e09f58;
   --app-text: #f4d5ad;
   --app-accent: #e09f58;
   --app-secondary: #c29d75;
+  --app-darker: #0d0906;
   --app-card: rgba(45, 30, 20, 0.6);
   --app-border: rgba(244, 213, 173, 0.25);
 }

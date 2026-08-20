@@ -1,30 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useSettings } from '../lib/settings';
 
 const DarkModeToggle = () => {
-  const [isDark, setIsDark] = useState(false);
+  const { settings, setSetting } = useSettings();
+  const isDark = settings.theme === 'dark';
 
+  // One-time migration from the pre-settings localStorage key.
   useEffect(() => {
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (saved === 'dark' || (!saved && prefersDark)) {
-      document.documentElement.classList.add('dark');
-      setIsDark(true);
-    } else {
-      document.documentElement.classList.remove('dark');
-      setIsDark(false);
+    const old = localStorage.getItem('theme');
+    if (old === 'dark' || old === 'light') {
+      setSetting('theme', old);
+      localStorage.removeItem('theme');
     }
-  }, []);
+  }, [setSetting]);
 
   const toggleDarkMode = () => {
-    const next = !isDark;
-    setIsDark(next);
-    if (next) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    setSetting('theme', isDark ? 'light' : 'dark');
   };
 
   return (

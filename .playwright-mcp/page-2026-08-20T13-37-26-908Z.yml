@@ -1,0 +1,84 @@
+- generic [ref=f2e4]:
+  - link "Skip to main content" [ref=f2e5] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=f2e6]:
+    - navigation [ref=f2e7]:
+      - link "JASPER SONA" [ref=f2e8] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f2e9]:
+        - list [ref=f2e10]:
+          - listitem [ref=f2e11]:
+            - link "Home" [ref=f2e12] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f2e13]:
+            - link "RNG Game" [ref=f2e14] [cursor=pointer]:
+              - /url: /#rng
+        - button "🌙 Dark" [ref=f2e15] [cursor=pointer]
+    - main [ref=f2e16]:
+      - generic [ref=f2e17]:
+        - generic [ref=f2e18]:
+          - heading "Jasper" [level=1] [ref=f2e19]
+          - heading "Sona" [level=1] [ref=f2e20]
+        - generic [ref=f2e21]:
+          - link "🎲 Play RNG Game" [ref=f2e22] [cursor=pointer]:
+            - /url: /#rng
+          - paragraph [ref=f2e23]: Roll for rare items. Collect them all.
+      - generic [ref=f2e24]:
+        - heading "How to Play" [level=2] [ref=f2e25]
+        - generic [ref=f2e26]:
+          - generic [ref=f2e27]:
+            - generic [ref=f2e28]: 🎲
+            - heading "Roll" [level=3] [ref=f2e29]
+            - paragraph [ref=f2e30]: Hit ROLL to spin the reel. Every roll costs LuckBucks and every outcome is weighted by rarity.
+          - generic [ref=f2e31]:
+            - generic [ref=f2e32]: 📜
+            - heading "Collect" [level=3] [ref=f2e33]
+            - paragraph [ref=f2e34]: Catch each rarity to fill your collection. Sell duplicates for LuckBucks to fund more rolls.
+          - generic [ref=f2e35]:
+            - generic [ref=f2e36]: ♻️
+            - heading "Rebirth" [level=3] [ref=f2e37]
+            - paragraph [ref=f2e38]: Catch enough distinct rarities and Rebirth — reset your progress and unlock 10 more rarities.
+          - generic [ref=f2e39]:
+            - generic [ref=f2e40]: 🎨
+            - heading "Customize" [level=3] [ref=f2e41]
+            - paragraph [ref=f2e42]: Spend LuckBucks on luck boosts and cosmetics. Equip themes and companions from the shop.
+    - generic [ref=f2e43]:
+      - button "🌙 Dark" [ref=f2e45] [cursor=pointer]
+      - generic [ref=f2e77]:
+        - heading "Create Account" [level=2] [ref=f2e78]
+        - generic [ref=f2e79]:
+          - generic [ref=f2e80]:
+            - generic [ref=f2e81]: Username
+            - textbox "Username" [ref=f2e82]:
+              - /placeholder: jasper_sona
+              - text: reeltest
+            - paragraph [ref=f2e83]: Choose a display name for your profile
+          - generic [ref=f2e84]:
+            - generic [ref=f2e85]: Email
+            - textbox "Email" [ref=f2e86]:
+              - /placeholder: youremail@amazing.com
+              - text: reeltest@test.local
+          - generic [ref=f2e87]:
+            - generic [ref=f2e88]: Password
+            - generic [ref=f2e89]:
+              - textbox "Password" [ref=f2e90]:
+                - /placeholder: ••••••••
+                - text: ReelTest123!
+              - button "Show password" [ref=f2e91] [cursor=pointer]
+          - button "Sign Up" [ref=f2e95] [cursor=pointer]
+        - button "Login" [ref=f2e97] [cursor=pointer]
+    - contentinfo [ref=f2e63]:
+      - generic [ref=f2e64]:
+        - link "Terms and Conditions" [ref=f2e65] [cursor=pointer]:
+          - /url: /terms
+        - link "Privacy Policy" [ref=f2e66] [cursor=pointer]:
+          - /url: /privacy
+        - link "Cookie Policy" [ref=f2e67] [cursor=pointer]:
+          - /url: /cookies
+      - paragraph [ref=f2e68]: © 2026 Jasper Sona. All rights reserved.
+      - paragraph [ref=f2e69]: "Last updated: August 16, 2026"
+  - generic [ref=f2e70]:
+    - paragraph [ref=f2e71]: We use cookies to ensure you get the best experience on our site.
+    - button "Got it" [ref=f2e72] [cursor=pointer]
+  - button "💬" [ref=f2e74] [cursor=pointer]
+  - button "↑" [ref=f2e76] [cursor=pointer]

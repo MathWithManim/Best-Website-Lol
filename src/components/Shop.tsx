@@ -1,15 +1,29 @@
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation, useQuery, useConvexAuth } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { useUser } from '../lib/useUser';
+
+const COSMETIC_ICONS: Record<string, string> = {
+  cat: '🐱',
+  math: '∑',
+  bird: '🐦',
+};
 
 const Shop = () => {
+  const { isAuthenticated } = useConvexAuth();
+  const user = useUser();
   const [buying, setBuying] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [cosmeticMsg, setCosmeticMsg] = useState<string | null>(null);
   const buySingleBoost = useMutation(api.shop.buySingleLuckBoost);
   const buyMinuteBoost = useMutation(api.shop.buyMinuteLuckBoost);
+  const buyCosmetic = useMutation(api.shop.buyCosmetic);
+  const equipCosmetic = useMutation(api.shop.equipCosmetic);
   const activeBoostData = useQuery(api.shop.getActiveBoost);
   const activeBoost = activeBoostData && activeBoostData.expiresAt > Date.now() ? activeBoostData : null;
+  const cosmetics = useQuery(api.shop.getCosmetics);
+  const ownedCosmetics = useQuery(api.shop.getUserCosmetics, isAuthenticated ? {} : "skip");
 
   const handleBuy = async (type: 'single' | 'minute') => {
     if (buying) return;
@@ -25,6 +39,27 @@ const Shop = () => {
       }
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'Purchase failed');
+    } finally {
+      setBuying(null);
+    }
+  };
+
+  const handleCosmetic = async (cosmeticId: string) => {
+    if (buying) return;
+    const owned = ownedCosmetics?.includes(cosmeticId) ?? false;
+    setBuying(cosmeticId);
+    setCosmeticMsg(null);
+    try {
+      if (!owned) {
+        await buyCosmetic({ cosmeticId });
+      }
+      if (user?.equippedCosmetic !== cosmeticId) {
+        await equipCosmetic({ cosmeticId });
+      }
+      const cosmetic = cosmetics?.find((c) => c.id === cosmeticId);
+      setCosmeticMsg(cosmetic ? `Equipped ${cosmetic.name}!` : 'Equipped!');
+    } catch (err) {
+      setCosmeticMsg(err instanceof Error ? err.message : 'Action failed');
     } finally {
       setBuying(null);
     }
@@ -87,6 +122,59 @@ const Shop = () => {
             className="mt-2 text-center text-xs font-mono text-primary dark:text-[#f4d5ad]"
           >
             {message}
+          </m.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cosmetics */}
+      <m.h3
+        initial={{ opacity: 0, y: 8 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.3 }}
+        className="text-sm font-mono text-primary/70 dark:text-[#f4d5ad]/70 text-center mt-6 mb-3"
+      >
+        Cosmetics
+      </m.h3>
+      <div className="space-y-2">
+        {cosmetics?.map((cosmetic) => {
+          const owned = ownedCosmetics?.includes(cosmetic.id) ?? false;
+          const equipped = user?.equippedCosmetic === cosmetic.id;
+          return (
+            <m.button
+              key={cosmetic.id}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleCosmetic(cosmetic.id)}
+              disabled={buying !== null}
+              title={cosmetic.description}
+              className="w-full py-3 px-4 font-mono text-sm font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between border"
+              style={{
+                backgroundColor: `${cosmetic.theme.primary}1a`,
+                borderColor: equipped ? cosmetic.theme.accent : `${cosmetic.theme.primary}40`,
+                color: cosmetic.theme.primary,
+              }}
+            >
+              <span className="flex items-center gap-3">
+                <span aria-hidden className="text-xl">{COSMETIC_ICONS[cosmetic.id] ?? cosmetic.icon}</span>
+                <span>{cosmetic.name}</span>
+              </span>
+              <span className="text-xs">
+                {equipped ? '✅ Equipped' : owned ? 'Equip' : `${cosmetic.price === 0 ? 'FREE' : `${cosmetic.price} LB`}`}
+              </span>
+            </m.button>
+          );
+        })}
+      </div>
+      <AnimatePresence>
+        {cosmeticMsg && (
+          <m.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mt-2 text-center text-xs font-mono text-primary dark:text-[#f4d5ad]"
+          >
+            {cosmeticMsg}
           </m.div>
         )}
       </AnimatePresence>

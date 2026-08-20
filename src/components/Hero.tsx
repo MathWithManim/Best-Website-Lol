@@ -1,56 +1,21 @@
-import { useState, useEffect } from 'react';
 import { m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Hero = () => {
-  const [jasperText, setJasperText] = useState('');
-  const [sonaText, setSonaText] = useState('');
-  const fullJasper = "Jasper";
-  const fullSona = "Sona";
-
-  useEffect(() => {
-    let i = 0;
-    const timer = setInterval(() => {
-      if (i <= fullJasper.length) {
-        setJasperText(fullJasper.slice(0, i));
-      }
-      if (i <= fullSona.length) {
-        setSonaText(fullSona.slice(0, i));
-      }
-      i++;
-      if (i > Math.max(fullJasper.length, fullSona.length)) {
-        clearInterval(timer);
-      }
-    }, 150);
-
-    return () => clearInterval(timer);
-  }, []);
-
   return (
-    <section className="flex flex-col items-center justify-center min-h-[60vh] md:h-[calc(100vh-80px)] p-6">
+    <section className="flex flex-col items-center justify-center min-h-[60vh] md:h-[calc(100vh-80px)] p-6 relative">
       <m.div
         initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="text-7xl md:text-9xl lg:text-[12rem] font-bold text-center"
       >
-        <m.h1
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="text-primary dark:text-[#f4d5ad] font-cursive flex items-center justify-center"
-        >
-          {jasperText}
-          <span className="animate-pulse ml-1 text-accent dark:text-[#c98a6e]">|</span>
-        </m.h1>
-        <m.h1
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="text-accent dark:text-[#c98a6e] font-cursive flex items-center justify-center"
-        >
-          {sonaText}
-        </m.h1>
+        <h1 className="text-primary dark:text-[#f4d5ad] font-cursive flex items-center justify-center">
+          Jasper
+        </h1>
+        <h1 className="text-accent dark:text-[#c98a6e] font-cursive flex items-center justify-center">
+          Sona
+        </h1>
       </m.div>
 
       {/* CTA above the fold */}

@@ -83,3 +83,4 @@ npx convex dev     # Convex backend (separate terminal)
 - Convex `_generated/` is auto-generated; never edit manually
 - The admin route `/x8f9a2_rootadmin` is obfuscated; server-enforced via `requireRoot` (email `root@root.root`)
 - Existing legacy users must re-signup with the same email to keep game data — `getAppUser` links the new identity to the old `users` row by email
+
