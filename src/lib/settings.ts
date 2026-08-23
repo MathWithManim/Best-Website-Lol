@@ -12,6 +12,8 @@ export interface Settings {
   /** When true, rarity names are shown under the number in the grid. */
   showRarityNames: boolean;
   soundEnabled: boolean;
+  /** When true, newly unlocked achievements pop a toast. */
+  achievementToasts: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -20,6 +22,7 @@ export const DEFAULT_SETTINGS: Settings = {
   compactGrid: false,
   showRarityNames: true,
   soundEnabled: true,
+  achievementToasts: true,
 };
 
 export const SETTINGS_STORAGE_KEY = 'settings:v1';

@@ -28,6 +28,7 @@ const MAX_SPIN_MS = 3000; // absolute cap for the settle phase
 const PARTICLE_COUNT_FULL = 18;
 const PARTICLE_COUNT_REDUCED = 4;
 const MAX_TILES = 2400; // hard cap on rendered strip tiles
+const ROLL_COOLDOWN_MS = 1000; // must match the server-side per-user roll limit
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
@@ -53,6 +54,8 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
   const [isNew, setIsNew] = useState(false);
   const [tileH, setTileH] = useState(80);
   const [revealKey, setRevealKey] = useState(0);
+  const [cooldownEnd, setCooldownEnd] = useState(0);
+  const [cooldownNow, setCooldownNow] = useState(0);
 
   const stripRef = useRef<HTMLDivElement | null>(null);
   const skipResolveRef = useRef<(() => void) | null>(null);
@@ -122,6 +125,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
       setRevealKey((k) => k + 1);
       setShowResult(true);
       setRolling(false);
+      setCooldownEnd(Date.now() + ROLL_COOLDOWN_MS);
       recordRoll({ rarity: outcome.rarity, index: RARITY_INDEX[outcome.rarity] ?? 0, unlocked: n });
       if (soundEnabled) {
         const idx = RARITY_INDEX[outcome.rarity] ?? 0;
@@ -203,7 +207,21 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
     } finally {
       busyRef.current = false;
     }
-  }, [roll, n, tileH, idleY, reduceMotion, rolling, result, startSpin, stripY, cancelAnims, finish]);
+  }, [roll, n, tileH, idleY, reduceMotion, rolling, result, soundEnabled, discovered, startSpin, stripY, cancelAnims, finish]);
+
+  useEffect(() => {
+    if (cooldownEnd === 0) return;
+    setCooldownNow(Date.now());
+    const iv = window.setInterval(() => {
+      if (Date.now() >= cooldownEnd) {
+        window.clearInterval(iv);
+        setCooldownEnd(0);
+      } else {
+        setCooldownNow(Date.now());
+      }
+    }, 50);
+    return () => window.clearInterval(iv);
+  }, [cooldownEnd]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -219,6 +237,8 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
 
   const resultIndex = result ? (RARITY_INDEX[result] ?? 0) : 0;
   const resultColor = result ? (RARITY_COLORS[result] || '#8B4513') : '#8B4513';
+  const cooling = cooldownEnd !== 0 && cooldownNow < cooldownEnd;
+  const cooldownPct = cooling ? Math.min(100, ((cooldownEnd - cooldownNow) / ROLL_COOLDOWN_MS) * 100) : 0;
 
   // Regenerate the particle burst on every reveal (18 cheap elements per render).
   const particleCount = reduceMotion ? PARTICLE_COUNT_REDUCED : PARTICLE_COUNT_FULL;
@@ -402,8 +422,16 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
         disabled={rolling || luckBucks < rollCost}
         aria-busy={rolling}
         title={rollCost === 0 ? 'Execute a free roll' : `Execute a roll (costs ${rollCost} LuckBucks)`}
-        className="w-full py-4 px-8 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono text-lg font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer active:scale-95"
+        className="relative w-full py-4 px-8 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono text-lg font-bold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer active:scale-95 overflow-hidden"
       >
+        {cooling && (
+          <span
+            aria-hidden
+            data-cooldown-bar
+            className="absolute left-0 bottom-0 h-1 bg-black/25 dark:bg-[#1a120b]/40 transition-none"
+            style={{ width: `${cooldownPct}%` }}
+          />
+        )}
         {rolling ? (
           <span className="flex items-center justify-center gap-2">
             <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">

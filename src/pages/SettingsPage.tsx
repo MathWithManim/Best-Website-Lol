@@ -117,6 +117,12 @@ const SettingsPage = () => {
             checked={settings.soundEnabled}
             onChange={(next) => setSetting('soundEnabled', next)}
           />
+          <ToggleRow
+            label="Achievement toasts"
+            description="Pop a toast when you unlock a new achievement."
+            checked={settings.achievementToasts}
+            onChange={(next) => setSetting('achievementToasts', next)}
+          />
         </Section>
 
         <Section title="Display">

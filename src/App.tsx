@@ -6,6 +6,7 @@ import Skills from './components/Skills';
 import NotFound from './components/NotFound';
 import ConvexClientProvider from './components/ConvexClientProvider';
 import { UserProvider } from './components/UserProvider';
+import AchievementToasts from './components/AchievementToasts';
 import { CosmeticThemeProvider } from './components/CosmeticThemeProvider';
 import { useSettings } from './lib/settings';
 import { SettingsProvider } from './components/SettingsProvider';
@@ -117,6 +118,7 @@ function App() {
   return (
     <ConvexClientProvider>
       <UserProvider>
+        <AchievementToasts />
         <SettingsProvider>
           <CosmeticThemeProvider>
             <AppShell />
