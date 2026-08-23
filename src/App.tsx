@@ -2,7 +2,10 @@ import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-ro
 import { AnimatePresence, m, MotionConfig } from 'framer-motion';
 import { lazy, Suspense, useEffect } from 'react';
 import Hero from './components/Hero';
-import Skills from './components/Skills';
+import AboutSection from './components/AboutSection';
+import ProjectsSection from './components/ProjectsSection';
+import SkillsSection from './components/SkillsSection';
+import ContactSection from './components/ContactSection';
 import NotFound from './components/NotFound';
 import ConvexClientProvider from './components/ConvexClientProvider';
 import { UserProvider } from './components/UserProvider';
@@ -69,9 +72,12 @@ function AnimatedRoutes() {
             <Route path="/" element={
               <>
                 <Navbar />
-                <main id="main-content" className="max-w-7xl mx-auto md:flex md:items-center">
+                <main id="main-content">
                   <Hero />
-                  <Skills />
+                  <AboutSection />
+                  <ProjectsSection />
+                  <SkillsSection />
+                  <ContactSection />
                 </main>
               </>
             } />

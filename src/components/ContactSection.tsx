@@ -1,0 +1,44 @@
+import { m } from 'framer-motion';
+import { CONTACT_BLURB, SOCIALS } from '../lib/portfolio';
+
+const ContactSection = () => {
+  return (
+    <section id="contact" className="p-6 md:p-10 pb-16 max-w-5xl mx-auto scroll-mt-20 text-center">
+      <m.h2
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="text-3xl md:text-4xl font-sans font-bold mb-3 text-primary dark:text-[#f4d5ad]"
+      >
+        Get in touch
+      </m.h2>
+      <m.p
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.1, duration: 0.45 }}
+        className="font-mono text-sm text-primary/60 dark:text-[#f4d5ad]/60 mb-6"
+      >
+        {CONTACT_BLURB}
+      </m.p>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        {SOCIALS.map((s, i) => (
+          <m.a
+            key={s.label}
+            href={s.href}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.07, duration: 0.4 }}
+            className="px-5 py-2 bg-secondary/30 dark:bg-secondary/10 border border-primary/20 dark:border-[#f4d5ad]/20 font-mono text-sm font-bold rounded-xl hover:opacity-90 hover:border-accent dark:hover:border-[#c98a6e] transition-all active:scale-95"
+          >
+            {s.label}
+          </m.a>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export default ContactSection;
