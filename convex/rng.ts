@@ -1,6 +1,7 @@
 import { mutation, query, internalMutation, type MutationCtx, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { v } from "convex/values";
+import { rateLimiter } from "./rateLimits";
 import { getAppUser, getIdentityEmail } from "./users";
 import {
   RARITIES,
@@ -42,6 +43,9 @@ export const roll = mutation({
   args: {},
   handler: async (ctx: MutationCtx) => {
     const user = await getAppUser(ctx);
+
+    const rollLimit = await rateLimiter.limit(ctx, "roll", { key: user._id });
+    if (!rollLimit.ok) throw new Error("Please wait before rolling again");
 
     if (user.completedGame) {
       throw new Error("You have completed the game. There is nothing left.");
@@ -175,6 +179,9 @@ export const sellRarity = mutation({
   handler: async (ctx, args) => {
     const user = await getAppUser(ctx);
 
+    const sellLimit = await rateLimiter.limit(ctx, "sell", { key: user._id });
+    if (!sellLimit.ok) throw new Error("Please wait before selling again");
+
     // 1-second cooldown between sells
     const now = Date.now();
     const lastSellAt = user.lastSellAt || 0;
@@ -227,6 +234,9 @@ export const rebirth = mutation({
   args: {},
   handler: async (ctx: MutationCtx) => {
     const user = await getAppUser(ctx);
+
+    const rebirthLimit = await rateLimiter.limit(ctx, "rebirth", { key: user._id });
+    if (!rebirthLimit.ok) throw new Error("Please wait a moment before rebirthing");
 
     if (user.completedGame) {
       throw new Error("You have completed the game. There is nothing left.");
@@ -308,6 +318,9 @@ export const sellBulkJunk = mutation({
   handler: async (ctx, args) => {
     const user = await getAppUser(ctx);
 
+    const sellLimit = await rateLimiter.limit(ctx, "sell", { key: user._id });
+    if (!sellLimit.ok) throw new Error("Please wait before selling again");
+
     if (!Number.isInteger(args.maxSellValue) || args.maxSellValue < 1 || args.maxSellValue > 100) {
       throw new Error("maxSellValue must be an integer between 1 and 100");
     }
@@ -353,6 +366,9 @@ export const prestige = mutation({
   args: {},
   handler: async (ctx) => {
     const user = await getAppUser(ctx);
+
+    const prestigeLimit = await rateLimiter.limit(ctx, "prestige", { key: user._id });
+    if (!prestigeLimit.ok) throw new Error("Please wait a moment before prestiging");
 
     if (!user.completedGame) {
       throw new Error("Complete the game first");

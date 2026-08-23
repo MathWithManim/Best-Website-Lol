@@ -1,5 +1,6 @@
 import { mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
+import { rateLimiter } from "./rateLimits";
 import { getAppUser, getIdentityEmail } from "./users";
 
 export const getLuckBucks = query({
@@ -31,6 +32,9 @@ export const buySingleLuckBoost = mutation({
   handler: async (ctx: MutationCtx) => {
     const user = await getAppUser(ctx);
 
+    const buyLimit = await rateLimiter.limit(ctx, "buy", { key: user._id });
+    if (!buyLimit.ok) throw new Error("Please wait a moment before buying");
+
     if (user.activeLuckBoost) {
       throw new Error("A luck boost is already active");
     }
@@ -55,6 +59,9 @@ export const buyMinuteLuckBoost = mutation({
   args: {},
   handler: async (ctx: MutationCtx) => {
     const user = await getAppUser(ctx);
+
+    const buyLimit = await rateLimiter.limit(ctx, "buy", { key: user._id });
+    if (!buyLimit.ok) throw new Error("Please wait a moment before buying");
 
     if (user.activeLuckBoost) {
       throw new Error("A luck boost is already active");
@@ -126,6 +133,9 @@ export const buyCosmetic = mutation({
   args: { cosmeticId: v.string() },
   handler: async (ctx, args) => {
     const user = await getAppUser(ctx);
+
+    const buyLimit = await rateLimiter.limit(ctx, "buy", { key: user._id });
+    if (!buyLimit.ok) throw new Error("Please wait a moment before buying");
 
     const cosmetic = COSMETICS.find(c => c.id === args.cosmeticId);
     if (!cosmetic) throw new Error("Invalid cosmetic");

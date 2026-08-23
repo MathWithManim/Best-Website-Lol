@@ -24,11 +24,12 @@ const RESERVED_USERNAMES = new Set([
 const USERNAME_CHARSET = /^[A-Za-z0-9_-]+$/;
 
 export function sanitizeText(input: string): string {
-  return input
-    .replace(/<[^>]*>/g, "")
-    .replace(/[\u0000-\u001F\u007F]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+  let out = "";
+  for (const ch of input.replace(/<[^>]*>/g, "")) {
+    const code = ch.charCodeAt(0);
+    if (code > 31 && code !== 127) out += ch;
+  }
+  return out.replace(/\s+/g, " ").trim();
 }
 
 /** Resolve the authenticated caller's email from the Convex JWT identity. */
@@ -153,20 +154,23 @@ export const updateProfile = mutation({
   handler: async (ctx, args) => {
     const user = await getAppUser(ctx);
 
-    // Input validation — sanitized against HTML/control characters first
-    if (args.name !== undefined) validateString(sanitizeText(args.name), 50, "Name");
-    if (args.bio !== undefined) validateString(sanitizeText(args.bio), 500, "Bio");
+    // Sanitize once, validate and persist the same values
+    const name = args.name !== undefined ? sanitizeText(args.name) : undefined;
+    const bio = args.bio !== undefined ? sanitizeText(args.bio) : undefined;
+
+    if (name !== undefined) validateString(name, 50, "Name");
+    if (bio !== undefined) validateString(bio, 500, "Bio");
+    let username: string | undefined;
     if (args.username !== undefined) {
-      const cleanedUname = sanitizeText(args.username);
-      validateString(cleanedUname, 30, "Username");
-      if (!USERNAME_CHARSET.test(cleanedUname)) {
+      username = sanitizeText(args.username);
+      validateString(username, 30, "Username");
+      if (!USERNAME_CHARSET.test(username)) {
         throw new Error("Username may only contain letters, numbers, dashes and underscores");
       }
-      if (RESERVED_USERNAMES.has(cleanedUname.toLowerCase())) {
+      if (RESERVED_USERNAMES.has(username.toLowerCase())) {
         throw new Error("That username is reserved");
       }
-      const newUname = cleanedUname;
-      const newUnameLower = newUname.toLowerCase();
+      const newUnameLower = username.toLowerCase();
       if (newUnameLower !== (user.usernameLower || (user.username || "").toLowerCase())) {
         const existing = await ctx.db
           .query("users")
@@ -175,7 +179,6 @@ export const updateProfile = mutation({
         if (existing) throw new Error("Username already taken");
       }
     }
-    if (args.bio !== undefined) validateString(args.bio, 500, "Bio");
     if (args.pfp !== undefined) {
       validateString(sanitizeText(args.pfp), 500, "Profile picture URL");
       let parsed: URL;
@@ -193,12 +196,9 @@ export const updateProfile = mutation({
     }
 
     await ctx.db.patch(user._id, {
-      ...(args.name !== undefined && { name: args.name }),
-      ...(args.username !== undefined && {
-        username: args.username.trim(),
-        usernameLower: args.username.trim().toLowerCase(),
-      }),
-      ...(args.bio !== undefined && { bio: args.bio }),
+      ...(name !== undefined && { name }),
+      ...(username !== undefined && { username, usernameLower: username.toLowerCase() }),
+      ...(bio !== undefined && { bio }),
       ...(args.pfp !== undefined && { pfp: args.pfp }),
     });
   },

@@ -13,6 +13,7 @@ import type * as auth from "../auth.js";
 import type * as crons from "../crons.js";
 import type * as http from "../http.js";
 import type * as leaderboard from "../leaderboard.js";
+import type * as rateLimits from "../rateLimits.js";
 import type * as rng from "../rng.js";
 import type * as shared from "../shared.js";
 import type * as shop from "../shop.js";
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   http: typeof http;
   leaderboard: typeof leaderboard;
+  rateLimits: typeof rateLimits;
   rng: typeof rng;
   shared: typeof shared;
   shop: typeof shop;
@@ -64,4 +66,5 @@ export declare const internal: FilterApi<
 
 export declare const components: {
   betterAuth: import("@convex-dev/better-auth/_generated/component.js").ComponentApi<"betterAuth">;
+  rateLimiter: import("@convex-dev/rate-limiter/_generated/component.js").ComponentApi<"rateLimiter">;
 };

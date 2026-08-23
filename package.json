@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@convex-dev/better-auth": "^0.12.5",
+    "@convex-dev/rate-limiter": "^0.3.2",
     "@sentry/react": "^10.70.0",
     "bcryptjs": "^3.0.3",
     "better-auth": "~1.6.15",
