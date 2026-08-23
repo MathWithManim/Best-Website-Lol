@@ -22,8 +22,8 @@
   --app-accent: #A0522D;
   --app-secondary: #D2B48C;
   --app-darker: #5D3A1A;
-  --app-card: rgba(210, 180, 140, 0.2);
-  --app-border: rgba(139, 69, 19, 0.2);
+  --app-card: rgba(210, 180, 140, 0.15);
+  --app-border: rgba(139, 69, 19, 0.15);
 }
 
 html.dark {
@@ -33,14 +33,14 @@ html.dark {
   --app-accent: #e09f58;
   --app-secondary: #c29d75;
   --app-darker: #0d0906;
-  --app-card: rgba(45, 30, 20, 0.6);
-  --app-border: rgba(244, 213, 173, 0.25);
+  --app-card: rgba(45, 30, 20, 0.55);
+  --app-border: rgba(244, 213, 173, 0.2);
 }
 
 body {
   background-color: var(--app-bg);
   color: var(--app-text);
-  font-family: sans-serif;
+  font-family: var(--font-typewriter);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -93,4 +93,34 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Apple Design: translucent surfaces with backdrop-filter */
+.backdrop-soft {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.card-soft {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(139, 69, 19, 0.15);
+}
+
+.card-soft-dark {
+  background: rgba(26, 18, 11, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(244, 213, 173, 0.3);
+  box-shadow: 0 4px 20px rgba(160, 159, 88, 0.15);
+}
+
+/* 8pt grid spacer utilities */
+.space-y-8 > * + * { margin-top: 2rem; }
+.space-x-8 > * + * { margin-left: 2rem; }
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .transition-none { transition: none !important; }
+  .opacity-fade { transition: opacity 150ms ease !important; }
 }

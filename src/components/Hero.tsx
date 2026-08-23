@@ -26,7 +26,7 @@ const Hero = () => {
         className="mt-8 flex flex-col items-center gap-4"
       >
         <Link
-          to="/#rng"
+          to="/rng"
           className="px-8 py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono text-sm font-bold rounded-xl hover:opacity-90 transition-opacity active:scale-95"
           title="Start playing the RNG gacha game"
         >
@@ -36,30 +36,6 @@ const Hero = () => {
           Roll for rare items. Collect them all.
         </p>
       </m.div>
-
-      {/* Subtle floating particles behind the name */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(6)].map((_, i) => (
-          <m.div
-            key={i}
-            className="absolute w-1 h-1 rounded-full bg-accent/20 dark:bg-[#c98a6e]/20"
-            style={{
-              left: `${15 + i * 14}%`,
-              top: `${30 + (i % 3) * 20}%`,
-            }}
-            animate={{
-              y: [-10, 10, -10],
-              opacity: [0.2, 0.5, 0.2],
-            }}
-            transition={{
-              duration: 3 + i * 0.5,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.4,
-            }}
-          />
-        ))}
-      </div>
     </section>
   );
 };

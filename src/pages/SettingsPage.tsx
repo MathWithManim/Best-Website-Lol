@@ -111,6 +111,12 @@ const SettingsPage = () => {
             checked={settings.reduceMotion}
             onChange={(next) => setSetting('reduceMotion', next)}
           />
+          <ToggleRow
+            label="Sound effects"
+            description="Play a whoosh on roll and a chime scaled to the rarity won."
+            checked={settings.soundEnabled}
+            onChange={(next) => setSetting('soundEnabled', next)}
+          />
         </Section>
 
         <Section title="Display">

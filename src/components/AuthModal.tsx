@@ -8,7 +8,7 @@ interface AuthModalProps {
 }
 
 const AuthModal = ({ onLogin }: AuthModalProps) => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +29,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
     setSubmitting(true);
     try {
       let result;
-      if (isLogin) {
+      if (mode === "login") {
         result = await authClient.signIn.email({ email: userEmail, password });
       } else {
         result = await authClient.signUp.email({
@@ -52,6 +52,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
       const message = err instanceof Error ? err.message : "Something went wrong. Try again.";
       if (message.toLowerCase().includes("already exists") || message.toLowerCase().includes("account")) {
         setError("Account already exists. Try logging in instead.");
+        if (mode === "signup") setMode("login");
       } else {
         setError(message);
       }
@@ -66,13 +67,13 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
         <DarkModeToggle />
       </div>
       <m.div 
-        key={isLogin ? "login" : "signup"}
+        key={mode}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-white/80 dark:bg-[#2d1e14]/90 border border-primary/20 dark:border-[#f4d5ad]/30 p-8 rounded-2xl max-w-md w-full relative shadow-2xl"
       >
         <h2 className="text-3xl font-bold font-sans text-primary dark:text-[#f4d5ad] mb-6 text-center">
-          {isLogin ? "Welcome Back" : "Create Account"}
+          {mode === "login" ? "Welcome Back" : "Create Account"}
         </h2>
         
         {error && (
@@ -82,7 +83,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-          {!isLogin && (
+          {mode === "signup" && (
             <div>
               <label htmlFor="auth-username" className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Username</label>
               <input 
@@ -92,7 +93,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full p-3 rounded-lg bg-bg dark:bg-[#1a120b] border border-primary/30 dark:border-[#f4d5ad]/30 text-primary dark:text-[#f4d5ad] font-mono focus:outline-none focus:border-accent"
                 placeholder="jasper_sona"
-                aria-describedby={!isLogin ? "auth-username-hint" : undefined}
+                aria-describedby={mode === "signup" ? "auth-username-hint" : undefined}
               />
               <p id="auth-username-hint" className="sr-only">Choose a display name for your profile</p>
             </div>
@@ -101,7 +102,8 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
             <label htmlFor="auth-email" className="block font-mono text-sm text-primary dark:text-[#f4d5ad] mb-1">Email</label>
             <input 
               id="auth-email"
-              type="text" 
+              type="text"
+              autoFocus 
               required 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -145,19 +147,21 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
             disabled={submitting}
             className="w-full py-3 bg-primary dark:bg-accent text-bg dark:text-[#1a120b] font-mono rounded-lg hover:opacity-95 transition-opacity font-bold mt-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? (isLogin ? "Logging in..." : "Creating account...") : (isLogin ? "Login" : "Sign Up")}
+            {submitting ? (mode === "login" ? "Logging in..." : "Creating account...") : (mode === "login" ? "Login" : "Sign Up")}
           </button>
         </form>
 
-        {/* Floating Squircle Toggle at the bottom */}
-        <div className="mt-8 flex justify-center">
-          <button 
+        <div className="mt-4 flex justify-end">
+          <button
             type="button"
-            onClick={() => { setIsLogin(!isLogin); setError(null); }}
-            className="w-16 h-16 rounded-2xl bg-accent text-bg flex items-center justify-center font-mono text-xs shadow-lg hover:scale-105 transition-transform cursor-pointer"
-            title="Toggle Login / Signup"
+            onClick={() => {
+              setMode(mode === "login" ? "signup" : "login");
+              setError(null);
+            }}
+            title={mode === "login" ? "Create a new account" : "Log in to an existing account"}
+            className="font-mono text-xs text-primary/60 dark:text-[#f4d5ad]/60 hover:text-accent dark:hover:text-[#c98a6e] transition-colors cursor-pointer"
           >
-            {isLogin ? "Sign Up" : "Login"}
+            {mode === "login" ? "New here? Sign up →" : "Already have an account? Log in →"}
           </button>
         </div>
       </m.div>

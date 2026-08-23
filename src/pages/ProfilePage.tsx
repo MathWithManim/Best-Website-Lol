@@ -3,10 +3,11 @@ import { useQuery, useMutation, useConvexAuth } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../lib/useUser';
 import { authClient } from '../lib/auth-client';
 import { RARITY_COLORS } from '../lib/rarities';
+import { COSMETIC_ICONS } from '../lib/cosmetics';
 
 const ProfilePage = () => {
   useEffect(() => {
@@ -101,6 +102,18 @@ const ProfilePage = () => {
           </button>
         </div>
 
+        {user.equippedCosmetic && (
+          <div className="-mt-4 mb-8">
+            <span
+              title={`Equipped cosmetic: ${user.equippedCosmetic}`}
+              className="inline-flex items-center gap-1.5 font-mono text-xs px-2 py-1 rounded bg-accent/10 dark:bg-[#c98a6e]/10 border border-accent/20 dark:border-[#c98a6e]/20 text-primary dark:text-[#f4d5ad]"
+            >
+              <span aria-hidden>{COSMETIC_ICONS[user.equippedCosmetic] ?? '✨'}</span>
+              {user.equippedCosmetic}
+            </span>
+          </div>
+        )}
+
         <form onSubmit={handleSave} className="bg-secondary/10 dark:bg-secondary/5 border border-primary/20 dark:border-[#f4d5ad]/20 p-8 rounded-2xl space-y-6">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <img
@@ -121,7 +134,10 @@ const ProfilePage = () => {
           </div>
 
           <div>
-            <label htmlFor="profile-name" className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Display Name</label>
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="profile-name" className="font-mono text-sm text-primary dark:text-[#f4d5ad]">Display Name</label>
+              <span className="font-mono text-[10px] opacity-40">{name.length}/50</span>
+            </div>
             <input
               id="profile-name"
               type="text"
@@ -143,7 +159,10 @@ const ProfilePage = () => {
           </div>
 
           <div>
-            <label htmlFor="profile-bio" className="block font-mono text-sm mb-1 text-primary dark:text-[#f4d5ad]">Bio</label>
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="profile-bio" className="font-mono text-sm text-primary dark:text-[#f4d5ad]">Bio</label>
+              <span className="font-mono text-[10px] opacity-40">{bio.length}/500</span>
+            </div>
             <textarea
               id="profile-bio"
               rows={4}
@@ -214,7 +233,13 @@ const ProfilePage = () => {
                       className="w-10 h-10 rounded-full bg-bg dark:bg-[#2d1e14]"
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="font-mono text-sm font-bold text-primary dark:text-[#f4d5ad]">{result.username}</div>
+                      <Link
+                        to={`/u/${result.username}`}
+                        className="font-mono text-sm font-bold text-primary dark:text-[#f4d5ad] hover:text-accent dark:hover:text-[#c98a6e] transition-colors truncate block"
+                        title={`View ${result.username}'s public profile`}
+                      >
+                        {result.username}
+                      </Link>
                       <div className="text-xs font-mono text-primary/50 dark:text-[#f4d5ad]/50">{result.totalRolls} rolls</div>
                     </div>
                     {result.bestRarity && (
@@ -229,6 +254,34 @@ const ProfilePage = () => {
             </div>
           )}
         </div>
+
+
+        <div className="mt-10">
+          <h2 className="text-2xl font-sans font-bold mb-4">Achievements</h2>
+          {user.achievements.length === 0 ? (
+            <p className="text-sm font-mono text-primary/50 dark:text-[#f4d5ad]/50">No achievements defined yet.</p>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {user.achievements.map((a) => (
+                <div
+                  key={a.id}
+                  title={a.unlocked ? a.description : `${a.description} (locked)`}
+                  aria-label={`${a.name}: ${a.unlocked ? 'unlocked' : 'locked'}`}
+                  data-testid={`achievement-${a.id}`}
+                  className={`p-3 rounded-lg border font-mono text-xs text-center transition-colors ${
+                    a.unlocked
+                      ? 'bg-accent/15 dark:bg-[#c98a6e]/15 border-accent/40 dark:border-[#c98a6e]/40 text-primary dark:text-[#f4d5ad]'
+                      : 'bg-primary/5 dark:bg-[#f4d5ad]/5 border-primary/10 dark:border-[#f4d5ad]/10 text-primary/30 dark:text-[#f4d5ad]/30'
+                  }`}
+                >
+                  <div aria-hidden className="text-lg mb-1">{a.unlocked ? '🏆' : '🔒'}</div>
+                  {a.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
       </main>
     </div>
   );

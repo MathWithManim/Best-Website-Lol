@@ -2,22 +2,22 @@ import { m } from 'framer-motion';
 
 const steps = [
   {
-    icon: '🎲',
+    icon: 'Roll',
     title: 'Roll',
     body: 'Hit ROLL to spin the reel. Every roll costs LuckBucks and every outcome is weighted by rarity.',
   },
   {
-    icon: '📜',
+    icon: 'Collect',
     title: 'Collect',
     body: 'Catch each rarity to fill your collection. Sell duplicates for LuckBucks to fund more rolls.',
   },
   {
-    icon: '♻️',
+    icon: 'Rebirth',
     title: 'Rebirth',
     body: 'Catch enough distinct rarities and Rebirth — reset your progress and unlock 10 more rarities.',
   },
   {
-    icon: '🎨',
+    icon: 'Customize',
     title: 'Customize',
     body: 'Spend LuckBucks on luck boosts and cosmetics. Equip themes and companions from the shop.',
   },

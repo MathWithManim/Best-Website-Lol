@@ -1,9 +1,8 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, m, MotionConfig } from 'framer-motion';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
-import Footer from './components/Footer';
 import NotFound from './components/NotFound';
 import ConvexClientProvider from './components/ConvexClientProvider';
 import { UserProvider } from './components/UserProvider';
@@ -17,8 +16,10 @@ import ScrollUpButton from './components/ScrollUpButton';
 import Navbar from './components/Navbar';
 import MobileCTA from './components/MobileCTA';
 import RNGSection from './components/RNGSection';
-
+import ErrorBoundary from './components/ErrorBoundary';
+import { useConvexAuth } from 'convex/react';
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const PublicProfilePage = lazy(() => import('./pages/PublicProfilePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const RootAdmin = lazy(() => import('./pages/RootAdmin'));
 const Logout = lazy(() => import('./pages/Logout'));
@@ -39,6 +40,16 @@ const pageTransition = {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const { isAuthenticated } = useConvexAuth();
+  const navigate = useNavigate();
+
+  // Only redirect unauth users from profile/settings routes, not from /rng
+  useEffect(() => {
+    const protectedRoutes = ['/profile', '/settings'];
+    if (protectedRoutes.includes(location.pathname) && !isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [location.pathname, isAuthenticated, navigate]);
 
   return (
     <AnimatePresence mode="wait">
@@ -51,8 +62,9 @@ function AnimatedRoutes() {
         transition={pageTransition}
         className="min-h-screen"
       >
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-mono text-primary/50">Loading...</div>}>
-          <Routes location={location}>
+        <ErrorBoundary>
+          <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-mono text-primary/50">Loading...</div>}>
+            <Routes location={location}>
             <Route path="/" element={
               <>
                 <Navbar />
@@ -60,11 +72,11 @@ function AnimatedRoutes() {
                   <Hero />
                   <Skills />
                 </main>
-                <RNGSection />
-                <Footer />
               </>
             } />
+            <Route path="/rng" element={<RNGSection />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/u/:username" element={<PublicProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/x8f9a2_rootadmin" element={<RootAdmin />} />
@@ -72,8 +84,9 @@ function AnimatedRoutes() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </m.div>
     </AnimatePresence>
   );

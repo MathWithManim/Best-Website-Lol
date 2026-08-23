@@ -6,16 +6,20 @@ import DarkModeToggle from './DarkModeToggle';
 
 const navLinks = [
   { to: '/', label: 'Home' },
-  { to: '/#rng', label: 'RNG Game' },
+  { to: '/rng', label: 'RNG Game' },
+  { to: '/rng', label: 'Sign Up', guestOnly: true },
+  { to: '/rng', label: 'Login', guestOnly: true },
   { to: '/profile', label: 'Profile', authOnly: true },
-  { to: '/settings', label: '⚙️ Settings', authOnly: true },
+  { to: '/settings', label: 'Settings', authOnly: true },
 ];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated } = useConvexAuth();
 
-  const visibleLinks = navLinks.filter(l => !l.authOnly || isAuthenticated);
+  const visibleLinks = navLinks.filter(
+    (l) => (l.authOnly ? isAuthenticated : true) && !(l.guestOnly && isAuthenticated)
+  );
 
   return (
     <nav className="sticky top-0 z-40 backdrop-blur bg-[#F5E6CA]/90 dark:bg-[#1a120b]/90 flex items-center justify-between p-6 text-[#8B4513] dark:text-[#f4d5ad] border-b border-[#8B4513]/20 dark:border-[#f4d5ad]/20">

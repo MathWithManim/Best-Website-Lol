@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
-import Footer from '../components/Footer';
-
 const Privacy = () => {
   useEffect(() => {
     document.title = 'Privacy Policy — Jasper Sona';
@@ -100,7 +98,6 @@ const Privacy = () => {
           </section>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

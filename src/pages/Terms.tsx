@@ -1,8 +1,6 @@
 import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
-import Footer from '../components/Footer';
-
 const Terms = () => {
   useEffect(() => {
     document.title = 'Terms & Conditions — Jasper Sona';
@@ -94,7 +92,6 @@ const Terms = () => {
           </section>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

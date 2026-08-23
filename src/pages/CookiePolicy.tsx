@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
-import Footer from '../components/Footer';
 
 const CookiePolicy = () => {
   useEffect(() => {
@@ -82,7 +81,6 @@ const CookiePolicy = () => {
           </section>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

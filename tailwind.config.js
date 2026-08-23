@@ -15,6 +15,8 @@ export default {
       },
       fontFamily: {
         typewriter: ['"Special Elite"', 'cursive'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['"Playfair Display"', 'serif'],
       },
     },
   },
