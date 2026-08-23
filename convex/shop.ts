@@ -78,10 +78,18 @@ export const buyMinuteLuckBoost = mutation({
 
 const COSMETICS = [
   { 
+    id: "bird", 
+    name: "Bird", 
+    icon: "BRD", 
+    price: 75, 
+    description: "Soar high with this bird.",
+    theme: { bg: "#1F2937", primary: "#3B82F6", accent: "#2563EB" }
+  },
+  { 
     id: "cat", 
     name: "Cat", 
     icon: "CAT", 
-    price: 0, 
+    price: 150, 
     description: "Meow! A cute cat cosmetic.",
     theme: { bg: "#1F2937", primary: "#F472B6", accent: "#EC4899" }
   },
@@ -89,17 +97,9 @@ const COSMETICS = [
     id: "math", 
     name: "Math", 
     icon: "MAT", 
-    price: 0, 
+    price: 300, 
     description: "For the math enthusiasts.",
     theme: { bg: "#1F2937", primary: "#22C55E", accent: "#16A34A" }
-  },
-  { 
-    id: "bird", 
-    name: "Bird", 
-    icon: "BRD", 
-    price: 0, 
-    description: "Soar high with this bird.",
-    theme: { bg: "#1F2937", primary: "#3B82F6", accent: "#2563EB" }
   },
 ];
 

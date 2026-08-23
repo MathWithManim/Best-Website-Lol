@@ -1,6 +1,6 @@
 import { mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
-import { RARITIES, WEIGHTS, rollCostFor, totalRaritiesFor } from "./shared";
+import { RARITIES, WEIGHTS, rollCostFor, totalRaritiesFor, TOP_TIER_SIZE, ACHIEVEMENTS } from "./shared";
 
 // --- Constants ---
 const ROOT_EMAIL = process.env.ROOT_EMAIL ?? "";
@@ -16,6 +16,21 @@ function validateString(value: string, maxLen: number, label: string): void {
   }
 }
 
+const RESERVED_USERNAMES = new Set([
+  "admin", "root", "support", "moderator", "official", "staff", "system",
+  "jasper", "jasperson", "help", "security", "owner",
+]);
+
+const USERNAME_CHARSET = /^[A-Za-z0-9_-]+$/;
+
+export function sanitizeText(input: string): string {
+  return input
+    .replace(/<[^>]*>/g, "")
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /** Resolve the authenticated caller's email from the Convex JWT identity. */
 export async function getIdentityEmail(ctx: QueryCtx | MutationCtx): Promise<string> {
   const identity = await ctx.auth.getUserIdentity();
@@ -25,12 +40,13 @@ export async function getIdentityEmail(ctx: QueryCtx | MutationCtx): Promise<str
   return identity.email.toLowerCase();
 }
 
-/** Verify the caller is the root admin. Throws otherwise. */
+/** Verify the caller is the root admin. Throws otherwise; returns their email. */
 async function requireRoot(ctx: QueryCtx | MutationCtx) {
   const email = await getIdentityEmail(ctx);
   if (email !== ROOT_EMAIL) {
     throw new Error("Unauthorized: Root access required");
   }
+  return email;
 }
 
 /**
@@ -87,6 +103,23 @@ export const getCurrentUser = query({
     const distinctCaught = Object.keys(user?.rarityCounts || {}).length;
     const totalRarities = totalRaritiesFor(rebirthCount);
     const nextRebirthAt = Math.min((rebirthCount + 1) * 10, 500);
+    const ownsTopTierPull = Object.keys(user?.rarityCounts || {}).some(
+      (r) => RARITIES.indexOf(r) >= RARITIES.length - TOP_TIER_SIZE
+    );
+    const achievementStats = {
+      rollCount,
+      rebirthCount,
+      distinctCaught,
+      completedGame: user?.completedGame || false,
+      luckbucks: user?.luckbucks || 0,
+      ownsTopTierPull,
+    };
+    const achievements = ACHIEVEMENTS.map(({ id, name, description, check }) => ({
+      id,
+      name,
+      description,
+      unlocked: check(achievementStats),
+    }));
 
     return {
       email,
@@ -103,6 +136,9 @@ export const getCurrentUser = query({
       totalRarities,
       nextRebirthAt,
       completedGame: user?.completedGame || false,
+      prestigeCount: user?.prestigeCount || 0,
+      discovered: user?.discovered || {},
+      achievements,
     };
   },
 });
@@ -117,11 +153,19 @@ export const updateProfile = mutation({
   handler: async (ctx, args) => {
     const user = await getAppUser(ctx);
 
-    // Input validation
-    if (args.name !== undefined) validateString(args.name, 50, "Name");
+    // Input validation — sanitized against HTML/control characters first
+    if (args.name !== undefined) validateString(sanitizeText(args.name), 50, "Name");
+    if (args.bio !== undefined) validateString(sanitizeText(args.bio), 500, "Bio");
     if (args.username !== undefined) {
-      validateString(args.username, 30, "Username");
-      const newUname = args.username.trim();
+      const cleanedUname = sanitizeText(args.username);
+      validateString(cleanedUname, 30, "Username");
+      if (!USERNAME_CHARSET.test(cleanedUname)) {
+        throw new Error("Username may only contain letters, numbers, dashes and underscores");
+      }
+      if (RESERVED_USERNAMES.has(cleanedUname.toLowerCase())) {
+        throw new Error("That username is reserved");
+      }
+      const newUname = cleanedUname;
       const newUnameLower = newUname.toLowerCase();
       if (newUnameLower !== (user.usernameLower || (user.username || "").toLowerCase())) {
         const existing = await ctx.db
@@ -133,7 +177,7 @@ export const updateProfile = mutation({
     }
     if (args.bio !== undefined) validateString(args.bio, 500, "Bio");
     if (args.pfp !== undefined) {
-      validateString(args.pfp, 500, "Profile picture URL");
+      validateString(sanitizeText(args.pfp), 500, "Profile picture URL");
       let parsed: URL;
       try {
         parsed = new URL(args.pfp);
@@ -160,25 +204,49 @@ export const updateProfile = mutation({
   },
 });
 
+export const getUserPublicProfile = query({
+  args: { usernameLower: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_usernameLower", (q) => q.eq("usernameLower", args.usernameLower))
+      .first();
+    if (!user) return null;
+
+    const uname = user.username || user.email.split("@")[0];
+    return {
+      username: uname,
+      name: user.name || uname,
+      bio: user.bio || "Hey there! I am using Jasper Sona website.",
+      pfp: user.pfp || ("https://api.dicebear.com/7.x/bottts/svg?seed=" + uname),
+      equippedCosmetic: user.equippedCosmetic,
+      rebirthCount: user.rebirthCount || 0,
+      rollCount: user.rollCount || 0,
+      rarityCounts: user.rarityCounts || {},
+      distinctCaught: Object.keys(user.rarityCounts || {}).length,
+      totalRarities: totalRaritiesFor(user.rebirthCount || 0),
+    };
+  },
+});
+
 // Search users by username — requires authentication
 export const searchUsers = query({
   args: { query: v.string() },
   handler: async (ctx, args) => {
-    if (!args.query || args.query.length < 1) return [];
-
-    // Auth-gate: only logged-in users can search
     const currentEmail = await getIdentityEmail(ctx);
 
-    const allUsers = await ctx.db.query("users").take(200);
-    const searchLower = args.query.toLowerCase();
+    const prefix = sanitizeText(args.query).trim().toLowerCase();
+    if (!prefix) return [];
 
-    const matched = allUsers.filter(u => {
-      const uname = (u.username || u.email.split("@")[0]).toLowerCase();
-      return uname.includes(searchLower) && u.email !== currentEmail;
-    });
+    const matches = await ctx.db
+      .query("users")
+      .withIndex("by_usernameLower", (q) =>
+        q.gte("usernameLower", prefix).lt("usernameLower", prefix + "\uffff")
+      )
+      .take(21);
 
     const results = [];
-    for (const user of matched.slice(0, 20)) {
+    for (const user of matches.filter((u) => u.email !== currentEmail).slice(0, 20)) {
       const counts = user.rarityCounts || {};
       const uname = user.email.split("@")[0];
       let bestRarity = "";
@@ -233,15 +301,30 @@ export const listUsers = query({
 export const updateUserStats = mutation({
   args: { userId: v.id("users"), luckbucks: v.number() },
   handler: async (ctx, args) => {
-    await requireRoot(ctx);
+    const adminEmail = await requireRoot(ctx);
+
+    if (!Number.isInteger(args.luckbucks) || !Number.isFinite(args.luckbucks) || args.luckbucks < 0) {
+      throw new Error("luckbucks must be a non-negative integer");
+    }
+
+    const target = await ctx.db.get(args.userId);
+    if (!target) throw new Error("User not found");
+
     await ctx.db.patch(args.userId, { luckbucks: args.luckbucks });
+    await ctx.db.insert("admin_audit", {
+      adminEmail,
+      action: "updateUserStats",
+      targetId: args.userId,
+      details: `luckbucks=${args.luckbucks}`,
+      timestamp: Date.now(),
+    });
   },
 });
 
 export const deleteUser = mutation({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
-    await requireRoot(ctx);
+    const adminEmail = await requireRoot(ctx);
     const user = await ctx.db.get(args.userId);
     if (!user) throw new Error("User not found");
 
@@ -258,6 +341,26 @@ export const deleteUser = mutation({
       .collect();
     await Promise.all(cosmetics.map((c) => ctx.db.delete(c._id)));
 
+    const stats = await ctx.db
+      .query("global_stats")
+      .withIndex("by_docId", (q) => q.eq("docId", "main"))
+      .first();
+    if (stats) {
+      const counts = { ...stats.counts };
+      for (const [rarity, count] of Object.entries(user.rarityCounts || {})) {
+        counts[rarity] = Math.max(0, (counts[rarity] || 0) - count);
+      }
+      await ctx.db.patch(stats._id, { counts });
+    }
+
     await ctx.db.delete(args.userId);
+
+    await ctx.db.insert("admin_audit", {
+      adminEmail,
+      action: "deleteUser",
+      targetId: args.userId,
+      details: `email=${user.email}`,
+      timestamp: Date.now(),
+    });
   },
 });

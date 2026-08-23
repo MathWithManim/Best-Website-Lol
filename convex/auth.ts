@@ -7,6 +7,14 @@ import authConfig from "./auth.config";
 
 const siteUrl = process.env.SITE_URL!;
 
+export const trustedAuthOrigins = (): string[] => [
+  siteUrl,
+  ...(process.env.AUTH_EXTRA_ORIGINS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
+];
+
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
 export const authComponent = createClient<DataModel>(components.betterAuth);
@@ -14,7 +22,12 @@ export const authComponent = createClient<DataModel>(components.betterAuth);
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
   return betterAuth({
     baseURL: process.env.CONVEX_SITE_URL,
-    trustedOrigins: [siteUrl],
+    trustedOrigins: trustedAuthOrigins(),
+    rateLimit: {
+      enabled: true,
+      window: 60,
+      max: 20,
+    },
     database: authComponent.adapter(ctx),
     // Simple, non-verified email/password auth to get started
     emailAndPassword: {

@@ -1,4 +1,5 @@
 import { mutation, query, internalMutation, type MutationCtx, type QueryCtx } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 import { v } from "convex/values";
 import { getAppUser, getIdentityEmail } from "./users";
 import {
@@ -10,6 +11,9 @@ import {
   RARITIES_PER_REBIRTH,
   MAX_REBIRTHS,
   TOTAL_RARITIES,
+  computeBulkSale,
+  LEADERBOARD_MIN_VALUE,
+  prestigeMultiplier,
 } from "./shared";
 
 /** Get or create the global stats singleton (mutations only) */
@@ -116,13 +120,13 @@ export const roll = mutation({
     }
     await ctx.db.patch(stats._id, patch);
 
-    // Only insert into leaderboard for the rarest rolls (hall of fame)
     const rarityIndex = RARITIES.indexOf(rarityName);
-    if (rarityIndex >= RARITIES.length - 10) {
+    if ((RARITY_VALUES[rarityIndex] ?? 0) >= LEADERBOARD_MIN_VALUE) {
       await ctx.db.insert("leaderboard", {
         email: user.email,
         username: user.username || user.email.split("@")[0],
         rarity: rarityName,
+        rebirthCount: user.rebirthCount || 0,
         weight: rarityWeight,
         timestamp: now,
       });
@@ -131,11 +135,14 @@ export const roll = mutation({
     // Update per-user rarity counts (this is the real inventory)
     const counts = { ...(user.rarityCounts || {}) };
     counts[rarityName] = (counts[rarityName] || 0) + 1;
+    const discovered = { ...(user.discovered || {}) };
+    discovered[rarityName] = true;
     const distinctCaught = Object.keys(counts).length;
     const nextRollCount = rollCount + 1;
     const completedGame = distinctCaught >= TOTAL_RARITIES;
     await ctx.db.patch(user._id, {
       rarityCounts: counts,
+      discovered,
       lastRollAt: now,
       luckbucks: luckbucks - cost,
       rollCount: nextRollCount,
@@ -187,7 +194,7 @@ export const sellRarity = mutation({
 
     const rarityIndex = RARITIES.indexOf(args.rarity);
     const valuePerItem = rarityIndex >= 0 ? RARITY_VALUES[rarityIndex] : 1;
-    const totalLB = sellAmount * valuePerItem;
+    const totalLB = Math.round(sellAmount * valuePerItem * prestigeMultiplier(user.prestigeCount || 0));
 
     // Decrement per-user rarity counts
     const counts = { ...(user.rarityCounts || {}) };
@@ -270,17 +277,96 @@ export const getRarityStats = query({
   },
 });
 
+// TTL'd score log (inventory = users.rarityCounts). Consumers:
+// getWeeklyLeaderboard reads a 7-day window (< this TTL); getRecentWins reads
+// the newest 8 rows, which are kept below even past the TTL.
 export const pruneAllLeaderboards = internalMutation({
   args: {},
   handler: async (ctx) => {
-    const all = await ctx.db.query("leaderboard").withIndex("by_weight").collect();
+    const cutoff = Date.now() - 8 * 24 * 60 * 60 * 1000;
 
-    if (all.length > 100) {
-      const toDelete = all.slice(100);
-      await Promise.all(toDelete.map((entry: any) => ctx.db.delete(entry._id)));
-      return { entriesPruned: toDelete.length };
+    const keep = new Set<Id<"leaderboard">>();
+    for (const entry of await ctx.db.query("leaderboard").withIndex("by_timestamp").order("desc").take(8)) {
+      keep.add(entry._id);
     }
 
-    return { entriesPruned: 0 };
+    let pruned = 0;
+    for await (const entry of ctx.db.query("leaderboard").withIndex("by_timestamp", (q) =>
+      q.lt("timestamp", cutoff)
+    )) {
+      if (!keep.has(entry._id)) {
+        await ctx.db.delete(entry._id);
+        pruned += 1;
+      }
+    }
+    return { entriesPruned: pruned };
+  },
+});
+
+export const sellBulkJunk = mutation({
+  args: { maxSellValue: v.number() },
+  handler: async (ctx, args) => {
+    const user = await getAppUser(ctx);
+
+    if (!Number.isInteger(args.maxSellValue) || args.maxSellValue < 1 || args.maxSellValue > 100) {
+      throw new Error("maxSellValue must be an integer between 1 and 100");
+    }
+
+    if (Date.now() - (user.lastSellAt || 0) < 1000) {
+      throw new Error("Please wait before selling again");
+    }
+
+    const counts = user.rarityCounts || {};
+    if (Object.keys(counts).length === 0) throw new Error("Nothing to sell");
+
+    const sale = computeBulkSale(counts, args.maxSellValue);
+    const earned = Math.round(sale.earned * prestigeMultiplier(user.prestigeCount || 0));
+    const itemsSold = sale.itemsSold;
+    const remainingCounts = sale.remainingCounts;
+    if (itemsSold === 0) throw new Error(`No rarities worth ${args.maxSellValue} LB or less`);
+
+    await ctx.db.patch(user._id, {
+      luckbucks: (user.luckbucks || 0) + earned,
+      rarityCounts: remainingCounts,
+      lastSellAt: Date.now(),
+    });
+
+    const stats = await ctx.db
+      .query("global_stats")
+      .withIndex("by_docId", (q) => q.eq("docId", "main"))
+      .first();
+    if (stats) {
+      const globalCounts = { ...stats.counts };
+      for (const [rarity] of Object.entries(counts)) {
+        const soldHere = (counts[rarity] || 0) - (remainingCounts[rarity] || 0);
+        if (soldHere > 0) globalCounts[rarity] = Math.max(0, (globalCounts[rarity] || 0) - soldHere);
+      }
+      await ctx.db.patch(stats._id, { counts: globalCounts });
+    }
+
+    return { soldItems: itemsSold, earned };
+  },
+});
+
+
+export const prestige = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getAppUser(ctx);
+
+    if (!user.completedGame) {
+      throw new Error("Complete the game first");
+    }
+
+    const prestigeCount = (user.prestigeCount || 0) + 1;
+    await ctx.db.patch(user._id, {
+      rarityCounts: {},
+      discovered: user.discovered ?? {},
+      rebirthCount: 0,
+      completedGame: false,
+      prestigeCount,
+    });
+
+    return { prestigeCount };
   },
 });

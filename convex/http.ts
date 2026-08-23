@@ -1,5 +1,5 @@
 import { httpRouter } from "convex/server";
-import { authComponent, createAuth } from "./auth";
+import { authComponent, createAuth, trustedAuthOrigins } from "./auth";
 
 const http = httpRouter();
 
@@ -7,7 +7,7 @@ const http = httpRouter();
 authComponent.registerRoutesLazy(http, createAuth, {
   basePath: "/api/auth",
   cors: true,
-  trustedOrigins: [process.env.SITE_URL!],
+  trustedOrigins: trustedAuthOrigins(),
 });
 
 export default http;

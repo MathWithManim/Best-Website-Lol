@@ -7,3 +7,4 @@ const crons = cronJobs();
 crons.interval("prune leaderboards", { hours: 6 }, internal.rng.pruneAllLeaderboards);
 
 export default crons;
+
