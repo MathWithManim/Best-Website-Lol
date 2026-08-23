@@ -24,6 +24,7 @@ const Shop = () => {
   const activeBoost = activeBoostData && activeBoostData.expiresAt > Date.now() ? activeBoostData : null;
   const cosmetics = useQuery(api.shop.getCosmetics);
   const ownedCosmetics = useQuery(api.shop.getUserCosmetics, isAuthenticated ? {} : "skip");
+  const luckBucks = useQuery(api.shop.getLuckBucks, isAuthenticated ? {} : "skip");
 
   const handleBuy = async (type: 'single' | 'minute') => {
     if (buying) return;
@@ -71,12 +72,12 @@ const Shop = () => {
         initial={{ opacity: 0, y: 8 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.3 }}
+        transition={{ type: 'spring', damping: 1.0, stiffness: 300 }}
         className="text-sm font-mono text-primary/70 dark:text-[#f4d5ad]/70 text-center mb-3"
       >
         Shop
       </m.h3>
-      <div className="space-y-2">
+      <div className="space-y-8">
         <m.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -125,29 +126,45 @@ const Shop = () => {
           </m.div>
         )}
       </AnimatePresence>
-
+      <AnimatePresence>
+        {cosmeticMsg && (
+          <m.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mt-2 text-center text-xs font-mono text-primary dark:text-[#f4d5ad]"
+          >
+            {cosmeticMsg}
+          </m.div>
+        )}
+      </AnimatePresence>
       {/* Cosmetics */}
       <m.h3
         initial={{ opacity: 0, y: 8 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.3 }}
+        transition={{ type: 'spring', damping: 1.0, stiffness: 300 }}
         className="text-sm font-mono text-primary/70 dark:text-[#f4d5ad]/70 text-center mt-6 mb-3"
       >
         Cosmetics
       </m.h3>
-      <div className="space-y-2">
+      <div className="space-y-8">
         {cosmetics?.map((cosmetic) => {
           const owned = ownedCosmetics?.includes(cosmetic.id) ?? false;
           const equipped = user?.equippedCosmetic === cosmetic.id;
+          const canAfford = (luckBucks ?? 0) >= cosmetic.price;
           return (
             <m.button
               key={cosmetic.id}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => handleCosmetic(cosmetic.id)}
-              disabled={buying !== null}
-              title={cosmetic.description}
+              disabled={buying !== null || (!owned && !canAfford)}
+              title={
+                !owned && !canAfford
+                  ? `Need ${cosmetic.price} LuckBucks (you have ${(luckBucks ?? 0).toLocaleString()})`
+                  : cosmetic.description
+              }
               className="w-full py-3 px-4 font-mono text-sm font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-between border"
               style={{
                 backgroundColor: `${cosmetic.theme.primary}1a`,
@@ -160,7 +177,7 @@ const Shop = () => {
                 <span>{cosmetic.name}</span>
               </span>
               <span className="text-xs">
-                {equipped ? '✅ Equipped' : owned ? 'Equip' : `${cosmetic.price === 0 ? 'FREE' : `${cosmetic.price} LB`}`}
+                {equipped ? '✅ Equipped' : owned ? 'Equip' : `${cosmetic.price} LB`}
               </span>
             </m.button>
           );

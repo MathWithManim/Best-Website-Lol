@@ -4,6 +4,9 @@ import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { RARITIES, RARITY_COLORS, RARITY_INDEX } from '../lib/rarities';
 import { useSettings } from '../lib/settings';
+import { playRollStart, playWin } from '../lib/sounds';
+import ShareCardModal from './ShareCardModal';
+import { recordRoll } from '../lib/rollHistory';
 
 interface RNGGameProps {
   onRollComplete: () => void;
@@ -11,7 +14,7 @@ interface RNGGameProps {
   rollCost: number;
   luckBucks: number;
   totalRarities: number;
-  rarityCounts?: Record<string, number>;
+  discovered?: Record<string, boolean>;
 }
 
 // ——— Reel geometry ———
@@ -22,7 +25,8 @@ const SPIN_EASE: [number, number, number, number] = [0.12, 0.6, 0.05, 1]; // fas
 const SETTLE_EASE: [number, number, number, number] = [0.2, 0.9, 0.3, 1]; // glide into the landing row
 const MIN_SPIN_MS = 1200; // minimum spin before the server result is awaited
 const MAX_SPIN_MS = 3000; // absolute cap for the settle phase
-const PARTICLE_COUNT = 18;
+const PARTICLE_COUNT_FULL = 18;
+const PARTICLE_COUNT_REDUCED = 4;
 const MAX_TILES = 2400; // hard cap on rendered strip tiles
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -34,24 +38,27 @@ interface RollOutcome {
   boostApplied: boolean;
 }
 
-const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalRarities, rarityCounts }: RNGGameProps) => {
+const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalRarities, discovered }: RNGGameProps) => {
   const roll = useMutation(api.rng.roll);
   const { settings } = useSettings();
   const reduceMotion = settings.reduceMotion;
+  const soundEnabled = settings.soundEnabled;
 
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [boostActive, setBoostActive] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const [tileH, setTileH] = useState(80);
   const [revealKey, setRevealKey] = useState(0);
 
   const stripRef = useRef<HTMLDivElement | null>(null);
+  const skipResolveRef = useRef<(() => void) | null>(null);
   const stripY = useMotionValue(0);
   const activeAnims = useRef<Array<{ stop: () => void }>>([]);
-  const countsBeforeRef = useRef<Record<string, number> | null>(null);
+  const discoveredBeforeRef = useRef<Record<string, boolean> | null>(null);
   const busyRef = useRef(false);
   const mountedRef = useRef(true);
 
@@ -107,29 +114,35 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
   const finish = useCallback(
     (outcome: RollOutcome) => {
       if (!mountedRef.current) return;
-      const prev = countsBeforeRef.current;
-      const wasNew = prev ? (prev[outcome.rarity] ?? 0) === 0 : false;
+      const prev = discoveredBeforeRef.current;
+      const wasNew = prev ? !prev[outcome.rarity] : true;
       setIsNew(wasNew);
       setBoostActive(outcome.boostApplied);
       setResult(outcome.rarity);
       setRevealKey((k) => k + 1);
       setShowResult(true);
       setRolling(false);
+      recordRoll({ rarity: outcome.rarity, index: RARITY_INDEX[outcome.rarity] ?? 0, unlocked: n });
+      if (soundEnabled) {
+        const idx = RARITY_INDEX[outcome.rarity] ?? 0;
+        playWin(Math.min(1, Math.max(0, idx / Math.max(n - 1, 1))));
+      }
       onRollComplete();
     },
-    [onRollComplete]
+    [onRollComplete, soundEnabled, n]
   );
 
   const handleRoll = useCallback(async () => {
     if (busyRef.current || rolling) return;
     busyRef.current = true;
     setRolling(true);
+    if (soundEnabled) playRollStart();
     setResult(null);
     setShowResult(false);
     setError(null);
     setBoostActive(false);
     setIsNew(false);
-    countsBeforeRef.current = rarityCounts ?? null;
+    discoveredBeforeRef.current = discovered ?? null;
 
     const startIdx = result ? (RARITY_INDEX[result] ?? 0) : 0;
     const startY = -mod(startIdx, n) * tileH;
@@ -164,7 +177,11 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
       // exactly on schedule and lets us snap to the landing row (immune to
       // tween overshoot), regardless of framer-motion's internal promise timing.
       startSpin(finalY, remaining, SETTLE_EASE);
-      await delay(remaining * 1000);
+      await new Promise<void>((resolve) => {
+        skipResolveRef.current = resolve;
+        window.setTimeout(resolve, remaining * 1000);
+      });
+      skipResolveRef.current = null;
       stripY.jump(finalY);
 
       // Phase C: the clunk — a tiny drop that springs back onto the payline.
@@ -186,14 +203,27 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
     } finally {
       busyRef.current = false;
     }
-  }, [roll, n, tileH, idleY, reduceMotion, rolling, result, rarityCounts, startSpin, stripY, cancelAnims, finish]);
+  }, [roll, n, tileH, idleY, reduceMotion, rolling, result, startSpin, stripY, cancelAnims, finish]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code !== 'Space') return;
+      const target = e.target as HTMLElement | null;
+      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+      e.preventDefault();
+      void handleRoll();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [handleRoll]);
 
   const resultIndex = result ? (RARITY_INDEX[result] ?? 0) : 0;
   const resultColor = result ? (RARITY_COLORS[result] || '#8B4513') : '#8B4513';
 
   // Regenerate the particle burst on every reveal (18 cheap elements per render).
-  const particles = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
-    const angle = (i / PARTICLE_COUNT) * Math.PI * 2 + Math.random() * 0.6;
+  const particleCount = reduceMotion ? PARTICLE_COUNT_REDUCED : PARTICLE_COUNT_FULL;
+  const particles = Array.from({ length: particleCount }, (_, i) => {
+    const angle = (i / particleCount) * Math.PI * 2 + Math.random() * 0.6;
     const dist = 60 + Math.random() * 70;
     return {
       x: Math.cos(angle) * dist,
@@ -201,14 +231,21 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
       size: 3 + Math.random() * 5,
       duration: 0.7 + Math.random() * 0.6,
       delay: Math.random() * 0.15,
-    };
+    } as const;
   });
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
       {/* Reel window */}
       <div
-        className="relative w-full overflow-hidden rounded-2xl border-4 border-primary dark:border-[#f4d5ad] bg-[#0a0a0a] shadow-2xl"
+        onClick={() => {
+          if (rolling && skipResolveRef.current) {
+            skipResolveRef.current();
+            skipResolveRef.current = null;
+          }
+        }}
+        title={rolling ? 'Click to skip the spin' : undefined}
+        className={`relative w-full overflow-hidden rounded-2xl border-4 border-primary dark:border-[#f4d5ad] bg-[#0a0a0a] shadow-2xl ${rolling ? 'cursor-pointer' : ''}`}
         style={{ height: tileH * VISIBLE }}
       >
         {/* Payline */}
@@ -383,6 +420,28 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
           `Execute Roll (${rollCost} LuckBucks)`
         )}
       </button>
+
+      {result && !rolling && (
+        <button
+          onClick={() => setShareOpen(true)}
+          title="Create a share card for this pull"
+          className="w-full py-2 px-6 bg-white/10 border border-white/15 text-white/85 font-mono text-sm rounded-xl hover:bg-white/20 transition-colors cursor-pointer"
+        >
+          📸 Create Share Card
+        </button>
+      )}
+
+      <p className="text-[10px] font-mono text-white/30 -mt-3">
+        Space = Roll · Click reel = Skip
+      </p>
+
+      <ShareCardModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        rarity={result ?? 'Common'}
+        rarityIndex={resultIndex}
+        totalRarities={n}
+      />
     </div>
   );
 };

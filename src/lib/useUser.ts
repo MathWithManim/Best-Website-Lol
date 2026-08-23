@@ -15,6 +15,9 @@ export interface User {
   totalRarities: number;
   nextRebirthAt: number;
   completedGame: boolean;
+  prestigeCount: number;
+  discovered: Record<string, boolean>;
+  achievements: Array<{ id: string; name: string; description: string; unlocked: boolean }>;
 }
 
 export const UserContext = createContext<User | null | undefined>(undefined);

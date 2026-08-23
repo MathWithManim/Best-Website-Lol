@@ -1,5 +1,5 @@
 import { m, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { RARITY_COLORS, RARITY_VALUES } from '../lib/rarities';
@@ -15,6 +15,15 @@ interface RarityStatsModalProps {
 }
 
 const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, onSellComplete }: RarityStatsModalProps) => {
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
   const color = RARITY_COLORS[rarity] || '#9CA3AF';
   const valuePerItem = index >= 0 && index < RARITY_VALUES.length ? RARITY_VALUES[index] : 1;
   const [selling, setSelling] = useState(false);
@@ -97,7 +106,6 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, on
             <div className="text-center mb-6 relative z-10">
               <m.div
                 className="text-5xl font-bold font-typewriter mb-2"
-                style={{ color }}
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.1 }}

@@ -11,6 +11,7 @@ export interface Settings {
   compactGrid: boolean;
   /** When true, rarity names are shown under the number in the grid. */
   showRarityNames: boolean;
+  soundEnabled: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -18,6 +19,7 @@ export const DEFAULT_SETTINGS: Settings = {
   reduceMotion: false,
   compactGrid: false,
   showRarityNames: true,
+  soundEnabled: true,
 };
 
 export const SETTINGS_STORAGE_KEY = 'settings:v1';
