@@ -1,0 +1,37 @@
+name: Weekly backup
+
+# Snapshot export of the production Convex deployment.
+# Setup (one-time): Dashboard -> your prod deployment -> Settings -> Deploy keys,
+# create one, then add it as the repo secret CONVEX_DEPLOY_KEY.
+# Snapshots land in workflow run artifacts; download and keep at least one off-GitHub.
+
+on:
+  schedule:
+    - cron: "0 4 * * 1" # Mondays 04:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Export snapshot
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex export --path backup.zip
+
+      - name: Upload snapshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: convex-backup-${{ github.run_id }}
+          path: backup.zip
+          retention-days: 90

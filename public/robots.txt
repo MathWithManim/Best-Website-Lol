@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /logout
 
-Sitemap: https://best-website-lol.vercel.app/sitemap.xml
+Sitemap: https://jasper-sona.pages.dev/sitemap.xml
