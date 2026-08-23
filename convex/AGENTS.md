@@ -10,9 +10,9 @@ Server functions: auth (Better Auth), RNG engine, shop, leaderboard, crons. **Al
 | Auth JWT config | `auth.config.ts` | `getAuthConfigProvider()` — lets Convex validate Better Auth JWTs |
 | Auth HTTP routes | `http.ts` | Better Auth endpoints on `/api/auth/*` via `registerRoutesLazy` + CORS |
 | App user lookup | `users.ts` | `getAppUser(ctx)` (mutations), `getIdentityEmail(ctx)` (queries), `getCurrentUser`, admin `requireRoot` |
-| RNG roll logic | `rng.ts` | `roll()`, `sellRarity()`, boost scaling, leaderboard-as-inventory |
+| RNG roll logic | `rng.ts` | `roll()`, `sellRarity()`, boost scaling; inventory = `users.rarityCounts`, leaderboard = TTL'd score log |
 | Shop/catalog | `shop.ts` | Hardcoded COSMETICS, `buyLuckBoost()`, `buyCosmetic()` |
-| Leaderboard query | `leaderboard.ts` | `getLeaderboard()`, uses `by_weight` index with early termination |
+| Leaderboard query | `leaderboard.ts` | `getWeeklyLeaderboard()` (7-day window, per-rebirth tiers), `getRecentWins()`, `getTotalRolls()` |
 | Shared constants | `shared.ts` | RARITIES, WEIGHTS, RARITY_VALUES — used by users.ts, rng.ts |
 | Schema | `schema.ts` | 4 tables: users, leaderboard, user_cosmetics, global_stats (+ Better Auth component tables) |
 | Cron jobs | `crons.ts` | 6h prune via `internal.rng.pruneAllLeaderboards` |
@@ -29,7 +29,7 @@ Server functions: auth (Better Auth), RNG engine, shop, leaderboard, crons. **Al
 
 ## ANTI-PATTERNS
 
-1. **Leaderboard = Inventory**: `leaderboard` table doubles as per-user stock; `pruneUserLeaderboard` (keep 100) destroys sellable entries
+1. **Leaderboard ≠ inventory**: selling reads/writes `users.rarityCounts` only; the `leaderboard` table is an append-only score log with an 8-day TTL (`pruneAllLeaderboards`, always spares newest 8 for RecentWins) — never treat its rows as stock
 2. **Vestigial auth fields**: `users.password`/`sessionToken`/`resetSecret` remain optional on the schema for legacy rows — Better Auth owns auth in its component tables; do not read or write them
 3. **Hand-rolled rate limiting** (removed): was `login_attempts` table — Better Auth handles rate limiting now
 

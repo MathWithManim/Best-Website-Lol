@@ -62,7 +62,7 @@ website/
 
 ## ANTI-PATTERNS (THIS PROJECT)
 
-1. **Leaderboard = Inventory**: `leaderboard` table doubles as per-user inventory; `pruneUserLeaderboard` (keep 100) silently destroys sellable stock beyond 100 entries.
+1. **Leaderboard ≠ inventory**: selling reads/writes `users.rarityCounts` only; the `leaderboard` table is an append-only score log with an 8-day TTL (`pruneAllLeaderboards` deletes older rows, always sparing the newest 8 for RecentWins). Never treat leaderboard rows as stock.
 2. **Vestigial auth fields**: `users.password`/`sessionToken`/`resetSecret` remain on the schema (optional) for legacy rows — Better Auth owns auth in its component tables; do not read or write them.
 3. **Hand-rolled rate limiting** (removed): was a `login_attempts` table with exponential backoff — Better Auth handles rate limiting now.
 
@@ -84,3 +84,16 @@ npx convex dev     # Convex backend (separate terminal)
 - The admin route `/x8f9a2_rootadmin` is obfuscated; server-enforced via `requireRoot` (email `root@root.root`)
 - Existing legacy users must re-signup with the same email to keep game data — `getAppUser` links the new identity to the old `users` row by email
 
+<!-- convex-ai-start -->
+
+This project uses [Convex](https://convex.dev) as its backend.
+
+When working on Convex code, **always read
+`convex/_generated/ai/guidelines.md` first** for important guidelines on
+how to correctly use Convex APIs and patterns. The file contains rules that
+override what you may have learned about Convex from training data.
+
+Convex agent skills for common tasks can be installed by running
+`npx convex ai-files install`.
+
+<!-- convex-ai-end -->
