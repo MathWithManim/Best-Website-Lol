@@ -30,7 +30,6 @@ const ArcadeButton = ({ onClick }: { onClick: () => void }) => {
       {/* Visuals live on an inner wrapper so the hit-target itself never moves
           (stable for pointer/tremor users and automation alike). */}
       <span className="arcade-bob flex h-full w-full flex-col overflow-hidden rounded-lg border-2 border-[#5D3A1A]/60 bg-gradient-to-b from-primary to-darker shadow-[0_6px_18px_rgba(93,58,26,0.45)] transition-all duration-200 group-hover:-rotate-2 group-hover:scale-105 group-hover:shadow-[0_8px_26px_rgba(201,150,46,0.55)]">
-        {/* marquee */}
         <span className="flex h-3 items-center justify-center gap-1 bg-[#C9962E]">
           {[0, 1, 2].map((i) => (
             <span
@@ -40,13 +39,11 @@ const ArcadeButton = ({ onClick }: { onClick: () => void }) => {
             />
           ))}
         </span>
-        {/* screen */}
         <span className="relative m-1 flex-1 rounded bg-[#1a120b]/85">
           <span className="arcade-ball absolute inset-x-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#C9962E]" />
           <span className="absolute bottom-1 left-1 right-1 h-1 rounded-sm bg-[#f4d5ad]/25" />
           <span className="absolute bottom-2.5 left-2 right-2 h-1 rounded-sm bg-[#f4d5ad]/40" />
         </span>
-        {/* coin slot */}
         <span className="mx-auto mb-1.5 h-1.5 w-5 rounded-full bg-[#1a120b]/70 shadow-inner" />
       </span>
     </button>
@@ -85,7 +82,6 @@ const GameCard = ({
           <span className="mt-2 block font-typewriter text-lg font-bold text-[#F5E6CA]">{game.name}</span>
           <span className="block font-mono text-[11px] text-[#F5E6CA]/75">{game.tagline}</span>
 
-          {/* tooltip */}
           <span
             role="tooltip"
             className="pointer-events-none absolute -top-3 left-1/2 z-10 w-56 -translate-x-1/2 translate-y-2 rounded-lg bg-[#1a120b] px-3 py-2 text-center font-mono text-[11px] leading-snug text-[#F5E6CA] opacity-0 shadow-xl transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100"

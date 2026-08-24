@@ -36,3 +36,5 @@ playwright-report
 OmniRoute
 security-audit-skill
 .omo
+
+.playwright-mcp/
