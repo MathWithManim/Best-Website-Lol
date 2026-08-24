@@ -10,4 +10,5 @@ export const rateLimiter = new RateLimiter(components.rateLimiter, {
   buy: { kind: "token bucket", rate: 2, period: 1_000, capacity: 4 },
   prestige: { kind: "fixed window", rate: 1, period: 60_000, capacity: 1 },
   rebirth: { kind: "fixed window", rate: 1, period: 60_000, capacity: 2 },
+  arcade: { kind: "token bucket", rate: 2, period: 1_000, capacity: 3 },
 });

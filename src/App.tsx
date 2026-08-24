@@ -3,9 +3,9 @@ import { AnimatePresence, m, MotionConfig } from 'framer-motion';
 import { lazy, Suspense, useEffect } from 'react';
 import Hero from './components/Hero';
 import AboutSection from './components/AboutSection';
-import ProjectsSection from './components/ProjectsSection';
 import SkillsSection from './components/SkillsSection';
 import ContactSection from './components/ContactSection';
+import ArcadeSection from './components/arcade/ArcadeSection';
 import NotFound from './components/NotFound';
 import ConvexClientProvider from './components/ConvexClientProvider';
 import { UserProvider } from './components/UserProvider';
@@ -15,7 +15,6 @@ import { useSettings } from './lib/settings';
 import { SettingsProvider } from './components/SettingsProvider';
 import ScrollProgress from './components/ScrollProgress';
 import CookieBanner from './components/CookieBanner';
-import FloatingContact from './components/FloatingContact';
 import ScrollUpButton from './components/ScrollUpButton';
 import Navbar from './components/Navbar';
 import MobileCTA from './components/MobileCTA';
@@ -31,7 +30,6 @@ const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const ArcadePage = lazy(() => import('./pages/ArcadePage'));
-import ArcadeLauncher from './components/arcade/ArcadeLauncher';
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -77,13 +75,15 @@ function AnimatedRoutes() {
                 <main id="main-content">
                   <Hero />
                   <AboutSection />
-                  <ProjectsSection />
                   <SkillsSection />
                   <ContactSection />
                 </main>
               </>
             } />
-            <Route path="/rng" element={<RNGSection />} />
+            <Route path="/rng" element={<>
+              <RNGSection />
+              <ArcadeSection />
+            </>} />
             <Route path="/game/:gameId" element={<ArcadePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/u/:username" element={<PublicProfilePage />} />
@@ -114,11 +114,9 @@ function AppShell() {
           <ScrollProgress />
           <AnimatedRoutes />
           <CookieBanner />
-          <FloatingContact />
           <ScrollUpButton />
           <MobileCTA />
           <AchievementToasts />
-          <ArcadeLauncher />
         </div>
       </BrowserRouter>
     </MotionConfig>

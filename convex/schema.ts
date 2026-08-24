@@ -33,6 +33,7 @@ export default defineSchema({
     discovered: v.optional(v.record(v.string(), v.boolean())),
     lastSellAt: v.optional(v.number()),
     lastRollAt: v.optional(v.number()),
+    hiloCard: v.optional(v.number()),
     // Rebirth / progression
     rebirthCount: v.optional(v.number()),
     rollCount: v.optional(v.number()),

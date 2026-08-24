@@ -47,6 +47,13 @@ describe('totalRaritiesFor', () => {
 });
 
 import { ACHIEVEMENTS, evaluateAchievements } from './shared';
+import {
+  ARCADE,
+  PLINKO_MULTS,
+  WHEEL_MULTS,
+  WHEEL_LABELS,
+  arcadePayout,
+} from './shared';
 
 const baseStats = {
   rollCount: 0,
@@ -131,5 +138,26 @@ describe('computeBulkSale', () => {
     const { earned, itemsSold } = computeBulkSale({ NotARealRarity: 9, Common: 2 }, 100);
     expect(earned).toBe(2);
     expect(itemsSold).toBe(2);
+  });
+});
+
+describe('arcade economy', () => {
+  it('wheel has 8 segments and plinko 9 buckets', () => {
+    expect(WHEEL_MULTS).toHaveLength(8);
+    expect(PLINKO_MULTS).toHaveLength(9);
+    expect(WHEEL_LABELS).toHaveLength(8);
+  });
+
+  it('payouts floor to whole LuckBucks', () => {
+    expect(arcadePayout(10, 0.5)).toBe(5);
+    expect(arcadePayout(10, 0.2)).toBe(2);
+    expect(arcadePayout(25, 5)).toBe(125);
+  });
+
+  it('costs stay defined for every game', () => {
+    expect(ARCADE.coin.cost).toBeGreaterThan(0);
+    expect(ARCADE.plinko.cost).toBeGreaterThan(0);
+    expect(ARCADE.hilo.cost).toBeGreaterThan(0);
+    expect(ARCADE.wheel.cost).toBeGreaterThan(0);
   });
 });

@@ -1,6 +1,9 @@
 import { useRef, useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';
+import { useMutation } from 'convex/react';
+import { api } from '../../../../convex/_generated/api';
 import { useSettings } from '../../../lib/settings';
+import { ARCADE } from '../../../../convex/shared';
 
 type Side = 'heads' | 'tails';
 
@@ -23,12 +26,14 @@ const Face = ({ side }: { side: Side }) => (
 
 const CoinFlip = () => {
   const { settings } = useSettings();
+  const flip = useMutation(api.arcade.playCoinFlip);
   const rotateY = useMotionValue(0);
   const [flipping, setFlipping] = useState(false);
-  const [result, setResult] = useState<Side | null>(null);
+  const [result, setResult] = useState<{ landed: Side; won: boolean; net: number } | null>(null);
   const [choice, setChoice] = useState<Side | null>(null);
   const [streak, setStreak] = useState(0);
   const [best, setBest] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const turnsRef = useRef(0);
   // Mirror of the visible face for imperative math without effect churn.
   const faceRef = useRef<Side>('heads');
@@ -38,43 +43,49 @@ const CoinFlip = () => {
     setChoice(side);
     setFlipping(true);
     setResult(null);
+    setError(null);
 
-    const outcome: Side = Math.random() < 0.5 ? 'heads' : 'tails';
-    // Full spins plus a half-turn when the visible face must change.
-    turnsRef.current += settings.reduceMotion ? 0 : 6;
-    const target =
-      turnsRef.current * 360 +
-      ((outcome !== faceRef.current ? 180 : 0) - (rotateY.get() % 360) + 360) % 360;
+    flip({ choice: side })
+      .then((res) => {
+        turnsRef.current += settings.reduceMotion ? 0 : 6;
+        const needed = res.landed !== faceRef.current ? 180 : 0;
+        const delta =
+          turnsRef.current * 360 + ((needed - (rotateY.get() % 360)) % 360 + 360) % 360;
 
-    animate(rotateY, rotateY.get() + target, {
-      duration: settings.reduceMotion ? 0.05 : 1.8,
-      ease: [0.15, 0.7, 0.25, 1],
-      onComplete: () => {
-        faceRef.current = outcome;
-        turnsRef.current = 0;
+        animate(rotateY, rotateY.get() + delta, {
+          duration: settings.reduceMotion ? 0.05 : 1.8,
+          ease: [0.15, 0.7, 0.25, 1],
+          onComplete: () => {
+            faceRef.current = res.landed as Side;
+            turnsRef.current = 0;
+            setFlipping(false);
+            setResult({ landed: res.landed as Side, won: res.won, net: res.net });
+            if (res.won) {
+              setStreak((s) => {
+                const next = s + 1;
+                setBest((b) => Math.max(b, next));
+                return next;
+              });
+            } else {
+              setStreak(0);
+            }
+          },
+        });
+      })
+      .catch((err: unknown) => {
         setFlipping(false);
-        setResult(outcome);
-        if (outcome === side) {
-          setStreak((s) => {
-            const next = s + 1;
-            setBest((b) => Math.max(b, next));
-            return next;
-          });
-        } else {
-          setStreak(0);
-        }
-      },
-    });
+        setError(err instanceof Error ? err.message : 'Flip failed');
+      });
   };
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div style={{ perspective: '900px' }} className="h-40 w-40">
+      <div style={{ perspective: '900px' }} className="h-36 w-36 sm:h-40 sm:w-40">
         <m.div
           className="relative h-full w-full"
           style={{ rotateY, transformStyle: 'preserve-3d' }}
           aria-live="polite"
-          aria-label={result ? `Coin shows ${result}` : 'Coin'}
+          aria-label={result ? `Coin shows ${result.landed}` : 'Coin'}
         >
           <Face side="heads" />
           <div style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }} className="absolute inset-0 rounded-full">
@@ -96,19 +107,21 @@ const CoinFlip = () => {
                 : 'bg-secondary/30 dark:bg-secondary/10 border border-primary/20 dark:border-[#f4d5ad]/20 text-primary dark:text-[#f4d5ad] hover:border-accent'
             }`}
           >
-            {side === 'heads' ? 'Heads' : 'Tails'}
+            {side === 'heads' ? `Heads (${ARCADE.coin.cost})` : `Tails (${ARCADE.coin.cost})`}
           </button>
         ))}
       </div>
 
-      <p className="h-5 font-mono text-sm" role="status">
-        {result && !flipping && (
-          choice === result ? (
-            <span className="text-green-600 dark:text-green-400">Called it — it&apos;s {result}!</span>
+      <p className="h-5 font-mono text-sm" role="status" aria-live="polite">
+        {error && <span className="text-red-600 dark:text-red-400">{error}</span>}
+        {!error && result && (
+          result.won ? (
+            <span className="text-green-600 dark:text-green-400">Called it — it&apos;s {result.landed}! +{result.net} LB</span>
           ) : (
-            <span className="text-red-600 dark:text-red-400">It landed {result}. Streak reset.</span>
+            <span className="text-red-600 dark:text-red-400">It landed {result.landed}. {ARCADE.coin.cost} LB gone.</span>
           )
         )}
+        {!error && !result && flipping && <span className="text-primary/50 dark:text-[#f4d5ad]/50">In the air...</span>}
       </p>
 
       <p className="font-mono text-xs text-primary/50 dark:text-[#f4d5ad]/50">

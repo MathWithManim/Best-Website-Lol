@@ -633,3 +633,21 @@ export const PRESTIGE_SELL_BONUS = 0.25;
 export function prestigeMultiplier(prestigeCount: number): number {
   return Math.min(4, 1 + PRESTIGE_SELL_BONUS * Math.max(0, prestigeCount));
 }
+
+// ── Mini arcade economy ──────────────────────────────────────────────
+// Server-authoritative side bets. Every payout is computed from these
+// constants on the server; the client only animates the result.
+export const ARCADE = {
+  coin: { cost: 5, win: 9 },
+  plinko: { cost: 10 },
+  hilo: { cost: 10, perGuess: 5 },
+  wheel: { cost: 25 },
+} as const;
+
+export const PLINKO_MULTS = [10, 1, 0.5, 2, 0.2, 2, 0.5, 1, 10];
+export const WHEEL_MULTS = [0, 1, 0, 2, 0, 1, 0, 5];
+export const WHEEL_LABELS = WHEEL_MULTS.map((m) => (m === 5 ? 'JACKPOT' : `x${m}`));
+
+export function arcadePayout(cost: number, mult: number): number {
+  return Math.floor(cost * mult);
+}

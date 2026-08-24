@@ -19,33 +19,6 @@ export const FACTS: Array<{ label: string; value: string }> = [
   { label: 'Currently', value: 'Open to interesting work' }, // SWAP:
 ];
 
-export interface Project {
-  title: string;
-  description: string;
-  bullets?: string[];
-  stack: string[];
-  href?: string;
-  hrefLabel?: string;
-}
-
-export const PROJECTS: Project[] = [
-  {
-    title: 'Project One', // SWAP:
-    description: 'Swap this card in src/lib/portfolio.ts — title, description, stack chips and link.', // SWAP:
-    stack: ['Your', 'Stack', 'Here'],
-  },
-  {
-    title: 'Project Two', // SWAP:
-    description: 'Same deal — a real project goes here.', // SWAP:
-    stack: ['Swap', 'Me'],
-  },
-  {
-    title: 'Project Three', // SWAP:
-    description: 'Third slot, same drill.', // SWAP:
-    stack: ['TBD'],
-  },
-];
-
 export const SKILL_GROUPS: Array<{ group: string; items: string[] }> = [
   { group: 'Frontend', items: ['React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Vite'] },
   { group: 'Backend', items: ['Convex functions & components', 'Better Auth', 'Cron jobs', 'Rate limiting'] },
@@ -54,7 +27,7 @@ export const SKILL_GROUPS: Array<{ group: string; items: string[] }> = [
 
 export const CONTACT_BLURB = 'Got a project or a weird idea? Links below.'; // SWAP:
 export const SOCIALS: Array<{ label: string; href: string }> = [
-  { label: 'GitHub', href: '#' }, // SWAP: real URLs
-  { label: 'X / Twitter', href: '#' }, // SWAP:
-  { label: 'Email', href: '#' }, // SWAP: mailto:you@example.com
+  { label: 'GitHub', href: 'https://github.com/MathWithManim' },
+  { label: 'TikTok', href: 'https://tiktok.com/@mathwowamazing' },
+  { label: 'Email', href: 'mailto:mathmanim09@gmail.com' },
 ];
