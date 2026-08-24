@@ -134,3 +134,17 @@ body {
   from { top: 6px; left: 6px; }
   to { top: 22px; left: calc(100% - 12px); }
 }
+
+/* Arcade cabinet: pause attract-mode when targeted, honor OS reduced-motion */
+.arcade-bob { animation: arcade-bob 3s ease-in-out infinite; }
+@keyframes arcade-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.arcade-bob:hover,
+.arcade-bob:focus-visible,
+.arcade-bob:hover *,
+.arcade-bob:focus-visible * { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .arcade-bob, .arcade-bob *, [style*="arcade-"] { animation: none !important; }
+}

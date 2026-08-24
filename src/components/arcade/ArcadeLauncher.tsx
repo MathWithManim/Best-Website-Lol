@@ -4,7 +4,6 @@ import { AnimatePresence, m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { GAMES } from '../../lib/games';
 import { PlinkoArt, CoinArt, SlotsArt, HiLoArt, WheelArt } from './GameArt';
-import { useSettings } from '../../lib/settings';
 
 const GAME_ART: Record<number, (props: { color: string; dark: string }) => ReactElement> = {
   1: PlinkoArt,
@@ -19,49 +18,38 @@ const GAME_ART: Record<number, (props: { color: string; dark: string }) => React
 // simply glows on hover.
 
 const ArcadeButton = ({ onClick }: { onClick: () => void }) => {
-  const { settings } = useSettings();
   return (
-    <m.button
+    <button
       type="button"
       onClick={onClick}
       aria-haspopup="dialog"
       aria-label="Open the mini arcade"
       title="Mini arcade"
-      animate={settings.reduceMotion ? undefined : { y: [0, -4, 0] }}
-      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-      whileHover={settings.reduceMotion ? undefined : { rotate: -2, scale: 1.06 }}
-      className="group fixed left-4 top-[84px] z-50 flex h-16 w-12 cursor-pointer flex-col overflow-hidden rounded-lg border-2 border-[#5D3A1A]/60 bg-gradient-to-b from-primary to-darker shadow-[0_6px_18px_rgba(93,58,26,0.45)] transition-shadow hover:shadow-[0_8px_26px_rgba(201,150,46,0.55)]"
+      className="group fixed left-4 top-[84px] z-50 h-16 w-12 cursor-pointer rounded-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/60"
     >
-      {/* marquee */}
-      <span className="flex h-3 items-center justify-center gap-1 bg-[#C9962E]">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="h-1 w-1 rounded-full bg-[#F5E6CA]"
-            style={
-              settings.reduceMotion
-                ? { opacity: 0.9 }
-                : { animation: `arcade-chase 1.1s ${i * 0.18}s infinite` }
-            }
-          />
-        ))}
+      {/* Visuals live on an inner wrapper so the hit-target itself never moves
+          (stable for pointer/tremor users and automation alike). */}
+      <span className="arcade-bob flex h-full w-full flex-col overflow-hidden rounded-lg border-2 border-[#5D3A1A]/60 bg-gradient-to-b from-primary to-darker shadow-[0_6px_18px_rgba(93,58,26,0.45)] transition-all duration-200 group-hover:-rotate-2 group-hover:scale-105 group-hover:shadow-[0_8px_26px_rgba(201,150,46,0.55)]">
+        {/* marquee */}
+        <span className="flex h-3 items-center justify-center gap-1 bg-[#C9962E]">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="h-1 w-1 rounded-full bg-[#F5E6CA]"
+              style={{ animation: `arcade-chase 1.1s ${i * 0.18}s infinite` }}
+            />
+          ))}
+        </span>
+        {/* screen */}
+        <span className="relative m-1 flex-1 rounded bg-[#1a120b]/85">
+          <span className="arcade-ball absolute inset-x-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#C9962E]" />
+          <span className="absolute bottom-1 left-1 right-1 h-1 rounded-sm bg-[#f4d5ad]/25" />
+          <span className="absolute bottom-2.5 left-2 right-2 h-1 rounded-sm bg-[#f4d5ad]/40" />
+        </span>
+        {/* coin slot */}
+        <span className="mx-auto mb-1.5 h-1.5 w-5 rounded-full bg-[#1a120b]/70 shadow-inner" />
       </span>
-      {/* screen */}
-      <span className="relative m-1 flex-1 rounded bg-[#1a120b]/85">
-        <span
-          className="absolute inset-x-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#C9962E]"
-          style={
-            settings.reduceMotion
-              ? undefined
-              : { animation: 'arcade-ball 1.4s ease-in-out infinite alternate' }
-          }
-        />
-        <span className="absolute bottom-1 left-1 right-1 h-1 rounded-sm bg-[#f4d5ad]/25" />
-        <span className="absolute bottom-2.5 left-2 right-2 h-1 rounded-sm bg-[#f4d5ad]/40" />
-      </span>
-      {/* coin slot */}
-      <span className="mx-auto mb-1.5 h-1.5 w-5 rounded-full bg-[#1a120b]/70 shadow-inner" />
-    </m.button>
+    </button>
   );
 };
 

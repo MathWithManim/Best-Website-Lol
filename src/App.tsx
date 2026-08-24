@@ -117,6 +117,8 @@ function AppShell() {
           <FloatingContact />
           <ScrollUpButton />
           <MobileCTA />
+          <AchievementToasts />
+          <ArcadeLauncher />
         </div>
       </BrowserRouter>
     </MotionConfig>
@@ -129,8 +131,6 @@ function App() {
       <UserProvider>
         <SettingsProvider>
           <CosmeticThemeProvider>
-            <AchievementToasts />
-            <ArcadeLauncher />
             <AppShell />
           </CosmeticThemeProvider>
         </SettingsProvider>

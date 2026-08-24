@@ -1,0 +1,30 @@
+- generic [ref=f2e4]:
+  - link "Skip to main content" [ref=f2e5] [cursor=pointer]:
+    - /url: "#main-content"
+  - main [ref=f2e215]:
+    - generic [ref=f2e216]:
+      - link "← Back to site" [ref=f2e217] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f2e218]:
+        - paragraph [ref=f2e219]: Mini arcade · game 2
+        - heading "Coin Flip" [level=1] [ref=f2e220]
+        - paragraph [ref=f2e221]: Heads or tails, no takebacks.
+      - generic [ref=f2e223]:
+        - generic "Coin" [ref=f2e225]:
+          - generic [ref=f2e226]:
+            - generic [ref=f2e227]: H
+            - generic [ref=f2e228]: heads
+          - generic [ref=f2e230]:
+            - generic [ref=f2e231]: T
+            - generic [ref=f2e232]: tails
+        - generic [ref=f2e233]:
+          - button "Heads" [disabled] [ref=f2e234] [cursor=pointer]
+          - button "Tails" [disabled] [ref=f2e235] [cursor=pointer]
+        - status
+        - paragraph [ref=f2e236]: Streak 0 · Best 0
+      - paragraph [ref=f2e237]: Just for fun — no LuckBucks involved.
+  - generic [ref=f2e99]:
+    - paragraph [ref=f2e100]: We use cookies to ensure you get the best experience on our site.
+    - button "Got it" [ref=f2e101] [cursor=pointer]
+  - button "💬" [ref=f2e103] [cursor=pointer]
+  - button "Open the mini arcade" [ref=f2e104] [cursor=pointer]

@@ -1,0 +1,9 @@
+- generic [ref=f6e4]:
+  - link "Skip to main content" [ref=f6e5] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=f6e6]: Loading...
+  - generic [ref=f6e8]:
+    - paragraph [ref=f6e9]: We use cookies to ensure you get the best experience on our site.
+    - button "Got it" [ref=f6e10] [cursor=pointer]
+  - button "💬" [ref=f6e12] [cursor=pointer]
+  - button "Open the mini arcade" [ref=f6e13] [cursor=pointer]
