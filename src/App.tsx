@@ -30,6 +30,8 @@ const Logout = lazy(() => import('./pages/Logout'));
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
+const ArcadePage = lazy(() => import('./pages/ArcadePage'));
+import ArcadeLauncher from './components/arcade/ArcadeLauncher';
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -82,6 +84,7 @@ function AnimatedRoutes() {
               </>
             } />
             <Route path="/rng" element={<RNGSection />} />
+            <Route path="/game/:gameId" element={<ArcadePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/u/:username" element={<PublicProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
@@ -124,9 +127,10 @@ function App() {
   return (
     <ConvexClientProvider>
       <UserProvider>
-        <AchievementToasts />
         <SettingsProvider>
           <CosmeticThemeProvider>
+            <AchievementToasts />
+            <ArcadeLauncher />
             <AppShell />
           </CosmeticThemeProvider>
         </SettingsProvider>

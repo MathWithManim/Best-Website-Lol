@@ -124,3 +124,13 @@ body {
   .transition-none { transition: none !important; }
   .opacity-fade { transition: opacity 150ms ease !important; }
 }
+
+/* Arcade cabinet attract-mode animations (launcher button) */
+@keyframes arcade-chase {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+@keyframes arcade-ball {
+  from { top: 6px; left: 6px; }
+  to { top: 22px; left: calc(100% - 12px); }
+}
