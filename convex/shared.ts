@@ -637,17 +637,48 @@ export function prestigeMultiplier(prestigeCount: number): number {
 // ── Mini arcade economy ──────────────────────────────────────────────
 // Server-authoritative side bets. Every payout is computed from these
 // constants on the server; the client only animates the result.
+// Every game is negative-EV by construction (~4% house edge): grinding
+// cannot print LuckBucks, so no play limits are needed.
+
 export const ARCADE = {
   coin: { cost: 5, win: 9 },
   plinko: { cost: 10 },
-  hilo: { cost: 10, perGuess: 5 },
+  hilo: { cost: 10, payoutPct: 0.96 },
   wheel: { cost: 25 },
+  dice: { cost: 10, payoutPct: 0.96 },
+  mines: { cost: 10, payoutPct: 0.96, tiles: 9, mines: 3, maxPicks: 4 },
+  slots: { cost: 5 },
+  limbo: { cost: 10, payoutPct: 0.96, minTarget: 1.1, maxTarget: 50 },
+  cups: { cost: 5, cups: 3, payoutMult: 2.88 },
 } as const;
 
-export const PLINKO_MULTS = [10, 1, 0.5, 2, 0.2, 2, 0.5, 1, 10];
-export const WHEEL_MULTS = [0, 1, 0, 2, 0, 1, 0, 5];
+// Binomial 8-row walk. Edge-weighted so EV = 249.2/256 ≈ 0.97 against the stake.
+export const PLINKO_MULTS = [6, 1, 0.5, 1.6, 0.2, 1.6, 0.5, 1, 6];
+// Uniform 8 segments, sum 7.5 → EV = 7.5/8 = 0.9375.
+export const WHEEL_MULTS = [0, 1, 0, 1.5, 0, 1, 0, 5];
 export const WHEEL_LABELS = WHEEL_MULTS.map((m) => (m === 5 ? 'JACKPOT' : `x${m}`));
 
 export function arcadePayout(cost: number, mult: number): number {
   return Math.floor(cost * mult);
 }
+
+// Slots: weighted reels. EV ≈ 0.964 (triples + any-pair paytable).
+export const SLOTS_SYMBOLS = ['SEVEN', 'GEM', 'BOLT', 'MOON', 'BELL', 'STAR'] as const;
+export type SlotsSymbol = (typeof SLOTS_SYMBOLS)[number];
+export const SLOTS_WEIGHTS: Record<SlotsSymbol, number> = {
+  SEVEN: 1,
+  GEM: 2,
+  BOLT: 3,
+  MOON: 4,
+  BELL: 6,
+  STAR: 8,
+};
+export const SLOTS_TRIPLE_PAY: Record<SlotsSymbol, number> = {
+  SEVEN: 50,
+  GEM: 20,
+  BOLT: 10,
+  MOON: 6,
+  BELL: 4,
+  STAR: 2.5,
+};
+export const SLOTS_PAIR_PAY = 1.5;

@@ -39,107 +39,100 @@ const HiddenCard = () => (
   </div>
 );
 
-type Phase = 'idle' | 'playing';
+// Odds-based single guess: fair odds (13 / ways) scaled to 96% payout.
+function multFor(card: number, dir: 'higher' | 'lower'): number {
+  const ways = dir === 'higher' ? 14 - card : card - 2;
+  return Math.floor(((ARCADE.hilo.payoutPct * 13) / ways) * 100) / 100;
+}
 
 const HiLo = () => {
   const start = useMutation(api.arcade.startHiLo);
   const guess = useMutation(api.arcade.guessHiLo);
-  const [phase, setPhase] = useState<Phase>('idle');
-  const [busy, setBusy] = useState(false);
   const [card, setCard] = useState<Card | null>(null);
-  const [streak, setStreak] = useState(0);
-  const [best, setBest] = useState(0);
+  const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const beginRun = () => {
+  const beginRound = () => {
     if (busy) return;
     setBusy(true);
     setError(null);
+    setMessage(null);
     start({})
       .then((res) => {
         setCard({ rank: res.card, suit: SUITS[res.card % 4] });
-        setStreak(0);
-        setMessage('Run started. Higher or lower?');
-        setPhase('playing');
+        setMessage('Higher or lower? One call.');
       })
       .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Could not start'))
       .finally(() => setBusy(false));
   };
 
   const callDirection = (dir: 'higher' | 'lower') => {
-    if (busy || phase !== 'playing') return;
+    if (busy || !card) return;
     setBusy(true);
     guess({ direction: dir })
       .then((res) => {
         setCard({ rank: res.nextCard, suit: SUITS[res.nextCard % 4] });
-        if (res.busted) {
-          setStreak(0);
-          setMessage(`Busted — run over.`);
-          setPhase('idle');
-        } else {
-          setMessage(`+${res.wonLb} LB. Again?`);
-          setStreak((s) => {
-            const v = s + 1;
-            setBest((b) => Math.max(b, v));
-            return v;
-          });
-        }
+        if (res.outcome === 'win') setMessage(`Called it — x${(res.payout / ARCADE.hilo.cost).toFixed(2)}! +${res.net} LB`);
+        else if (res.outcome === 'push') setMessage(`Tie — stake pushed back.`);
+        else setMessage(`Wrong. ${ARCADE.hilo.cost} LB gone.`);
       })
       .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Guess failed'))
       .finally(() => setBusy(false));
   };
 
+  const roundOver = message !== null && (message.startsWith('Called') || message.startsWith('Wrong') || message.startsWith('Tie'));
+
   return (
     <div className="flex flex-col items-center gap-6">
       <AnimatePresence mode="wait">
         <m.div
-          key={phase + (card ? `${card.rank}${card.suit}` : 'none') + String(busy)}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          key={card ? `${card.rank}${card.suit}` : 'none'}
+          initial={{ opacity: 0, y: 10, rotateY: 90 }}
+          animate={{ opacity: 1, y: 0, rotateY: 0 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.3 }}
         >
           {card ? <CardView card={card} /> : <HiddenCard />}
         </m.div>
       </AnimatePresence>
 
-      {phase === 'idle' ? (
-        <button
-          type="button"
-          onClick={beginRun}
-          disabled={busy}
-          className="cursor-pointer rounded-xl bg-primary px-8 py-3 font-mono text-sm font-bold text-bg transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 dark:bg-accent dark:text-[#1a120b]"
-        >
-          {busy ? 'Dealing...' : `Start run (${ARCADE.hilo.cost} LB)`}
-        </button>
-      ) : (
+      {card && !roundOver ? (
         <div className="flex gap-3">
           <button
             type="button"
             onClick={() => callDirection('higher')}
             disabled={busy}
-            className="cursor-pointer rounded-xl bg-green-700 px-6 py-3 font-mono text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 sm:px-8"
+            className="cursor-pointer rounded-xl bg-green-700 px-5 py-3 font-mono text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 sm:px-7"
           >
-            ▲ Higher
+            ▲ Higher · x{multFor(card.rank, 'higher')}
           </button>
           <button
             type="button"
             onClick={() => callDirection('lower')}
             disabled={busy}
-            className="cursor-pointer rounded-xl bg-red-700 px-6 py-3 font-mono text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 sm:px-8"
+            className="cursor-pointer rounded-xl bg-red-700 px-5 py-3 font-mono text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 sm:px-7"
           >
-            ▼ Lower
+            ▼ Lower · x{multFor(card.rank, 'lower')}
           </button>
         </div>
+      ) : (
+        <button
+          type="button"
+          onClick={beginRound}
+          disabled={busy}
+          className="cursor-pointer rounded-xl bg-primary px-8 py-3 font-mono text-sm font-bold text-bg transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 dark:bg-accent dark:text-[#1a120b]"
+        >
+          {busy ? 'Dealing...' : `Deal (${ARCADE.hilo.cost} LB)`}
+        </button>
       )}
 
       <p className="h-5 font-mono text-sm" role="status" aria-live="polite">
         {error && <span className="text-red-600 dark:text-red-400">{error}</span>}
+        {!error && !message && (
+          <span className="text-primary/50 dark:text-[#f4d5ad]/50">One card, one call — odds set the payout.</span>
+        )}
         {!error && message}
-      </p>
-      <p className="font-mono text-xs text-primary/50 dark:text-[#f4d5ad]/50">
-        Streak {streak} · Best {best} · +{ARCADE.hilo.perGuess} LB per correct call
       </p>
     </div>
   );
