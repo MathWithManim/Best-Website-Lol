@@ -7,12 +7,22 @@ import Plinko from '../components/arcade/games/Plinko';
 import CoinFlip from '../components/arcade/games/CoinFlip';
 import HiLo from '../components/arcade/games/HiLo';
 import WheelSpin from '../components/arcade/games/WheelSpin';
+import Dice from '../components/arcade/games/Dice';
+import Mines from '../components/arcade/games/Mines';
+import Slots from '../components/arcade/games/Slots';
+import Limbo from '../components/arcade/games/Limbo';
+import Cups from '../components/arcade/games/Cups';
 
 const GAME_COMPONENTS: Record<number, ComponentType> = {
   1: Plinko,
   2: CoinFlip,
   3: HiLo,
   4: WheelSpin,
+  5: Dice,
+  6: Mines,
+  7: Slots,
+  8: Limbo,
+  9: Cups,
 };
 
 const ArcadePage = () => {

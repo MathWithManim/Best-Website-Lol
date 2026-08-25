@@ -3,13 +3,28 @@ import type { ReactElement } from 'react';
 import { AnimatePresence, m } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { GAMES } from '../../lib/games';
-import { PlinkoArt, CoinArt, HiLoArt, WheelArt } from './GameArt';
+import {
+  PlinkoArt,
+  CoinArt,
+  HiLoArt,
+  WheelArt,
+  DiceArt,
+  MinesArt,
+  SlotsArt,
+  LimboArt,
+  CupsArt,
+} from './GameArt';
 
 const ART: Record<number, (props: { color: string; dark: string }) => ReactElement> = {
   1: PlinkoArt,
   2: CoinArt,
   3: HiLoArt,
   4: WheelArt,
+  5: DiceArt,
+  6: MinesArt,
+  7: SlotsArt,
+  8: LimboArt,
+  9: CupsArt,
 };
 
 const ArcadeCard = ({ id, index }: { id: number; index: number }) => {
@@ -64,7 +79,7 @@ const ArcadeCard = ({ id, index }: { id: number; index: number }) => {
   );
 };
 
-// Side arcade strip on the /rng page: four LuckBucks minigames.
+// Side arcade strip on the /rng page: nine LuckBucks minigames.
 const ArcadeSection = () => {
   return (
     <section aria-label="Mini arcade" className="mx-auto w-full max-w-5xl px-6 pb-16">
@@ -72,7 +87,7 @@ const ArcadeSection = () => {
         Insert coin
       </p>
       <h2 className="mb-5 font-cursive text-4xl font-bold text-primary dark:text-[#f4d5ad]">Side Arcade</h2>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {GAMES.map((g, i) => (
           <ArcadeCard key={g.id} id={g.id} index={i} />
         ))}
