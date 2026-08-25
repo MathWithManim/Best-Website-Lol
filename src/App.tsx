@@ -47,6 +47,10 @@ function AnimatedRoutes() {
   const { isAuthenticated } = useConvexAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [location.pathname]);
+
   // Only redirect unauth users from profile/settings routes, not from /rng
   useEffect(() => {
     const protectedRoutes = ['/profile', '/settings'];
