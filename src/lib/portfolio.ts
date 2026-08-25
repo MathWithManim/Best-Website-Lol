@@ -9,21 +9,15 @@ export const INTRO =
 
 export const ABOUT_PARAGRAPHS: string[] = [
   // SWAP: both paragraphs are placeholder copy.
-  'I write TypeScript all day, mostly by choice. I care about the boring parts done right: types that hold up, backends that survive concurrency, deploys nobody has to babysit.',
-  'This page is my public workbench. Projects land here once they stop embarrassing me.',
+  'I build things for the web and actually finish them. The boring parts — the types, the edge cases, the deploys at 2am — are the parts I care about most, because that is what still works a year later.',
+  'This site is my workbench: half portfolio, half playground. If it is live here, it survived me trying to break it first.',
 ];
 
 export const FACTS: Array<{ label: string; value: string }> = [
   { label: 'Role', value: 'Full-stack developer' }, // SWAP:
   { label: 'Focus', value: 'Web apps · realtime UIs' }, // SWAP:
-  { label: 'Currently', value: 'Open to interesting work' }, // SWAP:
+  { label: 'Status', value: 'Open to interesting work' }, // SWAP:
 ];
-
-export const SKILL_GROUPS: Array<{ group: string; items: string[] }> = [
-  { group: 'Frontend', items: ['React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Vite'] },
-  { group: 'Backend', items: ['Convex functions & components', 'Better Auth', 'Cron jobs', 'Rate limiting'] },
-  { group: 'Tooling', items: ['Git & GitHub Actions', 'Cloudflare Pages', 'Vitest', 'Sentry'] },
-]; // SWAP: trim or extend to your real stack
 
 export const CONTACT_BLURB = 'Got a project or a weird idea? Links below.'; // SWAP:
 export const SOCIALS: Array<{ label: string; href: string }> = [

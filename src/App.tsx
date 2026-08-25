@@ -3,7 +3,7 @@ import { AnimatePresence, m, MotionConfig } from 'framer-motion';
 import { lazy, Suspense, useEffect } from 'react';
 import Hero from './components/Hero';
 import AboutSection from './components/AboutSection';
-import SkillsSection from './components/SkillsSection';
+import TerminalSection from './components/TerminalSection';
 import ContactSection from './components/ContactSection';
 import ArcadeSection from './components/arcade/ArcadeSection';
 import NotFound from './components/NotFound';
@@ -75,7 +75,7 @@ function AnimatedRoutes() {
                 <main id="main-content">
                   <Hero />
                   <AboutSection />
-                  <SkillsSection />
+                  <TerminalSection />
                   <ContactSection />
                 </main>
               </>
