@@ -5,4 +5,4 @@ Disallow: /logout
 Disallow: /profile
 Disallow: /settings
 
-Sitemap: https://jasper-sona.pages.dev/sitemap.xml
+Sitemap: https://nostalgichillax.pages.dev/sitemap.xml

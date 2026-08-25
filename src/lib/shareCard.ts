@@ -45,7 +45,7 @@ export function drawShareCard(canvas: HTMLCanvasElement, data: ShareCardData, ac
   ctx.textAlign = 'center';
   ctx.fillStyle = paper ? '#555555' : '#ffffff66';
   ctx.font = 'bold 30px monospace';
-  ctx.fillText('🎲 jasper-sona.pages.dev', size / 2, 52);
+  ctx.fillText('🎲 nostalgichillax.pages.dev', size / 2, 52);
 
   const tile = { x: 150, y: 130, w: size - 300, h: size - 380 };
   ctx.strokeStyle = accent;
