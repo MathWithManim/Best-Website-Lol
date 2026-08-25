@@ -39,11 +39,13 @@ const Hero = () => {
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="relative text-7xl md:text-9xl lg:text-[10rem] font-bold text-center leading-none"
       >
-        <h1 className="text-primary font-cursive flex items-center justify-center [text-shadow:0_0_80px_rgba(224,159,88,0.35)]">
-          Jasper
-        </h1>
-        <h1 className="text-accent font-cursive flex items-center justify-center [text-shadow:0_0_80px_rgba(224,159,88,0.25)]">
-          Sona
+        <h1 className="font-cursive text-center">
+          <span className="text-primary flex items-center justify-center [text-shadow:0_0_80px_rgba(224,159,88,0.35)]">
+            Jasper
+          </span>
+          <span className="text-accent flex items-center justify-center [text-shadow:0_0_80px_rgba(224,159,88,0.25)]">
+            Sona
+          </span>
         </h1>
       </m.div>
 
