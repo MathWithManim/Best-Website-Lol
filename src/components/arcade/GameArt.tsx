@@ -123,3 +123,94 @@ export const WheelArt = ({ color, dark }: ArtProps) => {
   );
 };
 
+export const DiceArt = ({ color, dark }: ArtProps) => (
+  <svg viewBox="0 0 120 80" className="w-full h-full" aria-hidden>
+    <rect x="14" y="22" width="36" height="36" rx="7" fill="#F5E6CA" stroke={dark} strokeWidth="1.6" transform="rotate(-8 32 40)" />
+    <g transform="rotate(-8 32 40)" fill={dark}>
+      <circle cx="24" cy="32" r="3" />
+      <circle cx="40" cy="48" r="3" />
+    </g>
+    <g transform="rotate(9 82 40)">
+      <rect x="64" y="22" width="36" height="36" rx="7" fill={color} stroke="#F5E6CA" strokeWidth="2" />
+      <g fill="#F5E6CA">
+        <circle cx="74" cy="32" r="3" />
+        <circle cx="90" cy="32" r="3" />
+        <circle cx="82" cy="40" r="3" />
+        <circle cx="74" cy="48" r="3" />
+        <circle cx="90" cy="48" r="3" />
+      </g>
+    </g>
+    <text x="60" y="18" textAnchor="middle" fontSize="11" fontFamily="monospace" fontWeight="bold" fill="#F5E6CA" opacity="0.9">
+      1-100
+    </text>
+    <path d="M52 62 h16" stroke={color} strokeWidth="2.4" strokeLinecap="round">
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="1.5s" repeatCount="indefinite" />
+    </path>
+  </svg>
+);
+
+export const MinesArt = ({ color, dark }: ArtProps) => (
+  <svg viewBox="0 0 120 80" className="w-full h-full" aria-hidden>
+    {[0, 1, 2].map((row) =>
+      [0, 1, 2].map((col) => {
+        const x = 30 + col * 22;
+        const y = 12 + row * 20;
+        const isMine = (row === 0 && col === 2) || (row === 1 && col === 0);
+        return isMine ? (
+          <g key={`${row}${col}`}>
+            <circle cx={x + 8} cy={y + 8} r="7.5" fill={dark} stroke="#F5E6CA" strokeWidth="1.2" />
+            <path d={`M${x + 8} ${y + 1.5} v-3 M${x + 8} ${y + 14.5} v3 M${x + 0.5} ${y + 8} h-3 M${x + 15.5} ${y + 8} h3`} stroke="#F5E6CA" strokeWidth="1.2" strokeLinecap="round" opacity="0.85" />
+          </g>
+        ) : (
+          <rect key={`${row}${col}`} x={x} y={y} width="16" height="16" rx="3.5" fill="#F5E6CA" stroke={color} strokeWidth="1.4" opacity="0.95" />
+        );
+      })
+    )}
+    <circle cx="98" cy="20" r="4" fill={color} opacity="0.9">
+      <animate attributeName="opacity" values="0.9;0.25;0.9" dur="1.7s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="98" cy="40" r="4" fill={color} opacity="0.4">
+      <animate attributeName="opacity" values="0.4;0.9;0.4" dur="1.7s" repeatCount="indefinite" />
+    </circle>
+  </svg>
+);
+
+export const LimboArt = ({ color, dark }: ArtProps) => (
+  <svg viewBox="0 0 120 80" className="w-full h-full" aria-hidden>
+    <line x1="24" y1="64" x2="96" y2="64" stroke="#F5E6CA" strokeWidth="1.6" opacity="0.7" />
+    {[1.5, 2, 5, 10].map((m, i) => (
+      <g key={m}>
+        <line x1={28 + i * 18} y1="64" x2={28 + i * 18} y2="58" stroke="#F5E6CA" strokeWidth="1.2" opacity="0.6" />
+        <text x={28 + i * 18} y="74" textAnchor="middle" fontSize="7.5" fontFamily="monospace" fill="#F5E6CA" opacity="0.7">
+          x{m}
+        </text>
+      </g>
+    ))}
+    <circle cx="40" cy="30" r="5" fill={color} stroke="#F5E6CA" strokeWidth="1.4">
+      <animate attributeName="cy" values="30;14;30" dur="2.2s" repeatCount="indefinite" />
+    </circle>
+    <path d="M40 30 C 60 30 74 20 88 14" fill="none" stroke={color} strokeWidth="2" strokeDasharray="4 3" opacity="0.8">
+      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.2s" repeatCount="indefinite" />
+    </path>
+    <text x="96" y="12" textAnchor="middle" fontSize="9" fontWeight="bold" fontFamily="monospace" fill="#F5E6CA">
+      x50
+    </text>
+    <rect x="16" y="26" width="10" height="10" rx="2" fill={dark} stroke="#F5E6CA" strokeWidth="0.8" />
+  </svg>
+);
+
+export const CupsArt = ({ color, dark }: ArtProps) => (
+  <svg viewBox="0 0 120 80" className="w-full h-full" aria-hidden>
+    <ellipse cx="60" cy="68" rx="44" ry="4.5" fill={dark} opacity="0.35" />
+    {[26, 60, 94].map((x, i) => (
+      <g key={x}>
+        <path d={`M${x - 12} 30 h24 l-4.5 32 h-15 z`} fill={color} stroke="#F5E6CA" strokeWidth="1.6" opacity={i === 1 ? 1 : 0.85} />
+        <ellipse cx={x} cy="30" rx="12" ry="3.4" fill="#F5E6CA" stroke={dark} strokeWidth="1" />
+      </g>
+    ))}
+    <circle cx="60" cy="58" r="4" fill="#F5E6CA">
+      <animate attributeName="opacity" values="1;1;0;1" dur="2.6s" repeatCount="indefinite" />
+    </circle>
+  </svg>
+);
+
