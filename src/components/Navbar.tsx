@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { m, AnimatePresence } from 'framer-motion';
 import { useConvexAuth } from 'convex/react';
-import DarkModeToggle from './DarkModeToggle';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -29,7 +28,7 @@ const Navbar = () => {
       <div className="hidden md:flex items-center gap-6">
         <ul className="flex gap-6 font-typewriter items-center">
           {visibleLinks.map((link) => (
-            <li key={link.to}>
+            <li key={link.label}>
               <Link
                 to={link.to}
                 title={`Navigate to ${link.label}`}
@@ -40,12 +39,10 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-        <DarkModeToggle />
       </div>
 
       {/* Mobile controls */}
-      <div className="md:hidden flex items-center gap-4">
-        <DarkModeToggle />
+      <div className="md:hidden flex items-center">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="font-mono relative w-8 h-8 flex items-center justify-center"
@@ -83,7 +80,7 @@ const Navbar = () => {
             <ul className="flex flex-col gap-4 font-typewriter p-6">
               {visibleLinks.map((link, i) => (
                 <m.li
-                  key={link.to}
+                  key={link.label}
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.07, duration: 0.2 }}
