@@ -27,6 +27,7 @@
 }
 
 html.dark {
+  color-scheme: dark;
   --app-bg: #1a120b;
   --app-primary: #e09f58;
   --app-text: #f4d5ad;
@@ -75,6 +76,11 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: #8B4513 #2d1e14;
+}
+
+::selection {
+  background: rgba(224, 159, 88, 0.35);
+  color: #f4d5ad;
 }
 
 /* Focus-visible: keyboard-only focus ring for accessibility */
