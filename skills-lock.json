@@ -211,6 +211,12 @@
       "skillPath": "skills/convex-verify/SKILL.md",
       "computedHash": "dbe65a37ca2e9a5afa55669b8928ce1dc3ac765151452008f9105bde049228f7"
     },
+    "oiloil-ui-ux-guide": {
+      "source": "oil-oil/ui-ux-guide",
+      "sourceType": "github",
+      "skillPath": "skills/oiloil-ui-ux-guide/SKILL.md",
+      "computedHash": "9a912b8a0161d878b424cf3acfb31152158d9efaafd1ba4a7cd2296fe8577696"
+    },
     "typescript-advanced-types": {
       "source": "wshobson/agents",
       "sourceType": "github",
