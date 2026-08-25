@@ -37,6 +37,12 @@ html.dark {
   --app-border: rgba(244, 213, 173, 0.2);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   background-color: var(--app-bg);
   color: var(--app-text);

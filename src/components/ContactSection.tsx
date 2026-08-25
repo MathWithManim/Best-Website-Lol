@@ -4,12 +4,21 @@ import { CONTACT_BLURB, SOCIALS } from '../lib/portfolio';
 const ContactSection = () => {
   return (
     <section id="contact" className="p-6 md:p-10 pb-16 max-w-5xl mx-auto scroll-mt-20 text-center">
+      <m.p
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+        className="font-mono text-xs text-accent mb-2 tracking-widest"
+      >
+        {'//'} ping
+      </m.p>
       <m.h2
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="text-3xl md:text-4xl font-sans font-bold mb-3 text-primary dark:text-[#f4d5ad]"
+        className="text-3xl md:text-4xl font-sans font-bold mb-3 text-primary"
       >
         Get in touch
       </m.h2>
@@ -31,7 +40,7 @@ const ContactSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.07, duration: 0.4 }}
-            className="px-5 py-2 bg-secondary/30 dark:bg-secondary/10 border border-primary/20 dark:border-[#f4d5ad]/20 font-mono text-sm font-bold rounded-xl hover:opacity-90 hover:border-accent dark:hover:border-[#c98a6e] transition-all active:scale-95"
+            className="px-5 py-2 bg-secondary/10 border border-primary/25 font-mono text-sm font-bold rounded-xl hover:border-accent hover:text-accent hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
           >
             {s.label}
           </m.a>

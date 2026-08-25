@@ -6,12 +6,21 @@ const AboutSection = () => {
     <section id="about" className="p-6 md:p-10 max-w-5xl mx-auto scroll-mt-20">
       <div className="md:flex md:gap-10">
         <div className="md:w-2/3">
+          <m.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="font-mono text-xs text-accent mb-2 tracking-widest"
+          >
+            {'//'} who
+          </m.p>
           <m.h2
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-3xl md:text-4xl font-sans font-bold mb-6 text-primary dark:text-[#f4d5ad]"
+            className="text-3xl md:text-4xl font-sans font-bold mb-6 text-primary"
           >
             About
           </m.h2>
