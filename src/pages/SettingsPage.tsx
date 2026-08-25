@@ -100,12 +100,6 @@ const SettingsPage = () => {
 
         <Section title="Appearance">
           <ToggleRow
-            label="Dark mode"
-            description="Use the dark theme across the site."
-            checked={settings.theme === 'dark'}
-            onChange={(next) => setSetting('theme', next ? 'dark' : 'light')}
-          />
-          <ToggleRow
             label="Reduce motion"
             description="Shorten or skip long animations like the rolling reel."
             checked={settings.reduceMotion}

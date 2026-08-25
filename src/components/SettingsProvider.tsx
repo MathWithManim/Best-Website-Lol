@@ -8,10 +8,8 @@ import {
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<Settings>(() => {
-    const initial = loadSettings();
-    // Apply the theme synchronously on first render so there is no light/dark flash.
-    document.documentElement.classList.toggle('dark', initial.theme === 'dark');
-    return initial;
+    // Dark mode lives statically in index.html (<html class="dark">), not here.
+    return loadSettings();
   });
 
   useEffect(() => {
@@ -21,10 +19,6 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       /* ignore quota/private-mode errors */
     }
   }, [settings]);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', settings.theme === 'dark');
-  }, [settings.theme]);
 
   const value = useMemo(
     () => ({

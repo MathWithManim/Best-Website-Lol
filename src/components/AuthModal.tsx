@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { authClient } from "../lib/auth-client";
-import DarkModeToggle from "./DarkModeToggle";
 
 interface AuthModalProps {
   onLogin?: (email: string) => void;
@@ -63,9 +62,6 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
 
   return (
     <div className="fixed inset-0 bg-bg/95 dark:bg-[#1a120b]/95 flex flex-col items-center justify-center z-50 p-6">
-      <div className="absolute top-6 right-6">
-        <DarkModeToggle />
-      </div>
       <m.div 
         key={mode}
         initial={{ opacity: 0, scale: 0.9 }}

@@ -1,10 +1,6 @@
 import { createContext, useContext } from 'react';
 
-export type ThemeMode = 'light' | 'dark';
-
 export interface Settings {
-  /** Light or dark theme. Applied to <html class="dark">. */
-  theme: ThemeMode;
   /** When true, long/looping animations are shortened or skipped entirely. */
   reduceMotion: boolean;
   /** When true, rarity grid cells render smaller and denser. */
@@ -17,7 +13,6 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'light',
   reduceMotion: false,
   compactGrid: false,
   showRarityNames: true,
@@ -37,9 +32,7 @@ export function loadSettings(): Settings {
   } catch {
     /* ignore corrupt storage */
   }
-  const prefersDark =
-    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  return { ...DEFAULT_SETTINGS, theme: prefersDark ? 'dark' : 'light' };
+  return { ...DEFAULT_SETTINGS };
 }
 
 export interface SettingsContextValue {
