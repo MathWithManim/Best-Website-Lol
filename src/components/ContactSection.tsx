@@ -32,19 +32,24 @@ const ContactSection = () => {
         {CONTACT_BLURB}
       </m.p>
       <div className="flex flex-wrap items-center justify-center gap-3">
-        {SOCIALS.map((s, i) => (
-          <m.a
-            key={s.label}
-            href={s.href}
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.07, duration: 0.4 }}
-            className="px-5 py-2 bg-secondary/10 border border-primary/25 font-mono text-sm font-bold rounded-xl hover:border-accent hover:text-accent hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
-          >
-            {s.label}
-          </m.a>
-        ))}
+        {SOCIALS.map((s, i) => {
+          const external = s.href.startsWith('http');
+          return (
+            <m.a
+              key={s.label}
+              href={s.href}
+              target={external ? '_blank' : undefined}
+              rel={external ? 'noopener noreferrer' : undefined}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.07, duration: 0.4 }}
+              className="px-5 py-2 bg-secondary/10 border border-primary/25 font-mono text-sm font-bold rounded-xl hover:border-accent hover:text-accent hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
+            >
+              {s.label}
+            </m.a>
+          );
+        })}
       </div>
     </section>
   );
