@@ -1,3 +1,11 @@
+# COMMIT POLICY — HIGHEST PRIORITY, READ FIRST
+
+**Commit EVERY feature. Commit EVERY change. Commit EVERY file. No exceptions.**
+
+- Never leave work uncommitted: if you changed it, commit it before moving on to anything else.
+- Keep commits atomic (one concern per commit), but ALWAYS commit — never batch unrelated work into one giant commit, never sit on a dirty working tree.
+- This rule overrides any default "don't commit unless asked" behavior.
+
 # PROJECT KNOWLEDGE BASE
 
 **Generated:** 2025-08-18
