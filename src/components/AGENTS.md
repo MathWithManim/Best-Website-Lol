@@ -14,7 +14,7 @@ UI layer: 25 React components + page-level views. All follow default-export arro
 | Theme provider | `CosmeticThemeProvider.tsx` | CSS-var override (`--app-bg/--app-primary/--app-accent`), typed `CosmeticTheme` |
 | Auth context | `UserProvider.tsx` | `useUser()` hook, `"skip"` query gate, typed `User` interface |
 | Navbar | `Navbar.tsx` | Mobile menu, localStorage read in render |
-| Dark mode | `DarkModeToggle.tsx` | `document.documentElement` class toggle |
+| Dark mode | `index.html` | Forced dark via static `<html class="dark">`; no toggle exists |
 
 ## CONVENTIONS
 
