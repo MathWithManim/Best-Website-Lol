@@ -15,6 +15,8 @@
     <meta name="twitter:title" content="Jasper Sona" />
     <meta name="twitter:description" content="Personal website with an RNG gacha game, rarity collections, and cosmetic shop." />
     <meta name="twitter:image" content="https://jasper-sona.pages.dev/android-chrome-512x512.png" />
+    <link rel="canonical" href="https://jasper-sona.pages.dev/" />
+    <meta property="og:site_name" content="Jasper Sona" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -25,9 +27,48 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>Jasper Sona</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://jasper-sona.pages.dev/#person",
+          "name": "Jasper Sona",
+          "url": "https://jasper-sona.pages.dev/",
+          "jobTitle": "Full-stack developer",
+          "description": "Developer of an RNG gacha game with rarity collections, arcade minigames, and a leaderboard.",
+          "sameAs": [
+            "https://github.com/MathWithManim",
+            "https://www.tiktok.com/@mathwowamazing"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://jasper-sona.pages.dev/#website",
+          "url": "https://jasper-sona.pages.dev/",
+          "name": "Jasper Sona",
+          "description": "Personal website with an RNG gacha game, rarity collections, and cosmetic shop.",
+          "publisher": { "@id": "https://jasper-sona.pages.dev/#person" }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <div style="font-family: monospace; background: #1a120b; color: #f4d5ad; padding: 2rem; min-height: 100vh;">
+        <h1>Jasper Sona</h1>
+        <p>Full-stack developer. This site is a JavaScript app — enable JS to play the RNG gacha game, arcade minigames, and browse the portfolio.</p>
+        <ul>
+          <li><a href="/rng" style="color: #e09f58;">RNG Game</a></li>
+          <li><a href="/cookies" style="color: #e09f58;">Cookie Policy</a></li>
+          <li><a href="/terms" style="color: #e09f58;">Terms</a></li>
+          <li><a href="/privacy" style="color: #e09f58;">Privacy</a></li>
+        </ul>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
