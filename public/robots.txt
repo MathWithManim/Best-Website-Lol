@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /logout
+Disallow: /profile
+Disallow: /settings
 
 Sitemap: https://jasper-sona.pages.dev/sitemap.xml
