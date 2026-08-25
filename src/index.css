@@ -154,3 +154,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .arcade-bob, .arcade-bob *, [style*="arcade-"] { animation: none !important; }
 }
+
+/* Terminal caret blink (honors OS reduced motion) */
+.terminal-cursor {
+  animation: terminal-blink 1.06s step-end infinite;
+}
+@keyframes terminal-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .terminal-cursor { animation: none; }
+}
