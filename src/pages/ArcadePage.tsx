@@ -68,7 +68,7 @@ const ArcadePage = () => {
           <p className="mt-2 font-mono text-xs text-primary/60 dark:text-[#f4d5ad]/60">{game.tagline}</p>
         </header>
 
-        <div className="rounded-3xl border border-primary/15 dark:border-[#f4d5ad]/15 bg-secondary/20 dark:bg-secondary/10 p-4 sm:p-6 md:p-10">
+        <div className="rounded-3xl border border-primary/12 dark:border-[#f4d5ad]/12 bg-secondary/25 dark:bg-[#2d1e14]/60 p-4 shadow-[0_8px_40px_rgba(0,0,0,0.35)] sm:p-6 md:p-10">
           {loading ? (
             <Spinner />
           ) : !loggedIn ? (
@@ -88,12 +88,17 @@ const ArcadePage = () => {
             </div>
           ) : (
             <>
-              <p className="mb-4 text-center font-mono text-xs text-primary/60 dark:text-[#f4d5ad]/60">
-                Balance:{' '}
-                <span className="font-bold text-accent dark:text-[#c98a6e]">
-                  {(user.luckbucks || 0).toLocaleString()} LB
+              <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
+                <span className="rounded-full border border-[#f4d5ad]/15 bg-[#f4d5ad]/5 px-4 py-1.5 font-mono text-xs text-primary/70 dark:text-[#f4d5ad]/70">
+                  Balance{' '}
+                  <span className="font-bold text-accent dark:text-[#c98a6e]">
+                    {(user.luckbucks || 0).toLocaleString()} LB
+                  </span>
                 </span>
-              </p>
+                <span className="rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 font-mono text-xs font-bold text-accent dark:text-[#c98a6e]">
+                  {game.cost} LB per play
+                </span>
+              </div>
               <Game />
             </>
           )}
