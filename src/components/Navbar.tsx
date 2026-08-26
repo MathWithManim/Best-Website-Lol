@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { m, AnimatePresence } from 'framer-motion';
 import { useConvexAuth } from 'convex/react';
 
@@ -15,10 +15,14 @@ const navLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated } = useConvexAuth();
+  const { pathname } = useLocation();
 
   const visibleLinks = navLinks.filter(
     (l) => (l.authOnly ? isAuthenticated : true) && !(l.guestOnly && isAuthenticated)
   );
+  // Highlight only the first link that targets the current path — Sign Up / Login
+  // share /rng with RNG Game and must not all light up.
+  const activeTo = visibleLinks.find((l) => l.to === pathname)?.to;
 
   return (
     <nav className="sticky top-0 z-40 backdrop-blur bg-[#F5E6CA]/90 dark:bg-[#1a120b]/90 flex items-center justify-between p-6 text-[#8B4513] dark:text-[#f4d5ad] border-b border-[#8B4513]/20 dark:border-[#f4d5ad]/20">
@@ -32,7 +36,10 @@ const Navbar = () => {
               <Link
                 to={link.to}
                 title={`Navigate to ${link.label}`}
-                className="relative hover:text-accent dark:hover:text-[#c98a6e] transition-colors"
+                aria-current={activeTo === link.to ? 'page' : undefined}
+                className={`relative transition-colors hover:text-accent dark:hover:text-[#c98a6e] ${
+                  activeTo === link.to ? 'text-accent dark:text-[#c98a6e] after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-accent dark:after:bg-[#c98a6e]' : ''
+                }`}
               >
                 {link.label}
               </Link>
