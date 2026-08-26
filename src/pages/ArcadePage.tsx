@@ -3,6 +3,7 @@ import type { ComponentType } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { getGame } from '../lib/games';
 import { useUser } from '../lib/useUser';
+import Spinner from '../components/Spinner';
 import Plinko from '../components/arcade/games/Plinko';
 import CoinFlip from '../components/arcade/games/CoinFlip';
 import HiLo from '../components/arcade/games/HiLo';
@@ -33,6 +34,13 @@ const ArcadePage = () => {
   // logged-out view; the server still rejects any wager from anonymous callers.
   const [authTimedOut, setAuthTimedOut] = useState(false);
   useEffect(() => {
+    if (!game) return;
+    document.title = `${game.name} — Jasper Sona`;
+    return () => {
+      document.title = 'Jasper Sona';
+    };
+  }, [game?.name]);
+  useEffect(() => {
     const t = window.setTimeout(() => setAuthTimedOut(true), 4000);
     return () => window.clearTimeout(t);
   }, []);
@@ -62,7 +70,7 @@ const ArcadePage = () => {
 
         <div className="rounded-3xl border border-primary/15 dark:border-[#f4d5ad]/15 bg-secondary/20 dark:bg-secondary/10 p-4 sm:p-6 md:p-10">
           {loading ? (
-            <p className="py-10 text-center font-mono text-sm text-primary/50 dark:text-[#f4d5ad]/50">Loading...</p>
+            <Spinner />
           ) : !loggedIn ? (
             <div className="py-8 text-center">
               <p className="font-mono text-sm font-bold text-primary dark:text-[#f4d5ad]">

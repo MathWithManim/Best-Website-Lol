@@ -20,6 +20,7 @@ import Navbar from './components/Navbar';
 import MobileCTA from './components/MobileCTA';
 import RNGSection from './components/RNGSection';
 import ErrorBoundary from './components/ErrorBoundary';
+import Spinner from './components/Spinner';
 import { useConvexAuth } from 'convex/react';
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const PublicProfilePage = lazy(() => import('./pages/PublicProfilePage'));
@@ -71,7 +72,7 @@ function AnimatedRoutes() {
         className="min-h-screen"
       >
         <ErrorBoundary>
-          <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-mono text-primary/50">Loading...</div>}>
+          <Suspense fallback={<Spinner />}>
             <Routes location={location}>
             <Route path="/" element={
               <>
