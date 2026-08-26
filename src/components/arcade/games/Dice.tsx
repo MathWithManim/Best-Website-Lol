@@ -45,7 +45,7 @@ const Dice = () => {
         className={`flex h-28 w-28 items-center justify-center rounded-2xl border-2 font-mono text-4xl font-bold shadow-lg ${
           result
             ? result.won
-              ? 'border-green-500/60 bg-green-500/10 text-green-600 dark:text-green-400'
+              ? 'border-green-500/60 bg-green-500/10 text-green-600 shadow-[0_0_32px_rgba(39,174,96,0.25)] dark:text-green-400'
               : 'border-red-500/60 bg-red-500/10 text-red-600 dark:text-red-400'
             : 'border-[#f4d5ad]/25 bg-[#f4d5ad]/5 text-[#f4d5ad]/80'
         }`}

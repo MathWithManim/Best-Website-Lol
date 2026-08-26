@@ -88,9 +88,9 @@ const Slots = () => {
         {display.map((glyph, i) => (
           <div
             key={i}
-            className={`flex h-20 w-16 items-center justify-center rounded-lg border font-mono text-3xl font-bold transition-colors duration-200 sm:h-24 sm:w-20 sm:text-4xl ${
+            className={`flex h-20 w-16 items-center justify-center rounded-lg border font-mono text-3xl font-bold transition-all duration-200 sm:h-24 sm:w-20 sm:text-4xl ${
               spinning[i]
-                ? 'border-[#f4d5ad]/15 bg-[#f4d5ad]/5 text-[#f4d5ad]/50'
+                ? 'border-[#f4d5ad]/15 bg-[#f4d5ad]/5 text-[#f4d5ad]/50 blur-[2px]'
                 : jackpot
                   ? 'border-accent/70 bg-accent/10 text-accent'
                   : won
