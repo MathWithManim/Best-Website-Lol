@@ -73,7 +73,7 @@ const TerminalSection = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={{ duration: 0.55 }}
-        className="bg-[#0d0906]/90 backdrop-blur-sm border border-[#f4d5ad]/15 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.4)]"
+        className="bg-[#0d0906]/95 border border-[#f4d5ad]/10 rounded-2xl overflow-hidden shadow-none"
         role="img"
         aria-label="Terminal showing a playful status session"
       >
