@@ -1,15 +1,15 @@
+import { db } from "../../../db"; import { users as usersTable } from "../../../db/schema"; import { eq } from "drizzle-orm";
 import { useRef } from 'react';
 import { db } from "../../../db";
-import { useQuery, useMutation } from 'convex/react';
 import { useUser } from '../lib/useUser';
 
 const RootAdmin = () => {
   const user = useUser();
   const editingLuckBucks = useRef<Record<string, number>>({});
 
-  const users = useQuery(api.users.listUsers);
-  const updateStats = useMutation(api.users.updateUserStats);
-  const deleteUser = useMutation(api.users.deleteUser);
+  const users = db.select().from(usersTable).limit(100); // Drizzle query stub
+  const updateStats = (id: number) => db.update(usersTable).set({}).where(eq(usersTable.id, id));
+  const deleteUser = (id: number) => db.delete(usersTable).where(eq(usersTable.id, id));
 
   if (user?.email !== 'root@root.root') {
     return <div className="min-h-screen bg-bg dark:bg-[#1a120b] p-8 text-center text-primary dark:text-[#f4d5ad] font-mono">Access denied.</div>;
