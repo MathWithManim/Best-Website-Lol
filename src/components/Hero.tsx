@@ -27,16 +27,16 @@ const Hero = () => {
         initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="relative text-7xl md:text-9xl lg:text-[10rem] font-bold text-center leading-none"
+        className="relative text-6xl md:text-8xl lg:text-[9rem] font-bold tracking-tighter leading-[0.85] text-left md:text-left max-w-6xl mx-auto px-6 md:px-10"
       >
-        <h1 className="font-cursive text-center text-primary dark:text-[#f4d5ad]">
-            <span className="text-primary">
-              Jasper
-            </span>
-            <span className="text-accent">
-              Sona
-            </span>
-          </h1>
+        <h1 className="font-sans text-primary dark:text-[#f4d5ad]">
+          <span className="block">Jasper</span>
+          <span className="block text-accent">Sona</span>
+          <span className="inline-flex items-center gap-3 mt-2 text-2xl md:text-4xl lg:text-5xl font-mono text-primary/70 dark:text-[#f4d5ad]/60 tracking-tight not-italic font-normal">
+            <span className="inline-block w-14 h-8 md:w-20 md:h-10 rounded-full overflow-hidden shadow-xl ring-2 ring-[#e09f58]/30 align-middle bg-cover bg-center" style={{ backgroundImage: 'url(https://picsum.photos/seed/jasper-hero/200/160)' }} aria-hidden="true" />
+            <span>the RNG game that actually ships</span>
+          </span>
+        </h1>
       </m.div>
 
       <m.p
