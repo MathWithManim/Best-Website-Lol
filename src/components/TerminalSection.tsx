@@ -57,7 +57,7 @@ const TerminalSection = () => {
   const finished = done.line >= LINES.length;
 
   return (
-    <section className="p-6 md:p-10 max-w-5xl mx-auto">
+    <section className="overflow-x-hidden w-full max-w-full py-24 md:py-36 bg-gradient-to-b from-[#0d0906] via-[#1a120b] to-[#0d0906]" aria-label="Terminal session">
       <m.p
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -73,7 +73,7 @@ const TerminalSection = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={{ duration: 0.55 }}
-        className="bg-[#0d0906]/95 border border-[#f4d5ad]/10 rounded-2xl overflow-hidden shadow-none"
+        className="bg-[#0d0906]/95 border border-[#f4d5ad]/10 rounded-3xl overflow-hidden shadow-[inset_0_1px_0_rgba(244,213,173,0.08)]"
         role="img"
         aria-label="Terminal showing a playful status session"
       >
