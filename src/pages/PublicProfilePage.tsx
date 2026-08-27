@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { db } from "../../../db";
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';

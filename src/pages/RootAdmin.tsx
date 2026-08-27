@@ -1,11 +1,18 @@
 import { useUser } from '../lib/useUser';
-import { db } from "../../../db"; import { users as usersTable } from "../../../db/schema"; import { eq } from "drizzle-orm";
+import { useState, useEffect, useRef } from 'react';
+import { db } from "../../db";
+import { users as usersTable } from "../../db/schema";
+import { eq } from "drizzle-orm";
 
 const RootAdmin = () => {
   const user = useUser();
   const editingLuckBucks = useRef<Record<string, number>>({});
 
-  const users = db.select().from(usersTable).limit(100); // Drizzle query stub
+  const [usersList, setUsersList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    db.select().from(usersTable).limit(100).then(setUsersList).catch(() => setUsersList([])).finally(() => setLoading(false));
+  }, []);
   const updateStats = (id: number) => db.update(usersTable).set({}).where(eq(usersTable.id, id));
   const deleteUser = (id: number) => db.delete(usersTable).where(eq(usersTable.id, id));
 
@@ -13,7 +20,7 @@ const RootAdmin = () => {
     return <div className="min-h-screen bg-bg dark:bg-[#1a120b] p-8 text-center text-primary dark:text-[#f4d5ad] font-mono">Access denied.</div>;
   }
 
-  if (users === undefined) return <div className="p-8 text-center">Loading admin...</div>;
+  if (loading) return <div className="p-8 text-center">Loading admin...</div>;
 
   return (
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] p-8 text-primary dark:text-[#f4d5ad]">
@@ -29,7 +36,7 @@ const RootAdmin = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user: any) => (
+            {usersList.map((user: any) => (
               <tr key={user._id} className="border-b border-primary/5 hover:bg-primary/5 transition-colors">
                 <td className="p-4 font-mono font-bold">{user.username}</td>
                 <td className="p-4 font-mono text-sm">{user.email}</td>
@@ -59,13 +66,13 @@ const RootAdmin = () => {
                 </td>
                 <td className="p-4 flex gap-3">
                   <button
-                    onClick={() => updateStats({ userId: user._id, luckbucks: editingLuckBucks.current[user._id] ?? user.luckbucks ?? 0 })}
+                    onClick={() => updateStats(Number(user._id || user.id || 0))}
                     className="px-4 py-2 bg-accent text-bg rounded-lg text-sm font-bold hover:opacity-90"
                   >
                     Save
                   </button>
                   <button
-                    onClick={() => deleteUser({ userId: user._id })}
+                    onClick={() => deleteUser(Number(user._id || user.id || 0))}
                     className="px-4 py-2 bg-red-600/10 text-red-600 rounded-lg text-sm font-bold hover:bg-red-600 hover:text-white transition-colors"
                   >
                     Delete
