@@ -1,7 +1,8 @@
+import { db } from "../../db";
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, m, animate, useMotionValue } from 'framer-motion';
-import { useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+
+
 import { RARITIES, RARITY_COLORS, RARITY_INDEX } from '../lib/rarities';
 import { useSettings } from '../lib/settings';
 import { playRollStart, playWin } from '../lib/sounds';

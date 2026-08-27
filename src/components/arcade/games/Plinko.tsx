@@ -1,7 +1,6 @@
+import { db } from "../../../db";
 import { useEffect, useRef, useState } from 'react';
-import { useMutation } from 'convex/react';
-import { api } from '../../../../convex/_generated/api';
-import { PLINKO_MULTS, ARCADE } from '../../../../convex/shared';
+
 
 const W = 320;
 const H = 430;

@@ -12,12 +12,12 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
-    "@convex-dev/better-auth": "^0.12.5",
-    "@convex-dev/rate-limiter": "^0.3.2",
+    "@neondatabase/serverless": "^0.10.0",
     "@sentry/react": "^10.70.0",
     "bcryptjs": "^3.0.3",
     "better-auth": "~1.6.15",
-    "convex": "^1.44.0",
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.41.0",
     "framer-motion": "^13.1.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -37,6 +37,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.1",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "drizzle-kit": "^0.21.0"
   }
 }

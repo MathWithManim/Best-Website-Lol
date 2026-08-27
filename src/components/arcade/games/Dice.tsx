@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { useMutation } from 'convex/react';
-import { api } from '../../../../convex/_generated/api';
-import { ARCADE } from '../../../../convex/shared';
+import { eq } from 'drizzle-orm';
+import { db } from '../../db';
+import { users } from '../../db/schema';
+import { ARCADE } from '../../../lib/convex-constants/arcade';
 
 type Dir = 'over' | 'under';
 
@@ -14,7 +15,6 @@ interface DiceResult {
 }
 
 const Dice = () => {
-  const play = useMutation(api.arcade.playDice);
   const [target, setTarget] = useState(50);
   const [dir, setDir] = useState<Dir>('over');
   const [busy, setBusy] = useState(false);
@@ -29,10 +29,18 @@ const Dice = () => {
     setBusy(true);
     setResult(null);
     setError(null);
-    play({ target, direction: dir })
-      .then((res) => setResult({ roll: res.roll, mult: res.mult, won: res.won, net: res.net }))
-      .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Roll failed'))
-      .finally(() => setBusy(false));
+    (async () => {
+      try {
+        const rollVal = Math.floor(Math.random() * 100) + 1;
+        const won = dir === 'over' ? rollVal > target : rollVal < target;
+        const net = won ? Math.round(mult * 10) : -ARCADE.dice.cost;
+        setResult({ roll: rollVal, mult: won ? mult : 1, won, net });
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Roll failed');
+      } finally {
+        setBusy(false);
+      }
+    })();
   };
 
   return (

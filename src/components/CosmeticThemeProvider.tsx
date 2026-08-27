@@ -1,7 +1,7 @@
 import { createContext, type ReactNode, useState, useEffect } from 'react';
 import { useUser } from '../lib/useUser';
-import { useQuery } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+
+
 
 interface CosmeticTheme {
   bg: string;

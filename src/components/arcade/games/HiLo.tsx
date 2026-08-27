@@ -1,8 +1,7 @@
+import { db } from "../../../db";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { useMutation } from 'convex/react';
-import { api } from '../../../../convex/_generated/api';
-import { ARCADE } from '../../../../convex/shared';
+
 
 interface Card {
   rank: number; // 2..14

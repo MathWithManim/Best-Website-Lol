@@ -20,7 +20,6 @@ UI layer: 25 React components + page-level views. All follow default-export arro
 
 - **Component pattern**: Default export arrow function, local `interface XxxProps`
 - **Constants centralized**: `src/lib/rarities.ts` exports `RARITIES`, `RARITY_COLORS`, `RARITY_VALUES`, `RARITY_INDEX`
-- **Convex imports**: `import { api } from '../../convex/_generated/api'`
 - **Hook usage**: useState dominates (no useReducer, no useMemo); useCallback only for prop-drilled handlers; useRef for intervals
 - **Dark mode**: Every element gets literal hex pairs `dark:bg-[#1a120b] dark:text-[#f4d5ad]` — no shared utility
 

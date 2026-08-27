@@ -1,9 +1,8 @@
+import { db } from "../../../db";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { useMutation } from 'convex/react';
-import { api } from '../../../../convex/_generated/api';
+
 import { useSettings } from '../../../lib/settings';
-import { ARCADE } from '../../../../convex/shared';
 
 interface CupsResult {
   ball: number;

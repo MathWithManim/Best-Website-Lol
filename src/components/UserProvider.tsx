@@ -1,6 +1,7 @@
+import { db, users } from "../../db";
 import { type ReactNode } from 'react';
 import { useConvexAuth, useQuery } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+
 import { UserContext } from '../lib/useUser';
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {

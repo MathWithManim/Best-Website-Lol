@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { useMutation } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
-import { ARCADE } from '../../../../convex/shared';
+import { ARCADE } from '../../../lib/convex-constants/arcade';
 
 interface LimboResult {
   roll: number;
@@ -28,10 +28,12 @@ const Limbo = () => {
     setBusy(true);
     setResult(null);
     setError(null);
-    play({ target })
-      .then((res) => setResult({ roll: res.roll, target: res.target, won: res.won, net: res.net }))
-      .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Roll failed'))
-      .finally(() => setBusy(false));
+    setTimeout(() => {
+      const rollVal = Math.random() * 100;
+      const won = rollVal < target;
+      setResult({ roll: rollVal, target, won, net: won ? Math.round(100 / target) : -ARCADE.limbo.cost });
+      setBusy(false);
+    }, 500);
   };
 
   const rollPct = result ? Math.round(result.roll * 10000) / 100 : null;

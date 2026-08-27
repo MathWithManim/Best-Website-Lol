@@ -1,6 +1,6 @@
 import { m } from 'framer-motion';
-import { useQuery } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+
+
 import { RARITY_COLORS, RARITY_INDEX } from '../lib/rarities';
 
 function timeAgo(ts: number): string {

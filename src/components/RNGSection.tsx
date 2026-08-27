@@ -14,7 +14,7 @@ import RollHistory from './RollHistory';
 import LuckPanel from './LuckPanel';
 import CompletionRing from './CompletionRing';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+
 import { encodeRarityData, decodeRarityData } from '../lib/crypto';
 import { useUser } from '../lib/useUser';
 

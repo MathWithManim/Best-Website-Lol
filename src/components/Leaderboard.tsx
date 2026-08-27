@@ -1,7 +1,8 @@
+import { db, leaderboard, users } from "../../db";
 import { useState } from 'react';
 import { m } from 'framer-motion';
-import { useQuery } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+
+
 import { RARITY_COLORS } from '../lib/rarities';
 import { fmtCompact } from '../lib/format';
 import { useUser } from '../lib/useUser';

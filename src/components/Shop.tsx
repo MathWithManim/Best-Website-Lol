@@ -1,7 +1,8 @@
+import { db } from "../../db";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { useMutation, useQuery, useConvexAuth } from 'convex/react';
-import { api } from '../../convex/_generated/api';
+
 import { useUser } from '../lib/useUser';
 
 const COSMETIC_ICONS: Record<string, string> = {

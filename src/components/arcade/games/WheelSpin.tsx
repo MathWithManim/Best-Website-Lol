@@ -1,9 +1,8 @@
+import { db } from "../../../db";
 import { useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';
-import { useMutation } from 'convex/react';
-import { api } from '../../../../convex/_generated/api';
+
 import { useSettings } from '../../../lib/settings';
-import { ARCADE, WHEEL_MULTS, WHEEL_LABELS } from '../../../../convex/shared';
 
 const SEG = 360 / WHEEL_MULTS.length;
 const R = 120;

@@ -1,9 +1,8 @@
+import { db } from "../../../db";
 import { useRef, useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';
-import { useMutation } from 'convex/react';
-import { api } from '../../../../convex/_generated/api';
+
 import { useSettings } from '../../../lib/settings';
-import { ARCADE } from '../../../../convex/shared';
 
 type Side = 'heads' | 'tails';
 

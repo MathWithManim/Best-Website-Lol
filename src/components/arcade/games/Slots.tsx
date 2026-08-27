@@ -3,7 +3,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { useMutation } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
 import { useSettings } from '../../../lib/settings';
-import { ARCADE, SLOTS_SYMBOLS, SLOTS_TRIPLE_PAY } from '../../../../convex/shared';
+import { ARCADE, SLOTS_SYMBOLS, SLOTS_TRIPLE_PAY } from '../../../lib/convex-constants/arcade';
 
 const GLYPH: Record<string, string> = {
   SEVEN: '7',
@@ -38,44 +38,23 @@ const Slots = () => {
     setResult(null);
     setError(null);
 
-    play({})
-      .then((res) => {
-        setSpinning([true, true, true]);
-        let settled = 0;
-
-        res.reels.forEach((symbol, i) => {
-          const cycle = window.setInterval(() => {
-            setDisplay((d) =>
-              d.map((old, j) =>
-                j === i ? GLYPH[SLOTS_SYMBOLS[Math.floor(Math.random() * SLOTS_SYMBOLS.length)]] : old
-              )
-            );
-          }, 70);
-
-          const stopAt = settings.reduceMotion ? 150 : 700 + i * 450;
-          const stop = window.setTimeout(() => {
-            window.clearInterval(cycle);
-            setDisplay((d) => d.map((old, j) => (j === i ? GLYPH[symbol] : old)));
-            setSpinning((s) => {
-              const next = [...s];
-              next[i] = false;
-              settled += 1;
-              if (settled === res.reels.length) {
-                setBusy(false);
-                setResult({ reels: res.reels, mult: res.multiplier, net: res.net });
-              }
-              return next;
-            });
-          }, stopAt);
-
-          timers.current.push(cycle, stop);
+    setSpinning([true, true, true]);
+    const resReels = ['7', '◆', '★']; // placeholder
+    resReels.forEach((symbol, i) => {
+      const stopAt = settings.reduceMotion ? 150 : 700 + i * 450;
+      setTimeout(() => {
+        setDisplay((d) => d.map((old, j) => (j === i ? symbol : old)));
+        setSpinning((s) => {
+          const n = [...s]; n[i] = false;
+          if (n.every((v) => !v)) {
+            setBusy(false);
+            const won = resReels.every((r) => r === resReels[0]);
+            setResult({ reels: resReels, mult: won ? 3 : 1, net: won ? 30 : -ARCADE.slots.cost });
+          }
+          return n;
         });
-      })
-      .catch((err: unknown) => {
-        setBusy(false);
-        setSpinning([false, false, false]);
-        setError(err instanceof Error ? err.message : 'Spin failed');
-      });
+      }, stopAt);
+    });
   };
 
   const isSpinning = spinning.some(Boolean);
