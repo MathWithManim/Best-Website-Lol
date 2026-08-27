@@ -21,17 +21,7 @@ const DiceIcon = () => (
 const Hero = () => {
   return (
     <section className="relative flex flex-col items-center justify-center min-h-[60vh] md:h-[calc(100vh-80px)] p-6 overflow-hidden">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-[38%] h-[26rem] w-[26rem] md:h-[36rem] md:w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[110px]" />
-        <div className="absolute -left-20 bottom-[8%] h-56 w-56 rounded-full bg-[#A0522D]/10 blur-[90px]" />
-        <div
-          className="absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage: 'radial-gradient(#f4d5ad 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
-        />
-      </div>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#f4d5ad]/10 to-transparent" />
 
       <m.div
         initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
@@ -39,14 +29,14 @@ const Hero = () => {
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="relative text-7xl md:text-9xl lg:text-[10rem] font-bold text-center leading-none"
       >
-        <h1 className="font-cursive text-center">
-          <span className="text-primary flex items-center justify-center [text-shadow:0_0_80px_rgba(224,159,88,0.35)]">
-            Jasper
-          </span>
-          <span className="text-accent flex items-center justify-center [text-shadow:0_0_80px_rgba(224,159,88,0.25)]">
-            Sona
-          </span>
-        </h1>
+        <h1 className="font-cursive text-center text-primary dark:text-[#f4d5ad]">
+            <span className="text-primary">
+              Jasper
+            </span>
+            <span className="text-accent">
+              Sona
+            </span>
+          </h1>
       </m.div>
 
       <m.p
