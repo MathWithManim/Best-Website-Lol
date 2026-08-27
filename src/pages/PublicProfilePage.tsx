@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { db } from "../../../db";
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from 'convex/react';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import RarityGrid from '../components/RarityGrid';
@@ -15,7 +14,7 @@ const PublicProfilePage = () => {
     return () => { document.title = 'Jasper Sona'; };
   }, [username]);
 
-  const profile = useQuery(api.users.getUserPublicProfile, username ? { usernameLower: username.toLowerCase() } : 'skip');
+  const profile: any = null; // Drizzle stub
 
   if (profile === undefined) {
     return (

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { useMutation } from 'convex/react';
-import { api } from '../../../../convex/_generated/api';
 import { useSettings } from '../../../lib/settings';
 import { ARCADE, SLOTS_SYMBOLS, SLOTS_TRIPLE_PAY } from '../../../lib/convex-constants/arcade';
 
