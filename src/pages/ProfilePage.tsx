@@ -19,7 +19,6 @@ const ProfilePage = () => {
   }, []);
 
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useConvexAuth();
   const user = useUser();
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
@@ -30,14 +29,8 @@ const ProfilePage = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  const updateProfile = useMutation(api.users.updateProfile);
 
-  const searchResults = useQuery(
-    api.users.searchUsers,
     activeSearch ? { query: activeSearch } : "skip"
-  );
-
-  const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [pfp, setPfp] = useState('');
@@ -118,7 +111,6 @@ const ProfilePage = () => {
         <form onSubmit={handleSave} className="bg-secondary/10 dark:bg-secondary/5 border border-primary/20 dark:border-[#f4d5ad]/20 p-8 rounded-2xl space-y-6">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <img
-              src={pfp || "https://api.dicebear.com/7.x/bottts/svg?seed=default"}
               alt="Avatar"
               className="w-20 h-20 rounded-full border-2 border-accent bg-bg dark:bg-[#2d1e14] object-cover"
             />

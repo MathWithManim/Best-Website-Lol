@@ -53,7 +53,6 @@ const SettingsPage = () => {
   }, []);
 
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useConvexAuth();
   const user = useUser();
   const { settings, setSetting } = useSettings();
   const [dataMessage, setDataMessage] = useState<string | null>(null);
