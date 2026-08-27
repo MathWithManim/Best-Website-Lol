@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { db } from "../../db";
+
 
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
