@@ -1,3 +1,4 @@
+import FeaturesBento from "./components/FeaturesBento";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, m, MotionConfig } from 'framer-motion';
 import { lazy, Suspense, useEffect } from 'react';

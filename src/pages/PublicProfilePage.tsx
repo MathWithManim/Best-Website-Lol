@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
+import { db } from "../../../db";
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from 'convex/react';
-import { api } from '../../convex/_generated/api';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import RarityGrid from '../components/RarityGrid';

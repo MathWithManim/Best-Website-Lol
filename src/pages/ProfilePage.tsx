@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
+import { db } from "../../db";
 import { useQuery, useMutation, useConvexAuth } from 'convex/react';
-import { api } from '../../convex/_generated/api';
 import Navbar from '../components/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useNavigate, Link } from 'react-router-dom';

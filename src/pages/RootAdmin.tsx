@@ -1,6 +1,6 @@
 import { useRef } from 'react';
+import { db } from "../../../db";
 import { useQuery, useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
 import { useUser } from '../lib/useUser';
 
 const RootAdmin = () => {
