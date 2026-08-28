@@ -1,7 +1,7 @@
 import { useUser } from '../lib/useUser';
 import { useState, useEffect, useRef } from 'react';
-import { db } from "../../db";
-import { users as usersTable } from "../../db/schema";
+import { db } from "../db";
+import { users as usersTable } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 const RootAdmin = () => {

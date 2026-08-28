@@ -4,15 +4,15 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import { getGame } from '../lib/games';
 import { useUser } from '../lib/useUser';
 import Spinner from '../components/Spinner';
-import Plinko from '../components/arcade/games/Plinko';
-import CoinFlip from '../components/arcade/games/CoinFlip';
-import HiLo from '../components/arcade/games/HiLo';
-import WheelSpin from '../components/arcade/games/WheelSpin';
-import Dice from '../components/arcade/games/Dice';
-import Mines from '../components/arcade/games/Mines';
-import Slots from '../components/arcade/games/Slots';
-import Limbo from '../components/arcade/games/Limbo';
-import Cups from '../components/arcade/games/Cups';
+import Plinko from '../components/game/arcade/games/Plinko';
+import CoinFlip from '../components/game/arcade/games/CoinFlip';
+import HiLo from '../components/game/arcade/games/HiLo';
+import WheelSpin from '../components/game/arcade/games/WheelSpin';
+import Dice from '../components/game/arcade/games/Dice';
+import Mines from '../components/game/arcade/games/Mines';
+import Slots from '../components/game/arcade/games/Slots';
+import Limbo from '../components/game/arcade/games/Limbo';
+import Cups from '../components/game/arcade/games/Cups';
 
 const GAME_COMPONENTS: Record<number, ComponentType> = {
   1: Plinko,

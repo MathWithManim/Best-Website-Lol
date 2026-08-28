@@ -1,9 +1,9 @@
-import { ARCADE, WHEEL_MULTS, WHEEL_LABELS, PLINKO_MULTS } from "../../lib/convex-constants/arcade";
-import { db } from "../../../db";
+import { ARCADE, WHEEL_MULTS, WHEEL_LABELS, PLINKO_MULTS } from "../../../../lib/convex-constants/arcade";
+import { db } from "../../../../db";
 import { useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';
 
-import { useSettings } from '../../../lib/settings';
+import { useSettings } from '../../../../lib/settings';
 
 const SEG = 360 / WHEEL_MULTS.length;
 const R = 120;

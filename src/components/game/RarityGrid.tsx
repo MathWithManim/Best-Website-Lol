@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react';
 import { AnimatePresence, m } from 'framer-motion';
-import { RARITIES, RARITY_COLORS, rarityChancePercent } from '../lib/rarities';
-import { useSettings } from '../lib/settings';
+import { RARITIES, RARITY_COLORS, rarityChancePercent } from '../../lib/rarities';
+import { useSettings } from '../../lib/settings';
 
 const PAGE_SIZE = 50;
 

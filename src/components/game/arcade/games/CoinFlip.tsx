@@ -1,8 +1,8 @@
-import { db } from "../../../db";
+import { db } from "../../../../db";
 import { useRef, useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';
 
-import { useSettings } from '../../../lib/settings';
+import { useSettings } from '../../../../lib/settings';
 
 type Side = 'heads' | 'tails';
 

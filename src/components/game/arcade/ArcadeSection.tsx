@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { AnimatePresence, m } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { GAMES } from '../../lib/games';
+import { GAMES } from '../../../lib/games';
 import {
   PlinkoArt,
   CoinArt,

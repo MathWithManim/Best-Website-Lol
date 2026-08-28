@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { eq } from 'drizzle-orm';
-import { db } from '../../db';
-import { users } from '../../db/schema';
-import { ARCADE } from '../../../lib/convex-constants/arcade';
+import { db } from '../../../../db';
+import { users } from '../../../../db/schema';
+import { ARCADE } from '../../../../lib/convex-constants/arcade';
 
 type Dir = 'over' | 'under';
 

@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useState, useEffect } from 'react';
-import { useUser } from '../lib/useUser';
+import { useUser } from '../../lib/useUser';
 
 
 

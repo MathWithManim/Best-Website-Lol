@@ -1,4 +1,4 @@
-import { db } from "../../../db";
+import { db } from "../../../../db";
 import { useEffect, useRef, useState } from 'react';
 
 

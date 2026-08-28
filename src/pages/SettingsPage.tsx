@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/landing/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useUser } from '../lib/useUser';
 import { useSettings } from '../lib/settings';

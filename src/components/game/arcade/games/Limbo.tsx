@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { useMutation } from 'convex/react';
-import { ARCADE } from '../../../lib/convex-constants/arcade';
+import { ARCADE } from '../../../../lib/convex-constants/arcade';
 
 interface LimboResult {
   roll: number;

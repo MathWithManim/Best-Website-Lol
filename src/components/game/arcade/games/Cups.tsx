@@ -1,8 +1,8 @@
-import { db } from "../../../db";
+import { db } from "../../../../db";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 
-import { useSettings } from '../../../lib/settings';
+import { useSettings } from '../../../../lib/settings';
 
 interface CupsResult {
   ball: number;

@@ -1,22 +1,22 @@
 import { useState, useCallback, useEffect } from 'react';
-import AuthModal from './AuthModal';
+import AuthModal from '../app/AuthModal';
 import RNGGame from './RNGGame';
-import Shop from './Shop';
+import Shop from '../Shop';
 import Leaderboard from './Leaderboard';
 import RarityGrid from './RarityGrid';
 import RarityStatsModal from './RarityStatsModal';
-import EndgameScreen from './EndgameScreen';
-import RecentWins from './RecentWins';
-import { fmtCompact } from '../lib/format';
-import { RARITIES, RARITY_VALUES } from '../lib/rarities';
-import Navbar from './Navbar';
-import RollHistory from './RollHistory';
-import LuckPanel from './LuckPanel';
-import CompletionRing from './CompletionRing';
+import EndgameScreen from '../EndgameScreen';
+import RecentWins from '../RecentWins';
+import { fmtCompact } from '../../lib/format';
+import { RARITIES, RARITY_VALUES } from '../../lib/rarities';
+import Navbar from '../landing/Navbar';
+import RollHistory from '../RollHistory';
+import LuckPanel from '../LuckPanel';
+import CompletionRing from '../CompletionRing';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 
-import { encodeRarityData, decodeRarityData } from '../lib/crypto';
-import { useUser } from '../lib/useUser';
+import { encodeRarityData, decodeRarityData } from '../../lib/crypto';
+import { useUser } from '../../lib/useUser';
 
 const getCachedCounts = (): Record<string, number> => {
   try {

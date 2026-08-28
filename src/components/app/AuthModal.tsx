@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { m } from "framer-motion";
-import { authClient } from "../lib/auth-client";
+import { authClient } from "../../lib/auth-client";
 
 interface AuthModalProps {
   onLogin?: (email: string) => void;

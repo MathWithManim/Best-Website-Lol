@@ -4,7 +4,7 @@ import {
   SettingsContext,
   SETTINGS_STORAGE_KEY,
   type Settings,
-} from '../lib/settings';
+} from '../../lib/settings';
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<Settings>(() => {

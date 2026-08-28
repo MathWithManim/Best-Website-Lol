@@ -3,11 +3,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, m, animate, useMotionValue } from 'framer-motion';
 
 
-import { RARITIES, RARITY_COLORS, RARITY_INDEX } from '../lib/rarities';
-import { useSettings } from '../lib/settings';
-import { playRollStart, playWin } from '../lib/sounds';
-import ShareCardModal from './ShareCardModal';
-import { recordRoll } from '../lib/rollHistory';
+import { RARITIES, RARITY_COLORS, RARITY_INDEX } from '../../lib/rarities';
+import { useSettings } from '../../lib/settings';
+import { playRollStart, playWin } from '../../lib/sounds';
+import ShareCardModal from '../ShareCardModal';
+import { recordRoll } from '../../lib/rollHistory';
 
 interface RNGGameProps {
   onRollComplete: () => void;

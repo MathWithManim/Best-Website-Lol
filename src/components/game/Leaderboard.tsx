@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { m } from 'framer-motion';
 
 
-import { RARITY_COLORS } from '../lib/rarities';
-import { fmtCompact } from '../lib/format';
-import { useUser } from '../lib/useUser';
+import { RARITY_COLORS } from '../../lib/rarities';
+import { fmtCompact } from '../../lib/format';
+import { useUser } from '../../lib/useUser';
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 const spring = { type: 'spring', damping: 1.0, stiffness: 300 } as const;

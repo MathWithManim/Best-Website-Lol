@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, m } from 'framer-motion';
-import { useUser } from '../lib/useUser';
-import { useSettings } from '../lib/settings';
+import { useUser } from '../../lib/useUser';
+import { useSettings } from '../../lib/settings';
 
 interface ToastItem {
   key: string;

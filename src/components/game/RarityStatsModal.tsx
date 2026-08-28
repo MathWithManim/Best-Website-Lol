@@ -2,7 +2,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 
-import { RARITY_COLORS, RARITY_VALUES } from '../lib/rarities';
+import { RARITY_COLORS, RARITY_VALUES } from '../../lib/rarities';
 
 interface RarityStatsModalProps {
   isOpen: boolean;

@@ -1,9 +1,9 @@
 
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/landing/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
-import RarityGrid from '../components/RarityGrid';
+import RarityGrid from '../components/game/RarityGrid';
 import { COSMETIC_ICONS } from '../lib/cosmetics';
 
 const PublicProfilePage = () => {

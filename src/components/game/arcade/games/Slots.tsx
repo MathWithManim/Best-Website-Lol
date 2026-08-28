@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { useMutation } from 'convex/react';
-import { useSettings } from '../../../lib/settings';
-import { ARCADE, SLOTS_SYMBOLS, SLOTS_TRIPLE_PAY } from '../../../lib/convex-constants/arcade';
+import { useSettings } from '../../../../lib/settings';
+import { ARCADE, SLOTS_SYMBOLS, SLOTS_TRIPLE_PAY } from '../../../../lib/convex-constants/arcade';
 
 const GLYPH: Record<string, string> = {
   SEVEN: '7',

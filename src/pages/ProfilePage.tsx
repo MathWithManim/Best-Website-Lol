@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 
-import Navbar from '../components/Navbar';
+import Navbar from '../components/landing/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../lib/useUser';

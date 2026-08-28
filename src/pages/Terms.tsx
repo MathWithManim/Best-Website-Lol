@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/landing/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 const Terms = () => {
   useEffect(() => {
