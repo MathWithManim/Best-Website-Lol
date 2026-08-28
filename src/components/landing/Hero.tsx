@@ -8,7 +8,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSettings } from "../../lib/settings";
 
 gsap.registerPlugin(ScrollTrigger);
-
 const DiceIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -24,7 +23,6 @@ const DiceIcon = () => (
     <path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01" />
   </svg>
 );
-
 const Hero = () => {
   const rootRef = useRef<HTMLElement>(null);
   const { settings } = useSettings();
@@ -33,7 +31,6 @@ const Hero = () => {
   useGSAP(
     () => {
       if (reduce || !rootRef.current) return;
-
       const ctx = gsap.context(() => {
         // Title char stagger - kinetic reveal
         gsap.from(".hero-char", {
@@ -45,7 +42,6 @@ const Hero = () => {
           stagger: 0.035,
           delay: 0.15,
         });
-
         // Tagline line reveal
         gsap.from(".hero-tagline", {
           y: 24,
@@ -55,7 +51,6 @@ const Hero = () => {
           ease: "power3.out",
           delay: 0.9,
         });
-
         gsap.from(".hero-intro", {
           y: 16,
           opacity: 0,
@@ -63,7 +58,6 @@ const Hero = () => {
           ease: "power2.out",
           delay: 1.05,
         });
-
         gsap.from(".hero-cta", {
           y: 22,
           opacity: 0,
@@ -73,7 +67,6 @@ const Hero = () => {
           stagger: 0.08,
           delay: 1.2,
         });
-
         // Parallax on scroll - hero gradient
         gsap.to(".hero-glow", {
           yPercent: 22,
@@ -85,7 +78,6 @@ const Hero = () => {
             scrub: 0.8,
           },
         });
-
         // Floating accent orb
         gsap.to(".hero-orb", {
           y: -14,
@@ -94,8 +86,71 @@ const Hero = () => {
           yoyo: true,
           repeat: -1,
         });
+        // SPAM: skew title on scroll
+        gsap.to(".hero-title", {
+          skewY: 1.2,
+          scale: 0.98,
+          yPercent: -6,
+          ease: "none",
+          scrollTrigger: {
+            trigger: rootRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+        // SPAM: radial glow pulse
+        gsap.to(".hero-glow-blob", {
+          scale: 1.12,
+          opacity: 0.9,
+          duration: 3.8,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+        });
+        // SPAM: grid drift
+        gsap.to(".hero-grid", {
+          backgroundPosition: "56px 0px",
+          duration: 18,
+          ease: "none",
+          repeat: -1,
+        });
+        // SPAM: marquee scrub
+        gsap.to(".hero-marquee-track", {
+          xPercent: -50,
+          ease: "none",
+          duration: 18,
+          repeat: -1,
+        });
+        gsap.to(".hero-marquee-track", {
+          xPercent: -35,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-marquee",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.3,
+          },
+        });
+        // SPAM: CTA shimmer sweep via xPercent
+        gsap.fromTo(".hero-shimmer",
+          { xPercent: -120 },
+          { xPercent: 120, duration: 1.6, ease: "power2.inOut", repeat: -1, repeatDelay: 2.2 }
+        );
+        // SPAM: intro words scrub reveal
+        gsap.from(".hero-intro-word", {
+          opacity: 0.15,
+          filter: "blur(3px)",
+          stagger: 0.025,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-intro",
+            start: "top 85%",
+            end: "top 40%",
+            scrub: 0.9,
+          },
+        });
       }, rootRef);
-
       return () => ctx.revert();
     },
     { scope: rootRef, dependencies: [reduce] }
@@ -125,16 +180,15 @@ const Hero = () => {
       {/* Ambient glow + grid */}
       <div className="hero-glow pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-b from-[#e09f58]/[0.06] via-transparent to-transparent dark:from-[#e09f58]/[0.09]" />
-        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[900px] h-[520px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(224,159,88,0.18),transparent_68%)] blur-[28px] dark:bg-[radial-gradient(ellipse_at_center,rgba(224,159,88,0.14),transparent_70%)]" />
+        <div className="hero-glow-blob absolute top-[-20%] left-1/2 -translate-x-1/2 w-[900px] h-[520px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(224,159,88,0.18),transparent_68%)] blur-[28px] dark:bg-[radial-gradient(ellipse_at_center,rgba(224,159,88,0.14),transparent_70%)]" />
         <div
-          className="absolute inset-0 opacity-[0.04] dark:opacity-[0.07]"
+          className="hero-grid absolute inset-0 opacity-[0.04] dark:opacity-[0.07]"
           style={{
             backgroundImage: `linear-gradient(rgba(139,69,19,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(139,69,19,0.45) 1px, transparent 1px)`,
             backgroundSize: "56px 56px",
           }}
         />
       </div>
-
       {/* Floating orb */}
       <div
         aria-hidden="true"
@@ -144,7 +198,6 @@ const Hero = () => {
           boxShadow: "0 18px 60px rgba(224,159,88,0.45), inset 0 2px 12px rgba(255,255,255,0.55)",
         }}
       />
-
       {/* Grain */}
       <div
         aria-hidden="true"
@@ -153,10 +206,9 @@ const Hero = () => {
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
         }}
       />
-
       <div className="relative z-10 text-center max-w-6xl mx-auto px-2 md:px-10">
         {/* Title with char split */}
-        <h1 className="font-[Geist,sans-serif] text-[2.8rem] md:text-7xl lg:text-[5.8rem] font-[600] tracking-[-0.045em] leading-[0.92] text-[#1a120b] dark:text-[#f4d5ad] select-none">
+        <h1 className="hero-title font-[Geist,sans-serif] text-[2.8rem] md:text-7xl lg:text-[5.8rem] font-[600] tracking-[-0.045em] leading-[0.92] text-[#1a120b] dark:text-[#f4d5ad] select-none will-change-transform">
           <span className="inline-flex items-baseline overflow-hidden py-1 gap-[0.18em]">
             <span className="inline-block">
               {title.split("").map((ch, i) => (
@@ -178,28 +230,28 @@ const Hero = () => {
             </span>
           </span>
         </h1>
-
         <div className="hero-tagline mt-5 md:mt-7 inline-flex flex-wrap items-center justify-center gap-3 text-[1.05rem] md:text-3xl lg:text-[2rem] font-mono text-[#1a120b]/72 dark:text-[#f4d5ad]/80 tracking-tight leading-none">
           <span>the RNG game that actually ships</span>
         </div>
       </div>
-
       <p className="hero-tagline relative mt-3 mx-auto font-mono text-sm md:text-base font-bold text-[#A0522D] dark:text-[#e09f58] text-center tracking-wide">
         {TAGLINE}
       </p>
-      <p className="hero-intro relative mt-2 max-w-[36rem] mx-auto font-mono text-xs md:text-[13px] text-[#8B4513]/65 dark:text-[#f4d5ad]/60 text-center leading-relaxed px-4">
-        {INTRO}
+      <p className="hero-intro relative mt-2 max-w-[36rem] mx-auto font-mono text-xs md:text-[13px] text-[#8B4513]/65 dark:text-[#f4d5ad]/60 text-center leading-relaxed px-4 flex flex-wrap justify-center gap-x-[0.35em]">
+        {INTRO.split(" ").map((w, i) => (
+          <span key={i} className="hero-intro-word inline-block will-change-transform">{w}</span>
+        ))}
       </p>
-
       <div className="relative mt-8 md:mt-10 flex flex-wrap items-center justify-center gap-3 md:gap-4">
         <Link
           to="/rng"
           onMouseMove={handleMagnetic}
           onMouseLeave={resetMagnetic}
           title="Play the RNG game"
-          className="hero-cta group inline-flex items-center gap-2.5 px-7 md:px-8 py-3 md:py-[13px] bg-[#1a120b] dark:bg-[#f4d5ad] text-[#f4d5ad] dark:text-[#1a120b] font-mono text-sm font-bold rounded-full shadow-[0_10px_36px_rgba(26,18,11,0.28),0_0_0_1px_rgba(224,159,88,0.18)] dark:shadow-[0_10px_36px_rgba(0,0,0,0.45)] hover:shadow-[0_14px_44px_rgba(224,159,88,0.28)] will-change-transform transition-shadow duration-300"
+          className="hero-cta group relative overflow-hidden inline-flex items-center gap-2.5 px-7 md:px-8 py-3 md:py-[13px] bg-[#1a120b] dark:bg-[#f4d5ad] text-[#f4d5ad] dark:text-[#1a120b] font-mono text-sm font-bold rounded-full shadow-[0_10px_36px_rgba(26,18,11,0.28),0_0_0_1px_rgba(224,159,88,0.18)] dark:shadow-[0_10px_36px_rgba(0,0,0,0.45)] hover:shadow-[0_14px_44px_rgba(224,159,88,0.28)] will-change-transform transition-shadow duration-300"
         >
-          <span className="grid place-items-center w-7 h-7 rounded-full bg-[#e09f58] text-[#1a120b] group-hover:rotate-[14deg] transition-transform duration-300">
+          <span className="hero-shimmer pointer-events-none absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-12deg]" />
+          <span className="relative grid place-items-center w-7 h-7 rounded-full bg-[#e09f58] text-[#1a120b] group-hover:rotate-[14deg] transition-transform duration-300">
             <DiceIcon />
           </span>
           Play RNG
@@ -215,13 +267,20 @@ const Hero = () => {
           Get in Touch
         </a>
       </div>
-
+      {/* SPAM marquee */}
+      <div className="hero-marquee absolute bottom-0 left-0 right-0 overflow-hidden border-t border-[#8B4513]/10 dark:border-white/10 bg-[#1a120b]/95 dark:bg-[#0d0906] backdrop-blur py-2 hidden md:block">
+        <div className="hero-marquee-track flex gap-8 whitespace-nowrap will-change-transform w-[200%]">
+          {Array.from({ length: 16 }).map((_, i) => (
+            <span key={i} className="font-mono text-[11px] font-bold tracking-[0.18em] uppercase text-[#f4d5ad]/55">RNG • ARCade • LUCKBUCKS • REBIRTH • PRESTIGE •</span>
+          ))}
+        </div>
+      </div>
       {/* Scroll hint */}
       <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.6, duration: 0.6 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-[#8B4513]/40 dark:text-[#f4d5ad]/35"
+        className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-[#8B4513]/40 dark:text-[#f4d5ad]/35"
         aria-hidden="true"
       >
         <span className="font-mono text-[10px] tracking-[0.2em] uppercase">Scroll</span>
