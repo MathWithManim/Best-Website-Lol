@@ -6,19 +6,19 @@ const DbContext = createContext(db);
 export const useDb = () => useContext(DbContext);
 
 // Convex is optional after Drizzle migration — homepage should not crash if it's missing.
-// Use VITE_CONVEX_URL if available, otherwise provide a dummy client that never authenticates.
+// Now that all useConvexAuth callers are resilient (try/catch → guest), we don't need
+// a dummy client that would throw "[CONVEX FATAL ERROR] Couldn't parse deployment name".
 const convexUrl = (import.meta as any).env?.VITE_CONVEX_URL as string | undefined;
 
-// Create client lazily — don't throw at import time
 let convex: ConvexReactClient | null = null;
-const effectiveUrl = convexUrl || 'https://dummy.convex.cloud';
-try {
-  convex = new ConvexReactClient(effectiveUrl);
-  if (!convexUrl) {
-    console.warn('[ConvexClientProvider] VITE_CONVEX_URL not set — using dummy Convex client (guest mode, homepage will render).');
+if (convexUrl) {
+  try {
+    convex = new ConvexReactClient(convexUrl);
+  } catch (e) {
+    console.warn('[ConvexClientProvider] Failed to create Convex client:', e);
   }
-} catch (e) {
-  console.warn('[ConvexClientProvider] Failed to create Convex client:', e);
+} else {
+  console.warn('[ConvexClientProvider] VITE_CONVEX_URL not set — Convex disabled, rendering as guest (homepage will still show).');
 }
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
