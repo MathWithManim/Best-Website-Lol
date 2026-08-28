@@ -5,7 +5,6 @@ import Hero from './components/landing/Hero';
 import AboutSection from './components/landing/AboutSection';
 import TerminalSection from './components/landing/TerminalSection';
 import ContactSection from './components/landing/ContactSection';
-import GsapSpam from './components/landing/GsapSpam';
 import ArcadeSection from './components/game/arcade/ArcadeSection';
 import NotFound from './components/NotFound';
 import ConvexClientProvider from './components/app/ConvexClientProvider';
@@ -88,7 +87,6 @@ function AnimatedRoutes() {
                   <Hero />
                   <AboutSection />
                   <TerminalSection />
-                  <GsapSpam />
                   <ContactSection />
                 </main>
               </>

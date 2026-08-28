@@ -19,12 +19,27 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
     e.preventDefault();
     setError(null);
 
-    if (!email || !password) {
+    const userEmail = email.trim();
+    const userName = username.trim();
+    // Precise client-side validation
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail);
+    if (!userEmail || !password) {
       setError("Please enter both email and password.");
       return;
     }
+    if (!emailOk) {
+      setError(`Invalid email: "${userEmail}" — expected format name@domain.tld`);
+      return;
+    }
+    if (mode === "signup" && password.length < 8) {
+      setError(`Password too short (${password.length}/8 chars) — use at least 8 characters.`);
+      return;
+    }
+    if (mode === "signup" && userName && !/^[a-zA-Z0-9._-]{2,32}$/.test(userName)) {
+      setError(`Invalid username "${userName}" — use 2-32 letters/numbers/._- only.`);
+      return;
+    }
 
-    const userEmail = email.trim();
     setSubmitting(true);
     try {
       let result;
@@ -34,7 +49,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
         result = await authClient.signUp.email({
           email: userEmail,
           password,
-          name: username || userEmail.split("@")[0],
+          name: userName || userEmail.split("@")[0],
         });
       }
 
@@ -48,13 +63,36 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
 
       onLogin?.(userEmail);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Something went wrong. Try again.";
-      if (message.toLowerCase().includes("already exists") || message.toLowerCase().includes("account")) {
-        setError("Account already exists. Try logging in instead.");
+      // Verbose extraction — better-auth errors are often {message, code} or nested {error: {message}}
+      const e: any = err;
+      const raw = e?.message
+        || e?.error?.message
+        || e?.body?.message
+        || e?.cause?.message
+        || (typeof e === "string" ? e : null)
+        || (e ? JSON.stringify(e).slice(0, 400) : null)
+        || "Unknown error";
+      const code = e?.code || e?.error?.code || e?.body?.code || "";
+      const status = e?.status || e?.statusCode || "";
+      console.error("[AuthModal] signUp/signIn failed:", { err, raw, code, status, email: userEmail });
+
+      const lower = raw.toLowerCase();
+      let msg = code ? `${raw} (${code})` : raw;
+      if (status) msg += ` [${status}]`;
+      // Make common cases precise but keep original detail
+      if (lower.includes("already exists") || lower.includes("duplicate") || lower.includes("account")) {
+        msg = `Account already exists for ${userEmail} — try logging in instead. (${raw})`;
         if (mode === "signup") setMode("login");
-      } else {
-        setError(message);
+      } else if (lower.includes("password") && lower.includes("short")) {
+        msg = `Password too weak: ${raw}`;
+      } else if (lower.includes("invalid") && lower.includes("email")) {
+        msg = `Invalid email: ${raw}`;
+      } else if (lower.includes("network") || lower.includes("fetch") || lower.includes("failed to fetch")) {
+        msg = `Network error — cannot reach auth server (${raw}). Check VITE_CONVEX_SITE_URL / NEON_AUTH_URL and try again.`;
+      } else if (lower.includes("rate") || lower.includes("too many")) {
+        msg = `Rate limited: ${raw} — wait a moment and retry.`;
       }
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
