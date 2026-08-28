@@ -1,0 +1,261 @@
+{
+  "enable_hint": "Hermes may require `hermes plugins enable omh` after the bundle is installed.",
+  "files": [
+    {
+      "path": "__init__.py",
+      "sha256": "9b5906fbc1cbeb43b2153ac28145cc9e89a0ca6e75d499f5e199590c209ee625"
+    },
+    {
+      "path": "_governance_evaluation.py",
+      "sha256": "48a839a85c330103bb39e8f5221a895364bd4fa1fd6f603f771d66b382cb9d1b"
+    },
+    {
+      "path": "_governance_overrides.py",
+      "sha256": "5a9b02259333d0de375f2e753fd468abf9bc1f2e3362c2597914910afedae503"
+    },
+    {
+      "path": "_governance_safety.py",
+      "sha256": "eb237d98d717f0029256e121f7eaf1e2afc8589b45f9c9c3f3ba56ab30a806e9"
+    },
+    {
+      "path": "awareness.py",
+      "sha256": "ae1bff6e4a49a3efcf6c81720a6e1b0f3d2ed53409b0fca83a66c7e37b891cb0"
+    },
+    {
+      "path": "awareness_delivery.py",
+      "sha256": "b9b6925d4d560af855753016e8fd6a49020830436aead718802d51b464f25d5e"
+    },
+    {
+      "path": "buzz_diagnostics.py",
+      "sha256": "7c5cdec3ebf5cef3a3777129e47ce5c05e0dea8f07e956f0211e84ad13d1220a"
+    },
+    {
+      "path": "config.yaml",
+      "sha256": "2c47686cc564d126f4780474bb6827d66ef8987a5caa01384c61834f56f29a64"
+    },
+    {
+      "path": "context_brief.py",
+      "sha256": "7fd57d615e50f505008684e477b0856049488d24b04ab9f807e615d0ae7d5985"
+    },
+    {
+      "path": "degradation.py",
+      "sha256": "8793316e7fc38e3c02ddddacf571638f0007c1fd3f59209da2187bba8d7fa507"
+    },
+    {
+      "path": "delegation_routing.py",
+      "sha256": "47637ca852aedff221168a92224428612dca8c3f42d70ad65d72a1ca19574ae7"
+    },
+    {
+      "path": "domain_signals.py",
+      "sha256": "fb28582eaff05752a7ed8f7cf341652f841622ca2dcff6eaf9c5d191c2f0e152"
+    },
+    {
+      "path": "hermes_delegation.py",
+      "sha256": "977cfe11b275ddc70e9df78e1614aad9f2c2f53693d499583293b40075a33ebb"
+    },
+    {
+      "path": "hermes_memory.py",
+      "sha256": "965c63cfc00143192e79e3ccc1464e7d66359b2e76920f2080a6955fb8e85891"
+    },
+    {
+      "path": "hooks/__init__.py",
+      "sha256": "5384bfdb2df380b6557cc7a71d16891415bccaa87699406e236f752c6415389f"
+    },
+    {
+      "path": "hooks/diff_presentation.py",
+      "sha256": "e695ead08354a79e61ee91069851c64c245a06bbd7d76cd2423fdb7fea9b6743"
+    },
+    {
+      "path": "hooks/llm_hooks.py",
+      "sha256": "aae3d1aecc270baf913f45ba569e4e5135ed392a8571283814a7e2847c64be59"
+    },
+    {
+      "path": "hooks/session_hooks.py",
+      "sha256": "3ee7f229095bee101ef15f3749b88c6d685d4cf613d96ade0d519e18b7f47b36"
+    },
+    {
+      "path": "hooks/tool_hooks.py",
+      "sha256": "e53ea5190cde26282c7545f6eb59699071d24a5631e066a0f45675016eb75372"
+    },
+    {
+      "path": "hooks/verify_hooks.py",
+      "sha256": "4917ad697e07fbacf59a64252e7079d5db7c81004ae127b7c7dd9adf415b2309"
+    },
+    {
+      "path": "host_context.py",
+      "sha256": "1650c73eb9ef2a46a665e6b935de7d5a5d9e02b93e2a4bfa4b10ad27ef37caa6"
+    },
+    {
+      "path": "host_observation.py",
+      "sha256": "201a2984d5548cf94413d163d6aa871067f65fa592039cb791c691ac8751cc49"
+    },
+    {
+      "path": "memory_block_replay.py",
+      "sha256": "a269dac757ae466fc50a098306a1ae0074d57402956be42b379c299148f46285"
+    },
+    {
+      "path": "memory_blocks.py",
+      "sha256": "2c196be0dc47964ff1ddd21dc41b1cbfbe36d66e0a43f6266ab9cfe2567ba6e1"
+    },
+    {
+      "path": "memory_dreaming.py",
+      "sha256": "0e01e3dd596dcf96f6c669420eb122f6ef6ace53c8e10d5365072dd35ce022c5"
+    },
+    {
+      "path": "memory_eviction.py",
+      "sha256": "0c076051970080e37aad53dbd476ddaf77168055c11032fbcb8c6e21ed9ce462"
+    },
+    {
+      "path": "memory_governance.py",
+      "sha256": "64003263797444e49389264a3f80a46784191904eb93d52b3a2a98892e792c14"
+    },
+    {
+      "path": "memory_provider.py",
+      "sha256": "4bb533a3c627906362fb3e4dfe73b8fbc6774f48e11733f8852a28ae41577da9"
+    },
+    {
+      "path": "metadata.py",
+      "sha256": "64f36bb46df1734e78c55b4da388610517040b2288a207e23c3aa1b2ae8abc58"
+    },
+    {
+      "path": "omh_roles.py",
+      "sha256": "3ba9dc28777c5f26be524d1b9f223bf941b4fc66a3ea80b605290ac6ad6d6817"
+    },
+    {
+      "path": "plugin.yaml",
+      "sha256": "91436dec757b10b7ce7df82039819fd2ac74d6fc091a763550a8cb4a0656e955"
+    },
+    {
+      "path": "references/__init__.py",
+      "sha256": "69e4d7fa5a79a3020e2aaa2d64aa96bf98260e870634448f1be288afc5d273bf"
+    },
+    {
+      "path": "references/role-builder.md",
+      "sha256": "e9efefeae29eb0940f1bd7e7067a97c92aaca988e3ef251dfa0f2915697864a3"
+    },
+    {
+      "path": "references/role-guide.md",
+      "sha256": "0a93e93fc1414ea0c5348271220b75f3249255233fd220453bae28935b2f0d67"
+    },
+    {
+      "path": "references/role-handoff-guide.md",
+      "sha256": "4ae43648c92de5725cc92412f4295618797b697d540cde3b0ae2cc11bdddb539"
+    },
+    {
+      "path": "references/role-memory-keeper.md",
+      "sha256": "ad900366fbb3c01eab008d96b74e804371681365d4f3924f905b64640f5dd769"
+    },
+    {
+      "path": "references/role-operator.md",
+      "sha256": "97ee601a2aa85a6cdd9bf96b0e7c01454fd452e617ba374ffcad4c1463e89f8a"
+    },
+    {
+      "path": "references/role-planner.md",
+      "sha256": "dbc31ea6d024515098ff47b9f176eae132b0796a956b2d3b2354413e054650cf"
+    },
+    {
+      "path": "references/role-researcher.md",
+      "sha256": "5b48bcf3ab57582222ce79078f69b8571b8789fd9a700773727f34cb1c3c9829"
+    },
+    {
+      "path": "references/role-reviewer.md",
+      "sha256": "272baa473c513260d3e6bf0db5e7fda782e70cfbd06dfe5b97e746812ee22dfe"
+    },
+    {
+      "path": "references/role-tracker.md",
+      "sha256": "b376cfe7310a6c55f919426d3d9f876face70e2fefe415af0347f69c87baaf3a"
+    },
+    {
+      "path": "runtime_reader.py",
+      "sha256": "77dae4323adbf2cda88647a743c3bdbb000e7142aed3f001d384f113a950a3bf"
+    },
+    {
+      "path": "status_board_reader.py",
+      "sha256": "29bf9789fc5a5cb01bbb2c6dd965d78dc0f493afd1da3c5d1c0de8946373e86b"
+    },
+    {
+      "path": "todo_store.py",
+      "sha256": "bf3c54497ccc81a8c8cd55dbcb87d8b6394ba32dd4af3842d460318bf43a2886"
+    },
+    {
+      "path": "tool_bursts.py",
+      "sha256": "b099b92096a3891ffb72f566ca257e02be7420f729242e5107a863fd2c10e0d9"
+    },
+    {
+      "path": "tools/__init__.py",
+      "sha256": "5384bfdb2df380b6557cc7a71d16891415bccaa87699406e236f752c6415389f"
+    },
+    {
+      "path": "tools/capability_families.json",
+      "sha256": "88a3d44cf899e526bb8db6bb8d1da473d12e2e2beefb799c517198ca8be28def"
+    },
+    {
+      "path": "tools/capability_impact.py",
+      "sha256": "0058bbd9f75566abca80c8e345a7e0078374805557f495cc03b354f552f57a95"
+    },
+    {
+      "path": "tools/capability_tool.py",
+      "sha256": "127fe54ebe8d3f0f87f92c2925e44eac37ea942dee6861aee2b727ec52bf5397"
+    },
+    {
+      "path": "tools/chat_tool.py",
+      "sha256": "42d5d91cc34bc4c1490c6af790636254a94a709ece509d99b32cdedc52d7c31f"
+    },
+    {
+      "path": "tools/context_tool.py",
+      "sha256": "92a9a087a98e63ac2e3b9f11b4999d026d22161dfd15f7108e448ad4893bde1a"
+    },
+    {
+      "path": "tools/delegate_route_tool.py",
+      "sha256": "57b94fc62e3d31855134717052b77ebd4ca759ca174a3e073b774252f62391c6"
+    },
+    {
+      "path": "tools/evidence_tool.py",
+      "sha256": "5db3e0dcd0bc5eb61d28a7f401fbff9e2f352cb242ef33f245dcb1664fff8996"
+    },
+    {
+      "path": "tools/hud_tool.py",
+      "sha256": "1a461e6c06d0a9b5c172044ae49ca13fe373305ac42b30c87f3fd5522aafeddf"
+    },
+    {
+      "path": "tools/memory_tool.py",
+      "sha256": "2b6081b9ec2400f4f388242d87dfca30400c89379c2adac1f7b7d776e6c8dfae"
+    },
+    {
+      "path": "tools/probe_tool.py",
+      "sha256": "db9b1d13b1da880d89eab745f21bd25e604ab1b3b23713a4cd3986307e492c24"
+    },
+    {
+      "path": "tools/recommend_tool.py",
+      "sha256": "d2ae6a4d4100d9a7a86986f329d94439480aa75811b70b65b9dff5a994a71c60"
+    },
+    {
+      "path": "tools/role_tool.py",
+      "sha256": "a7c4976232e61bfdfcae03a1c2257bd7e0f08d1ab1a54695bf61c9f1f2088bd6"
+    },
+    {
+      "path": "tools/run_summary_tool.py",
+      "sha256": "94659e830d2b4bf9216225f121bc43970c3368c9673f53702735635e2d8bde1b"
+    },
+    {
+      "path": "tools/source_trust_tool.py",
+      "sha256": "2bd4a0f6f0085e2e07a8f263419efd5fc59c3ed2d948b5fa93aabdc660681d86"
+    },
+    {
+      "path": "tools/status_tool.py",
+      "sha256": "a5121870437c6f41f3a021841bf06db925acd032927ad5984c2ad4c8c57638d2"
+    },
+    {
+      "path": "tools/todo_tool.py",
+      "sha256": "1dfb4b667ea1dcd8800431c5f01462196bdd8e3139017bbc09f1d464dbee7cae"
+    }
+  ],
+  "installed_at": "2026-08-28T12:13:21Z",
+  "package": "oh-my-hermes",
+  "plugin_dir": "/home/website/.hermes/plugins/omh",
+  "plugin_name": "omh",
+  "requires_hermes_plugin_enable": true,
+  "schema_version": "plugin_distribution/v1",
+  "source": "builtin",
+  "version": "1.0.9"
+}

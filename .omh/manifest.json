@@ -1,0 +1,754 @@
+{
+  "catalog_revision": "4e58b1babc6b741464a9c5d2d408d02ad157f83f6410697b59925bde237b0bc9",
+  "context_cost_warning": {
+    "core_profile_skill_count": 10,
+    "extra_skill_count": 92,
+    "installed_skill_count": 102,
+    "message": "full profile installs all 102 packaged skills, 92 more than the 10-skill core default; every installed skill adds per-turn context weight to every Hermes request, so prefer core unless this workspace genuinely needs the complete catalog.",
+    "profile": "full",
+    "schema_version": "omh_skill_profile_context_cost_warning/v1"
+  },
+  "flat_layout_skills_removed": [],
+  "flat_layout_skills_retained": [],
+  "installed_at": "2026-08-28T12:12:21Z",
+  "package": "oh-my-hermes",
+  "pruned_skills": [],
+  "schema_version": 1,
+  "skill_profile": "full",
+  "skill_profile_state": {
+    "context_cost_note": "Every installed skill adds per-turn context weight to every Hermes request, so an install that still carries full-only skills costs full-profile context even when the recorded profile is core.",
+    "core_profile_skill_count": 10,
+    "effective_profile": "full",
+    "full_only_installed_skills": [
+      "accessibility-audit",
+      "achievements",
+      "agent-board",
+      "agent-debug",
+      "agent-evaluation",
+      "ai-slop-cleaner",
+      "ask",
+      "automation-blueprint",
+      "autoresearch-goal",
+      "best-practice-research",
+      "browser-operator",
+      "build-failure-triage",
+      "capability-toggle",
+      "code-review",
+      "codebase-onboarding",
+      "codegraph-refresh",
+      "command-operator",
+      "connector-operator",
+      "content-operator",
+      "context",
+      "context-budget-review",
+      "cto-loop",
+      "curriculum-design",
+      "data-analysis",
+      "decision-recall",
+      "deep-interview",
+      "deliverable-package",
+      "deploy-and-monitor",
+      "design-orchestration",
+      "design-quality-gate",
+      "external-connector-readiness",
+      "failure-signal-audit",
+      "feedback-triage",
+      "finance-analysis",
+      "frontend",
+      "github-event-ops",
+      "harness-session-inventory",
+      "idea-to-deploy",
+      "img-summary",
+      "instinct-ledger",
+      "jit-learn",
+      "legal-compliance-review",
+      "live-info-operator",
+      "localization-review",
+      "loop",
+      "materials-package",
+      "media-input-operator",
+      "meeting-brief",
+      "memory-new",
+      "memory-sync",
+      "meta-router",
+      "model-setup",
+      "morning-brief",
+      "operating-rhythm",
+      "ops-review",
+      "paper-learning",
+      "parallel-tools",
+      "people-ops",
+      "performance-goal",
+      "physical-device-readiness",
+      "product-brief",
+      "production-audit",
+      "prompt-import-readiness",
+      "provider-profile-posture",
+      "ralplan",
+      "reliability-review",
+      "report-package",
+      "research",
+      "research-brief",
+      "research-department",
+      "rules-distill",
+      "run-efficiency",
+      "running-work-board",
+      "sales-development",
+      "security-safety-review",
+      "skill-health",
+      "skill-scout",
+      "source-finder",
+      "strategy-brief",
+      "support-operations",
+      "toolbelt-readiness",
+      "ultraperf",
+      "ultraqa",
+      "ultrawork",
+      "verification-gate",
+      "visual-qa",
+      "voice-operator",
+      "websearch-setup",
+      "wiki",
+      "workflow-learning",
+      "workspace-audit",
+      "workspace-file-operator"
+    ],
+    "full_profile_skill_count": 102,
+    "installed_catalog_skill_count": 102,
+    "installed_skill_count": 102,
+    "matches_requested_profile": true,
+    "next_action": "",
+    "non_destructive_default": "omh setup, install, and update never delete installed skills, so a full install keeps its skills after the recorded profile changes; run `omh skill-profile reconcile --to core` explicitly to shrink an existing full install.",
+    "prompt_cost": {
+      "claim_boundary": "These are OMH-local filesystem estimates, not observed serialized request bytes, selected skill bodies, provider input tokens, or cache counters. Use `hermes prompt-size --json` for host-observed prompt accounting.",
+      "core_fixed_index_bytes": 2853,
+      "estimated_index_line_bytes": 34221,
+      "evidence_status": "prepared_estimate_not_host_observed",
+      "full_only_fixed_index_bytes": 31368,
+      "installed_skill_body_bytes": 722948,
+      "observation_command": "hermes prompt-size --json",
+      "schema_version": "omh_skill_prompt_cost_estimate/v1"
+    },
+    "requested_profile": "full",
+    "retained_exception": false,
+    "schema_version": "omh_skill_profile_state/v1",
+    "unmanaged_skill_count": 0
+  },
+  "skills": [
+    {
+      "name": "accessibility-audit",
+      "path": "reviewer/omh-accessibility-audit/SKILL.md",
+      "sha256": "7031c1361e26b3ba0c8e2f75de7d8a16681c353c338dbffca41053f5e7d3386b",
+      "source": "builtin"
+    },
+    {
+      "name": "achievements",
+      "path": "tracker/omh-achievements/SKILL.md",
+      "sha256": "4439ba045ec11361ecbe39fae43387e654cde99abcf4f9e39ad9ce71ef04a6fe",
+      "source": "builtin"
+    },
+    {
+      "name": "agent-board",
+      "path": "tracker/omh-agent-board/SKILL.md",
+      "sha256": "adb99f0ecc0b1791a1c223629af3af3d85add4bd8773e6a246778dfb81201182",
+      "source": "builtin"
+    },
+    {
+      "name": "agent-debug",
+      "path": "operator/omh-agent-debug/SKILL.md",
+      "sha256": "c16c3279d1e80913dc6a64d508ac10c68334c56d899e757a38d01fb985019fcb",
+      "source": "builtin"
+    },
+    {
+      "name": "agent-evaluation",
+      "path": "operator/omh-agent-evaluation/SKILL.md",
+      "sha256": "f029396dfb9e96110407d6cbc35bc3bf7759ae05fb532fb0fac157878d89d9e6",
+      "source": "builtin"
+    },
+    {
+      "name": "agent-ops-review",
+      "path": "tracker/omh-agent-ops-review/SKILL.md",
+      "sha256": "08d13b4ed2603afd1f3b72c7b152f0359ca18ec92e8b855857742f0929910b08",
+      "source": "builtin"
+    },
+    {
+      "name": "ai-slop-cleaner",
+      "path": "handoff-guide/omh-ai-slop-cleaner/SKILL.md",
+      "sha256": "26358c998e6e47d844455c51d26c56ba9d6683bd2fbf26801f19ce67453d3f2f",
+      "source": "builtin"
+    },
+    {
+      "name": "ask",
+      "path": "reviewer/omh-ask/SKILL.md",
+      "sha256": "6f5b304429828bf5648a0c004db7e3a3d362e4d80ad3754d7a9dbf66074e3b90",
+      "source": "builtin"
+    },
+    {
+      "name": "automation-blueprint",
+      "path": "operator/omh-automation-blueprint/SKILL.md",
+      "sha256": "2ba5b4e3fd9fad5b686d76182e2c0fdc9b47d1eeef610d29644142f3e150fc62",
+      "source": "builtin"
+    },
+    {
+      "name": "autoresearch-goal",
+      "path": "researcher/omh-autoresearch-goal/SKILL.md",
+      "sha256": "dac0394942ed5159c54bf98fbcb9414c6e1280e200a553e5e8d180e312c2dd68",
+      "source": "builtin"
+    },
+    {
+      "name": "best-practice-research",
+      "path": "researcher/omh-best-practice-research/SKILL.md",
+      "sha256": "40b6f6618b23f532c4fa1379e5e6ea497e9c02193b13218d2c8ff64e274f0236",
+      "source": "builtin"
+    },
+    {
+      "name": "browser-operator",
+      "path": "guide/omh-browser/SKILL.md",
+      "sha256": "7bf026b9da04bd0671c55c1552a95abdf0e559dbec126b1b90db79dc58f2eec6",
+      "source": "builtin"
+    },
+    {
+      "name": "build-failure-triage",
+      "path": "reviewer/omh-build-failure-triage/SKILL.md",
+      "sha256": "83e033842e336f46c86d38b7a70032c260fb5e5cbba988f4ec5749ff7581fde6",
+      "source": "builtin"
+    },
+    {
+      "name": "buzz",
+      "path": "tracker/omh-buzz/SKILL.md",
+      "sha256": "ed68c2baa51c70ddad0a34c6f16e2f58bec73217916f7c5b4cb8f57597b79518",
+      "source": "builtin"
+    },
+    {
+      "name": "cancel",
+      "path": "tracker/omh-cancel/SKILL.md",
+      "sha256": "f025877f0d8525cd3d51ed55d2948ad1ef3235b6c7c3743342607faaf08664c9",
+      "source": "builtin"
+    },
+    {
+      "name": "capability-toggle",
+      "path": "tracker/omh-capability-toggle/SKILL.md",
+      "sha256": "8f61ddbccc5176db85787953817242680287f70e8063a9b88e29f8dfd3aef811",
+      "source": "builtin"
+    },
+    {
+      "name": "code-review",
+      "path": "reviewer/omh-code-review/SKILL.md",
+      "sha256": "bc187bc008769c73516cc3b679243acfce56089d1ab15da449617cc770a4bff5",
+      "source": "builtin"
+    },
+    {
+      "name": "codebase-onboarding",
+      "path": "planner/omh-codebase-onboarding/SKILL.md",
+      "sha256": "cc33a92e49947eb4055dbd31f0096d91f802b481594583a0ad5ca300188d2396",
+      "source": "builtin"
+    },
+    {
+      "name": "codegraph-refresh",
+      "path": "planner/omh-codegraph-refresh/SKILL.md",
+      "sha256": "f8f2f2be90ad8c1022c99877e1a9c1c7b983c82675cd96fe93aa928d73d15541",
+      "source": "builtin"
+    },
+    {
+      "name": "command-operator",
+      "path": "guide/omh-terminal/SKILL.md",
+      "sha256": "f2f4d8e50261fc16f01780ed40e4f011e6538850a76426e04f7ec977e591f1e1",
+      "source": "builtin"
+    },
+    {
+      "name": "connector-operator",
+      "path": "guide/omh-apps/SKILL.md",
+      "sha256": "a2dfc9888b39df353049758d595d0dd95172077e0db2d957f895de8445ebf331",
+      "source": "builtin"
+    },
+    {
+      "name": "content-operator",
+      "path": "guide/omh-content-operator/SKILL.md",
+      "sha256": "bbd4df961277fb0c3bffa51f30dd734a151eabc4876b4ed2272ec88da034ce69",
+      "source": "builtin"
+    },
+    {
+      "name": "context",
+      "path": "ultrawork/ulw-context/SKILL.md",
+      "sha256": "8fce2e4bdbb5138bcf662918e11cc7323e6d1f77f5c91a19a815023f697e232b",
+      "source": "builtin"
+    },
+    {
+      "name": "context-budget-review",
+      "path": "tracker/omh-context-budget-review/SKILL.md",
+      "sha256": "54745c4f94a78fcee69f7687ef72b5fa0e8e349b15f0aaa48ece862f68e39723",
+      "source": "builtin"
+    },
+    {
+      "name": "cto-loop",
+      "path": "operator/omh-cto-loop/SKILL.md",
+      "sha256": "ab17b6bf39621fb8054bc9e00c6b78ac40c9608330648aa87817ad1ae430f2a2",
+      "source": "builtin"
+    },
+    {
+      "name": "curriculum-design",
+      "path": "planner/omh-curriculum-design/SKILL.md",
+      "sha256": "754b46c0f8c945fdf927316d765f30c432bca9e30c5bc273ea62e4da545d1aab",
+      "source": "builtin"
+    },
+    {
+      "name": "data-analysis",
+      "path": "guide/omh-data-analysis/SKILL.md",
+      "sha256": "bad308ca37e434478a190a6f7c8830e5bab0ee3dd24e688728ee024d9bc16a0f",
+      "source": "builtin"
+    },
+    {
+      "name": "decision-recall",
+      "path": "memory-keeper/omh-decision-recall/SKILL.md",
+      "sha256": "a390e4a564a85fd9daaab08659507895af3578bf54f4ce1a2e57fc4ba3ffa46c",
+      "source": "builtin"
+    },
+    {
+      "name": "deep-interview",
+      "path": "ultrawork/ulw-interview/SKILL.md",
+      "sha256": "487ac41e9fcca445e78db7297c366fa3401c899324ecb7a5ed4446d4fc63bb28",
+      "source": "builtin"
+    },
+    {
+      "name": "deliverable-package",
+      "path": "operator/omh-deliverable-package/SKILL.md",
+      "sha256": "f8cf0d629b5c01ce03281a0f3d1c1e51c42d5604f6d19c576fdc10f929902a39",
+      "source": "builtin"
+    },
+    {
+      "name": "deploy-and-monitor",
+      "path": "operator/omh-deploy-and-monitor/SKILL.md",
+      "sha256": "49d755f7648e364d6415524008002f88a7c29ea92e83e05670a26f4baf9cd4e9",
+      "source": "builtin"
+    },
+    {
+      "name": "design-orchestration",
+      "path": "operator/omh-design-orchestration/SKILL.md",
+      "sha256": "b92fc5f6912509ece5741e46acfac59d57d19962b3c4999fcb2891cc1bc11167",
+      "source": "builtin"
+    },
+    {
+      "name": "design-quality-gate",
+      "path": "operator/omh-design-quality-gate/SKILL.md",
+      "sha256": "0a72f588d338f03a916b1893918693ce8c0f71229ca895136b609257df1fa195",
+      "source": "builtin"
+    },
+    {
+      "name": "doctor",
+      "path": "tracker/omh-doctor/SKILL.md",
+      "sha256": "2d1f9c724212071a0f77b021e530bb64eade0cc2984fe59ae682a126a90c20aa",
+      "source": "builtin"
+    },
+    {
+      "name": "executor-runtime-readiness",
+      "path": "handoff-guide/omh-executor-runtime-readiness/SKILL.md",
+      "sha256": "8eac06f8ffc548693fc535270b2d4f1056caa9edf069474b6061dc6bf5eca7ad",
+      "source": "builtin"
+    },
+    {
+      "name": "external-connector-readiness",
+      "path": "guide/omh-external-connector-readiness/SKILL.md",
+      "sha256": "2f05385a2d416e71b91b8606b595f98ce4cfd42b82b6233a968ef80330ee236c",
+      "source": "builtin"
+    },
+    {
+      "name": "failure-signal-audit",
+      "path": "reviewer/omh-failure-signal-audit/SKILL.md",
+      "sha256": "a5a8add8cccf8a4f5632c200e76900ebd641d6244aa8642f18dcb53c11fe5c20",
+      "source": "builtin"
+    },
+    {
+      "name": "feedback-triage",
+      "path": "operator/omh-feedback-triage/SKILL.md",
+      "sha256": "94a6e754ab35ea1b9742b9acf76461f2c39e147db0893e7b42cd060952bbc7bd",
+      "source": "builtin"
+    },
+    {
+      "name": "finance-analysis",
+      "path": "operator/omh-finance-analysis/SKILL.md",
+      "sha256": "0ca9ea9841a2f97479d8243d81726ee10b878e784b80e648c28c4febe155c0c4",
+      "source": "builtin"
+    },
+    {
+      "name": "frontend",
+      "path": "operator/omh-frontend/SKILL.md",
+      "sha256": "48dbeddc9c1af6656bd8e8ffb6bfca48c6d51c82a91fef42bf44f2722631e6e2",
+      "source": "builtin"
+    },
+    {
+      "name": "gateway-intent-card",
+      "path": "guide/omh-gateway-intent-card/SKILL.md",
+      "sha256": "5a7dda25a921e1926bc172f94ea9935500d504dddcd136a4111d3704a360fbd7",
+      "source": "builtin"
+    },
+    {
+      "name": "github-event-ops",
+      "path": "operator/omh-github-event-ops/SKILL.md",
+      "sha256": "429848034f5d87ca3d4d695811b00f6be2bbc185903658162cf367279a9e839f",
+      "source": "builtin"
+    },
+    {
+      "name": "harness-session-inventory",
+      "path": "tracker/omh-harness-session-inventory/SKILL.md",
+      "sha256": "b8ccff20538a60911e409f8e3d26a7a2ba33a96daed4f88fc4f7ab36c6f071b5",
+      "source": "builtin"
+    },
+    {
+      "name": "idea-to-deploy",
+      "path": "operator/omh-idea-to-deploy/SKILL.md",
+      "sha256": "0e684a0e13b05ac12bc49df5840dcd5b30eb1b008f9204886753351682e2103e",
+      "source": "builtin"
+    },
+    {
+      "name": "img-summary",
+      "path": "operator/omh-image-cards/SKILL.md",
+      "sha256": "bc34b3a1b67722aeaf76f5ad748ff35650050f3494a0e7e9c1817b6b5f243f90",
+      "source": "builtin"
+    },
+    {
+      "name": "instinct-ledger",
+      "path": "tracker/omh-instinct-ledger/SKILL.md",
+      "sha256": "5ce9ba7e9ab14ad00952be8178daa26201d10aefc6735a21ab86e28634424647",
+      "source": "builtin"
+    },
+    {
+      "name": "jit-learn",
+      "path": "researcher/omh-jit-learn/SKILL.md",
+      "sha256": "f2d17cedcf08fb894fbdd0696f42fbadaef882d04eaf41328a75a660e4520e01",
+      "source": "builtin"
+    },
+    {
+      "name": "legal-compliance-review",
+      "path": "reviewer/omh-legal-compliance-review/SKILL.md",
+      "sha256": "2f1f1014f001584a3b2ce6106905ec1d252bbf014003a89f969c912fe7ba1076",
+      "source": "builtin"
+    },
+    {
+      "name": "live-info-operator",
+      "path": "guide/omh-live-info/SKILL.md",
+      "sha256": "d2099541e0df4de0ceaa1d0e405af2e130687826632f1cbb2e10ffe2b7e9aaaf",
+      "source": "builtin"
+    },
+    {
+      "name": "localization-review",
+      "path": "reviewer/omh-localization-review/SKILL.md",
+      "sha256": "f06b69e96c1b7526b0ab16d30cf9e34f2fe49dd2ebe01cdc889b77f77c33e45a",
+      "source": "builtin"
+    },
+    {
+      "name": "loop",
+      "path": "ultrawork/ulw-loop/SKILL.md",
+      "sha256": "709035040ae3d46fc4f60d50ec551406db5f91dd4238ebd240e322f76050c50f",
+      "source": "builtin"
+    },
+    {
+      "name": "materials-package",
+      "path": "operator/omh-materials-package/SKILL.md",
+      "sha256": "979b90f3031d2c82edcc953d73f3a0b8428b63cfe7ad57626326b91d157e928c",
+      "source": "builtin"
+    },
+    {
+      "name": "media-input-operator",
+      "path": "guide/omh-media-input/SKILL.md",
+      "sha256": "5dfd1d5082cd0fdaa9a7a143fe48d6f0b76abdff01917dfe8f729d14e6eec6d3",
+      "source": "builtin"
+    },
+    {
+      "name": "meeting-brief",
+      "path": "operator/omh-meeting-brief/SKILL.md",
+      "sha256": "e137dadf3a4bffaf6ee556627e184c6603254ea60303579b6acb156d2ecaab9f",
+      "source": "builtin"
+    },
+    {
+      "name": "memory-new",
+      "path": "memory-keeper/omh-memory-new/SKILL.md",
+      "sha256": "9e5eacabda7b941883e61fb227e510eebd9b8604a6a2321675f5dc480908a98e",
+      "source": "builtin"
+    },
+    {
+      "name": "memory-sync",
+      "path": "memory-keeper/omh-memory-sync/SKILL.md",
+      "sha256": "b6668751a323f8f3e573e7c0d1bbd30f53b947fab9d32585ec2734a36a97d693",
+      "source": "builtin"
+    },
+    {
+      "name": "meta-router",
+      "path": "guide/omh-meta-router/SKILL.md",
+      "sha256": "443afb3958d867d732d179a744b15959bf5cfb5698c656a405f222d1d63ac3cf",
+      "source": "builtin"
+    },
+    {
+      "name": "model-setup",
+      "path": "guide/omh-model-setup/SKILL.md",
+      "sha256": "8736a018f6e319aa7b37294745b2773200ab7754e581b77f15e4ea212d5e11c3",
+      "source": "builtin"
+    },
+    {
+      "name": "morning-brief",
+      "path": "guide/omh-morning-brief/SKILL.md",
+      "sha256": "b9063b6b61ef63cce07574424a9ea8004269a08eb70e657d9d28ffb9e39122c2",
+      "source": "builtin"
+    },
+    {
+      "name": "oh-my-hermes",
+      "path": "guide/omh-routing/SKILL.md",
+      "sha256": "3aa4c1830e766e1ae9ad63823ecf2ff0ccc133a72b71d1d1ec3fdbcd52c0d9b0",
+      "source": "builtin"
+    },
+    {
+      "name": "operating-rhythm",
+      "path": "operator/omh-operating-rhythm/SKILL.md",
+      "sha256": "984440a1c4b1d10612ff386b0d1a9353bd92da2afa3126f98154d8ce899cb99e",
+      "source": "builtin"
+    },
+    {
+      "name": "ops-observability-card",
+      "path": "tracker/omh-ops-observability-card/SKILL.md",
+      "sha256": "c5763f569d5889ba5b4243324b97e5eb9168ec8f30d8183364d964c57d3d5381",
+      "source": "builtin"
+    },
+    {
+      "name": "ops-review",
+      "path": "operator/omh-ops-review/SKILL.md",
+      "sha256": "0c3b18e0420912ba4224841c34e6fd31188543a63c3fdb0fe284e8b9732dd294",
+      "source": "builtin"
+    },
+    {
+      "name": "paper-learning",
+      "path": "researcher/omh-paper-learning/SKILL.md",
+      "sha256": "df7cdc24550024f692355f8397bc1b26319591bbac09abf27a6a17d338cbbd17",
+      "source": "builtin"
+    },
+    {
+      "name": "parallel-tools",
+      "path": "guide/omh-parallel-tools/SKILL.md",
+      "sha256": "3eb5f9e64f38213601f255b0e70e4ecfc385f323dd98660a86b533a718604ae0",
+      "source": "builtin"
+    },
+    {
+      "name": "people-ops",
+      "path": "operator/omh-people-ops/SKILL.md",
+      "sha256": "1746ba65b0d31faf3270d8974e9904cfee74c4f7d481b9b41b97c52856286d82",
+      "source": "builtin"
+    },
+    {
+      "name": "performance-goal",
+      "path": "tracker/omh-performance-goal/SKILL.md",
+      "sha256": "8935a0d1ddf6c354665e44ab7cf008a6880edb92261e55a0032676396f50ed24",
+      "source": "builtin"
+    },
+    {
+      "name": "physical-device-readiness",
+      "path": "operator/omh-physical-device-readiness/SKILL.md",
+      "sha256": "5f9e58d830342842bf9e61fc267635b7b6176b0f456a94bf4b2858743060d043",
+      "source": "builtin"
+    },
+    {
+      "name": "plan",
+      "path": "planner/omh-plan/SKILL.md",
+      "sha256": "851c5fb0735ac38f678026f1aede4ec5072103f35f739ba873737f6fddc24cdb",
+      "source": "builtin"
+    },
+    {
+      "name": "product-brief",
+      "path": "planner/omh-product-brief/SKILL.md",
+      "sha256": "fc3b8ce1a811af97211ddbcd2f2ee74085fe8f36bf1be4b3c3bb780f7855ae06",
+      "source": "builtin"
+    },
+    {
+      "name": "production-audit",
+      "path": "reviewer/omh-production-audit/SKILL.md",
+      "sha256": "81c38a62a994e4a0d656e6d7a7340c67f622d213753b4eaa7a1e372bc8795d5e",
+      "source": "builtin"
+    },
+    {
+      "name": "prompt-import-readiness",
+      "path": "guide/omh-prompt-import-readiness/SKILL.md",
+      "sha256": "f6f5ed0076e56ff601e9429596c124eb0e82d56a0957b14bc47bbc19b7be3cd0",
+      "source": "builtin"
+    },
+    {
+      "name": "provider-profile-posture",
+      "path": "operator/omh-provider-profile-posture/SKILL.md",
+      "sha256": "a88716e9dd0c43623e3b8755168062049b91a001a4fff8ce6d8f6df3c53a8096",
+      "source": "builtin"
+    },
+    {
+      "name": "ralplan",
+      "path": "ultrawork/ulw-plan/SKILL.md",
+      "sha256": "2ba2db74a7aac2f7d801efe65e7ae35fcd524b870a9879e05f5195ea023b5495",
+      "source": "builtin"
+    },
+    {
+      "name": "reliability-review",
+      "path": "operator/omh-reliability-review/SKILL.md",
+      "sha256": "421abd82e2a5eaae93782d923139f2dcd7c1695266cc4c96dcbc8b29b60c5a42",
+      "source": "builtin"
+    },
+    {
+      "name": "report-package",
+      "path": "operator/omh-report-package/SKILL.md",
+      "sha256": "5135def28418b3e409bd41182695fcf677149aca540f9b9b1d296855574dc9e9",
+      "source": "builtin"
+    },
+    {
+      "name": "research",
+      "path": "ultrawork/ulw-research/SKILL.md",
+      "sha256": "14ee23f046da4f43ff3f8c86d43d6e20f3f72fe13c87ec387b93305d83d0d77a",
+      "source": "builtin"
+    },
+    {
+      "name": "research-brief",
+      "path": "researcher/omh-research-brief/SKILL.md",
+      "sha256": "73fc23903abdae3f73fa5f60f83daf026b1283733a00585842787bda0e129072",
+      "source": "builtin"
+    },
+    {
+      "name": "research-department",
+      "path": "researcher/omh-research-department/SKILL.md",
+      "sha256": "e3c8a2e59e82e2bdc69827db2af7f7e76e61bad191b1aacd17ebbe035ff96b9c",
+      "source": "builtin"
+    },
+    {
+      "name": "rules-distill",
+      "path": "memory-keeper/omh-rules-distill/SKILL.md",
+      "sha256": "635a498de68080ffa4163dd24f9326172e488c16254a5b053bc1498ba2ac47b3",
+      "source": "builtin"
+    },
+    {
+      "name": "run-efficiency",
+      "path": "tracker/omh-run-efficiency/SKILL.md",
+      "sha256": "b5c99cbe555d3feccad46b5f418fc65f69694e942485db5abbee61adc74e1d9e",
+      "source": "builtin"
+    },
+    {
+      "name": "running-work-board",
+      "path": "tracker/omh-running-work-board/SKILL.md",
+      "sha256": "b6e8b1c52f0ff7ce846e9fd78dcf5f80c8b71c07f72f45e6efb1901c614d1975",
+      "source": "builtin"
+    },
+    {
+      "name": "sales-development",
+      "path": "operator/omh-sales-development/SKILL.md",
+      "sha256": "1d37992ffb67b25fa8fc966eac824c9cef3aee1262e20dff9d6a9f0424522b92",
+      "source": "builtin"
+    },
+    {
+      "name": "security-safety-review",
+      "path": "reviewer/omh-security-safety-review/SKILL.md",
+      "sha256": "e8902f9dd80435ce451659efc21c99d5308a9a79ca735d9a2fefedc51bfd1aad",
+      "source": "builtin"
+    },
+    {
+      "name": "skill",
+      "path": "tracker/omh-skill/SKILL.md",
+      "sha256": "97813f73c66027bfc844b71a2badb8a895eb299338cbae21fb9b10be5e50c20a",
+      "source": "builtin"
+    },
+    {
+      "name": "skill-health",
+      "path": "operator/omh-skill-health/SKILL.md",
+      "sha256": "19ed8e84157281c744337053bb4c2cf932f18cd7bdce04dfeddbdd786e8581c9",
+      "source": "builtin"
+    },
+    {
+      "name": "skill-scout",
+      "path": "operator/omh-skill-scout/SKILL.md",
+      "sha256": "bfed980ccc38845a23ce641fcceb15fbfb2b4074a13690006e5e8a0319bb35d4",
+      "source": "builtin"
+    },
+    {
+      "name": "source-finder",
+      "path": "researcher/omh-source-finder/SKILL.md",
+      "sha256": "0f783511cff13333d1aff72de148c85cb4dd523cd70e3a16385604bf4fd302dc",
+      "source": "builtin"
+    },
+    {
+      "name": "strategy-brief",
+      "path": "operator/omh-decide/SKILL.md",
+      "sha256": "353301c5a76b3be55d63f0ddd8df8f5a0d1b1d150df968b004be1b6b3265ee54",
+      "source": "builtin"
+    },
+    {
+      "name": "support-operations",
+      "path": "operator/omh-support-operations/SKILL.md",
+      "sha256": "198fcdef439eda95f31cad90a9a4fe37dfdf226108dae210e8f0e627c73a0b65",
+      "source": "builtin"
+    },
+    {
+      "name": "toolbelt-readiness",
+      "path": "tracker/omh-toolbelt-readiness/SKILL.md",
+      "sha256": "38f169301586f778706993d5cac6578138e3ede491566564087a11957007c40d",
+      "source": "builtin"
+    },
+    {
+      "name": "ultraperf",
+      "path": "ultrawork/ulw-perf/SKILL.md",
+      "sha256": "5b47dc33cefb9f4c12dbd868bbd4a21b1a0f6448c44b901661cb06ea3ab2ad56",
+      "source": "builtin"
+    },
+    {
+      "name": "ultraqa",
+      "path": "ultrawork/ulw-qa/SKILL.md",
+      "sha256": "089cae72ff22a5c9ea09bb346423bfcd04246a05b9d51d59f42276158ea98bf1",
+      "source": "builtin"
+    },
+    {
+      "name": "ultrawork",
+      "path": "ultrawork/ulw-work/SKILL.md",
+      "sha256": "507f94ccda49d18ad18b7aa669a48ae34b40a14fe815a5635de0615718d17aa7",
+      "source": "builtin"
+    },
+    {
+      "name": "verification-gate",
+      "path": "reviewer/omh-verification-gate/SKILL.md",
+      "sha256": "8ef59cb56b138338dee464cf836bf62973a64a91cf8f5c62ef677fc0c40af3a1",
+      "source": "builtin"
+    },
+    {
+      "name": "visual-qa",
+      "path": "operator/omh-visual-qa/SKILL.md",
+      "sha256": "16da7151574a0df849db2b2a7589fc126410b2901b538c0a0524c522e236398e",
+      "source": "builtin"
+    },
+    {
+      "name": "voice-operator",
+      "path": "guide/omh-voice-input/SKILL.md",
+      "sha256": "dbe444136f3e86a16d5bd3041057fc2b37a3fd4dcbe6bc0807c01cdb0cfec5c2",
+      "source": "builtin"
+    },
+    {
+      "name": "websearch-setup",
+      "path": "guide/omh-websearch-setup/SKILL.md",
+      "sha256": "8007173e07777870c45faf61f5b43a6a26400822056d543ae16ed3cd472b5ee6",
+      "source": "builtin"
+    },
+    {
+      "name": "wiki",
+      "path": "memory-keeper/omh-wiki/SKILL.md",
+      "sha256": "611e62651aabc78cdd8ff7bbc7f0d78e002b5799764b1f4a05996cc0c76204c5",
+      "source": "builtin"
+    },
+    {
+      "name": "workflow-learning",
+      "path": "tracker/omh-workflow-learning/SKILL.md",
+      "sha256": "ea0585038c527b09d1edf4756f2be99a0ff9dc2250a2f206a9c98a338ecbd8bb",
+      "source": "builtin"
+    },
+    {
+      "name": "workspace-audit",
+      "path": "operator/omh-workspace-audit/SKILL.md",
+      "sha256": "7b1575d82376d17cbc482e315d7b5096f4c75a9e54a4c06811fdfe0cb310d5ed",
+      "source": "builtin"
+    },
+    {
+      "name": "workspace-file-operator",
+      "path": "guide/omh-files/SKILL.md",
+      "sha256": "3b65566e3fce43829bd3dde18a671a84af1324524e24d027fe82d47eccd13417",
+      "source": "builtin"
+    }
+  ],
+  "skills_dir": "/home/website/.omh/skills",
+  "source": "builtin",
+  "version": "1.0.9"
+}
