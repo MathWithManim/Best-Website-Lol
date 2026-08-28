@@ -1,22 +1,22 @@
 import { createAuthClient } from 'better-auth/react';
 
-// VITE_CONVEX_SITE_URL should be https://giant-ant-97.convex.site etc.
-// Old logic: `VITE_CONVEX_SITE_URL || DEV ? undefined : '/api/auth'` was buggy
-// (operator precedence) and '/api/auth' is invalid as absolute baseURL for better-auth,
-// causing "Invalid base URL: /api/auth" and blanking homepage (root empty).
-// Make it resilient: use VITE_CONVEX_SITE_URL if set, otherwise same-origin or undefined.
+// Priority: explicit Neon Auth URL > legacy Convex site URL > same-origin fallback.
+// VITE_NEON_AUTH_URL must be an absolute URL, e.g.
+//   https://ep-soft-wind-ayywd88x.neonauth.c-5.us-east-2.aws.neon.tech/neondb/auth
+// For local dev, vite.config proxies /api/auth -> NEON_AUTH_URL so
+// window.location.origin also works.
 let baseURL: string | undefined;
 try {
-  const envUrl = (import.meta as any).env?.VITE_CONVEX_SITE_URL as string | undefined;
-  if (envUrl) {
-    baseURL = envUrl;
+  const env = (import.meta as any).env ?? {};
+  const neonUrl = (env.VITE_NEON_AUTH_URL as string | undefined)
+    || (env.VITE_CONVEX_SITE_URL as string | undefined); // legacy fallback
+  if (neonUrl && neonUrl !== '/api/auth') {
+    baseURL = neonUrl;
   } else if (typeof window !== 'undefined') {
-    // Same-origin fallback — valid absolute URL, won't throw
     baseURL = window.location.origin;
   } else {
     baseURL = undefined;
   }
-  // Validate: better-auth needs absolute URL if provided
   if (baseURL === '/api/auth') baseURL = undefined;
 } catch {
   baseURL = undefined;
