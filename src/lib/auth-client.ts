@@ -8,8 +8,12 @@ import { createAuthClient } from 'better-auth/react';
 let baseURL: string | undefined;
 try {
   const env = (import.meta as any).env ?? {};
+  // Hardcoded Neon Auth as last-resort build-time fallback so Pages deploys
+  // without VITE_NEON_AUTH_URL still work (dashboard env may be missing).
+  const hardcodedNeon = 'https://ep-soft-wind-ayywd88x.neonauth.c-5.us-east-2.aws.neon.tech/neondb/auth';
   const neonUrl = (env.VITE_NEON_AUTH_URL as string | undefined)
-    || (env.VITE_CONVEX_SITE_URL as string | undefined); // legacy fallback
+    || (env.VITE_CONVEX_SITE_URL as string | undefined)
+    || hardcodedNeon;
   if (neonUrl && neonUrl !== '/api/auth') {
     baseURL = neonUrl;
   } else if (typeof window !== 'undefined') {
