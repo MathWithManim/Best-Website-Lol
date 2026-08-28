@@ -40,7 +40,19 @@ html.dark {
 
 @media (prefers-reduced-motion: no-preference) {
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+  }
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
   }
 }
 
@@ -214,4 +226,13 @@ input[type="range"]::-moz-range-track {
   height: 6px;
   border-radius: 999px;
   background: linear-gradient(to right, rgba(224, 159, 88, 0.55), rgba(244, 213, 173, 0.18));
+}
+
+/* Elite visuals: scrollbar hide for bento strip, glass, grain */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; }
+
+/* View transitions - subtle */
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 0.22s;
 }

@@ -1,9 +1,64 @@
+import { useRef } from 'react';
 import { m } from 'framer-motion';
-import { ABOUT_PARAGRAPHS, FACTS } from '../lib/portfolio';
+import { ABOUT_PARAGRAPHS, FACTS } from '../../lib/portfolio';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+import { useSettings } from '../../lib/settings';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const AboutSection = () => {
+  const ref = useRef<HTMLElement>(null);
+  const { settings } = useSettings();
+
+  useGSAP(
+    () => {
+      if (settings.reduceMotion || !ref.current) return;
+      const ctx = gsap.context(() => {
+        gsap.from('.about-card', {
+          y: 42,
+          opacity: 0,
+          scale: 0.985,
+          duration: 0.85,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.about-card',
+            start: 'top 88%',
+            toggleActions: 'play none none reverse',
+          },
+        });
+        gsap.from('.about-fact', {
+          x: 18,
+          opacity: 0,
+          duration: 0.55,
+          ease: 'power2.out',
+          stagger: 0.06,
+          scrollTrigger: {
+            trigger: '.about-facts',
+            start: 'top 86%',
+            toggleActions: 'play none none reverse',
+          },
+        });
+        // Subtle card tilt on scrub
+        gsap.to('.about-card', {
+          yPercent: -2,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        });
+      }, ref);
+      return () => ctx.revert();
+    },
+    { scope: ref, dependencies: [settings.reduceMotion] }
+  );
+
   return (
-    <section id="about" className="p-6 md:p-10 max-w-5xl mx-auto scroll-mt-20">
+    <section ref={ref} id="about" className="p-6 md:p-10 max-w-5xl mx-auto scroll-mt-20">
       <m.p
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -17,26 +72,20 @@ const AboutSection = () => {
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="text-3xl md:text-4xl font-sans font-bold mb-6 text-primary"
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="text-3xl md:text-4xl font-sans font-bold mb-6 text-primary tracking-tight"
       >
         About
       </m.h2>
 
-      <m.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.55 }}
-        className="relative bg-secondary/10 backdrop-blur-sm border border-[#f4d5ad]/15 rounded-2xl overflow-hidden hover:border-[#e09f58]/40 transition-colors duration-200"
-      >
-        <div className="flex items-center justify-between gap-4 px-5 md:px-7 py-3 border-b border-[#f4d5ad]/15 bg-[#f4d5ad]/5">
-          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#f4d5ad]/60">
-            Dossier — 001
-          </span>
-          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent rotate-[-1.5deg] border border-accent/50 rounded px-2 py-0.5">
-            Subject: Jasper Sona
-          </span>
+      <div className="about-card relative bg-white/70 dark:bg-[#1e160f]/55 backdrop-blur-xl border border-[#f4d5ad]/20 dark:border-white/10 rounded-[22px] overflow-hidden shadow-[0_16px_48px_rgba(139,69,19,0.12),0_0_0_1px_rgba(139,69,19,0.08)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.28)] will-change-transform">
+        {/* Top glow */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#e09f58]/30 to-transparent" />
+        <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-[radial-gradient(circle_at_center,rgba(224,159,88,0.16),transparent_70%)] blur-[18px] pointer-events-none" />
+
+        <div className="flex items-center justify-between gap-4 px-5 md:px-7 py-3 border-b border-[#f4d5ad]/16 dark:border-white/10 bg-[#f4d5ad]/[0.06] dark:bg-white/[0.04]">
+          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#8B4513]/60 dark:text-[#f4d5ad]/60">Dossier — 001</span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent rotate-[-1.2deg] border border-accent/50 rounded-full px-2.5 py-1 bg-accent/10">Subject: Jasper Sona</span>
         </div>
 
         <div className="p-5 md:p-7 md:flex md:gap-10">
@@ -47,8 +96,8 @@ const AboutSection = () => {
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.15 + i * 0.1, duration: 0.45 }}
-                className="font-mono text-sm md:text-base text-[#f4d5ad]/75 leading-relaxed mb-4 last:mb-0"
+                transition={{ delay: 0.12 + i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="font-mono text-sm md:text-[15px] text-[#1a120b]/70 dark:text-[#f4d5ad]/75 leading-relaxed mb-4 last:mb-0"
               >
                 {p}
               </m.p>
@@ -65,25 +114,16 @@ const AboutSection = () => {
             </m.p>
           </div>
 
-          <dl className="md:w-1/3 mt-6 md:mt-0 space-y-3">
-            {FACTS.map((f, i) => (
-              <m.div
-                key={f.label}
-                initial={{ opacity: 0, x: 16 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 + i * 0.08, duration: 0.4 }}
-                className="flex justify-between gap-4 py-2 border-b border-dashed border-[#f4d5ad]/20"
-              >
-                <dt className="font-mono text-xs uppercase tracking-wide text-[#f4d5ad]/40">
-                  {f.label}
-                </dt>
-                <dd className="font-mono text-xs font-bold text-right text-[#f4d5ad]">{f.value}</dd>
-              </m.div>
+          <dl className="about-facts md:w-1/3 mt-6 md:mt-0 space-y-0 rounded-2xl overflow-hidden border border-[#f4d5ad]/15 dark:border-white/10 bg-[#F5E6CA]/40 dark:bg-black/20 divide-y divide-dashed divide-[#f4d5ad]/15 dark:divide-white/10">
+            {FACTS.map((f) => (
+              <div key={f.label} className="about-fact flex justify-between gap-4 py-3.5 px-4 will-change-transform">
+                <dt className="font-mono text-xs uppercase tracking-wide text-[#8B4513]/45 dark:text-[#f4d5ad]/40">{f.label}</dt>
+                <dd className="font-mono text-xs font-bold text-right text-[#1a120b] dark:text-[#f4d5ad]">{f.value}</dd>
+              </div>
             ))}
           </dl>
         </div>
-      </m.div>
+      </div>
     </section>
   );
 };

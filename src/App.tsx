@@ -1,4 +1,3 @@
-import FeaturesBento from "./components/landing/FeaturesBento";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, m, MotionConfig } from 'framer-motion';
 import { lazy, Suspense, useEffect } from 'react';
@@ -9,7 +8,7 @@ import ContactSection from './components/landing/ContactSection';
 import ArcadeSection from './components/game/arcade/ArcadeSection';
 import NotFound from './components/NotFound';
 import ConvexClientProvider from './components/app/ConvexClientProvider';
-import { UserProvider } from './components/UserProvider';
+import { UserProvider } from './components/app/UserProvider';
 import AchievementToasts from './components/app/AchievementToasts';
 import { CosmeticThemeProvider } from './components/app/CosmeticThemeProvider';
 import { useSettings } from './lib/settings';
@@ -20,6 +19,7 @@ import ScrollUpButton from './components/landing/ScrollUpButton';
 import Navbar from './components/landing/Navbar';
 import MobileCTA from './components/landing/MobileCTA';
 import AnimatedBento from "./components/landing/AnimatedBento";
+import SmoothScroll from './components/app/SmoothScroll';
 import RNGSection from './components/game/RNGSection';
 import ErrorBoundary from './components/ErrorBoundary';
 import Spinner from './components/Spinner';
@@ -115,6 +115,7 @@ function AppShell() {
   return (
     <MotionConfig reducedMotion={settings.reduceMotion ? 'always' : 'user'}>
       <BrowserRouter>
+        <SmoothScroll>
         <div className="min-h-screen bg-[#F5E6CA] dark:bg-[#1a120b] dark:text-[#f4d5ad] relative transition-colors duration-300">
           <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-bg focus:rounded-lg focus:font-mono focus:text-sm">
             Skip to main content
@@ -126,6 +127,7 @@ function AppShell() {
           <MobileCTA />
           <AchievementToasts />
         </div>
+        </SmoothScroll>
       </BrowserRouter>
     </MotionConfig>
   );
