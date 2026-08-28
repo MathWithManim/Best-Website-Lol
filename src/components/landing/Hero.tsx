@@ -24,19 +24,18 @@ const Hero = () => {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#f4d5ad]/10 to-transparent" />
 
       <m.div
-        initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+        initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="relative text-6xl md:text-8xl lg:text-[9rem] font-bold tracking-tighter leading-[0.85] text-left md:text-left max-w-6xl mx-auto px-6 md:px-10"
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 text-center max-w-6xl mx-auto px-6 md:px-10"
       >
-        <h1 className="font-sans text-primary dark:text-[#f4d5ad]">
-          <span className="block">Jasper</span>
-          <span className="block text-accent">Sona</span>
-          <span className="inline-flex items-center gap-3 mt-2 text-2xl md:text-4xl lg:text-5xl font-mono text-primary/70 dark:text-[#f4d5ad]/60 tracking-tight not-italic font-normal">
-            <span className="inline-block w-14 h-8 md:w-20 md:h-10 rounded-full overflow-hidden shadow-xl ring-2 ring-[#e09f58]/30 align-middle bg-cover bg-center" style={{ backgroundImage: 'url(https://picsum.photos/seed/jasper-hero/200/160)' }} aria-hidden="true" />
-            <span>the RNG game that actually ships</span>
-          </span>
+        <h1 className="font-[Geist,sans-serif] text-5xl md:text-7xl lg:text-[5.5rem] font-medium tracking-[-0.04em] leading-[1.05] text-[#f4d5ad] dark:text-[#f4d5ad]">
+          Jasper <span className="text-[#e09f58]">Sona</span>
         </h1>
+        <div className="mt-8 inline-flex items-center gap-3 text-xl md:text-3xl lg:text-4xl font-mono text-[#f4d5ad]/80 tracking-tight">
+          <span className="inline-block w-16 h-10 md:w-24 md:h-14 rounded-full overflow-hidden shadow-2xl ring-2 ring-[#e09f58]/40 align-middle bg-cover bg-center" style={{ backgroundImage: 'url(https://picsum.photos/seed/jasper-hero/200/160)' }} aria-hidden="true" />
+          <span>the RNG game that actually ships</span>
+        </div>
       </m.div>
 
       <m.p

@@ -1,25 +1,26 @@
-import FeaturesBento from "./components/FeaturesBento";
+import FeaturesBento from "./components/landing/FeaturesBento";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, m, MotionConfig } from 'framer-motion';
 import { lazy, Suspense, useEffect } from 'react';
-import Hero from './components/Hero';
-import AboutSection from './components/AboutSection';
-import TerminalSection from './components/TerminalSection';
-import ContactSection from './components/ContactSection';
-import ArcadeSection from './components/arcade/ArcadeSection';
+import Hero from './components/landing/Hero';
+import AboutSection from './components/landing/AboutSection';
+import TerminalSection from './components/landing/TerminalSection';
+import ContactSection from './components/landing/ContactSection';
+import ArcadeSection from './components/game/arcade/ArcadeSection';
 import NotFound from './components/NotFound';
-import ConvexClientProvider from './components/ConvexClientProvider';
+import ConvexClientProvider from './components/app/ConvexClientProvider';
 import { UserProvider } from './components/UserProvider';
-import AchievementToasts from './components/AchievementToasts';
-import { CosmeticThemeProvider } from './components/CosmeticThemeProvider';
+import AchievementToasts from './components/app/AchievementToasts';
+import { CosmeticThemeProvider } from './components/app/CosmeticThemeProvider';
 import { useSettings } from './lib/settings';
-import { SettingsProvider } from './components/SettingsProvider';
-import ScrollProgress from './components/ScrollProgress';
-import CookieBanner from './components/CookieBanner';
-import ScrollUpButton from './components/ScrollUpButton';
-import Navbar from './components/Navbar';
-import MobileCTA from './components/MobileCTA';
-import RNGSection from './components/RNGSection';
+import { SettingsProvider } from './components/app/SettingsProvider';
+import ScrollProgress from './components/landing/ScrollProgress';
+import CookieBanner from './components/landing/CookieBanner';
+import ScrollUpButton from './components/landing/ScrollUpButton';
+import Navbar from './components/landing/Navbar';
+import MobileCTA from './components/landing/MobileCTA';
+import AnimatedBento from "./components/landing/AnimatedBento";
+import RNGSection from './components/game/RNGSection';
 import ErrorBoundary from './components/ErrorBoundary';
 import Spinner from './components/Spinner';
 import { useConvexAuth } from 'convex/react';
@@ -83,6 +84,7 @@ function AnimatedRoutes() {
                   <AboutSection />
                   <TerminalSection />
                   <ContactSection />
+                  <AnimatedBento />
                 </main>
               </>
             } />
