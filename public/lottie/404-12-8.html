@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>404 12-8 — Saturn 404 — Lottie</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    width:100%; height:100%;
+    background:#020208;
+    overflow:hidden;
+  }
+  /* full viewport, centered, contain-fit */
+  #wrap {
+    width:100vw;
+    height:100vh;
+    height:100dvh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: radial-gradient(ellipse at 50% 38%, #0b1226 0%, #060a18 42%, #020208 72%);
+  }
+  #lottie {
+    width:min(100vw, 177.78vh); /* 1880/1080 = 1.777 */
+    height:min(100vh, 56.25vw);
+    max-width:1880px;
+    max-height:1080px;
+    display:block;
+  }
+  /* Lottie svg will fill container */
+  #lottie svg {
+    width:100% !important;
+    height:100% !important;
+    display:block;
+  }
+  /* subtle UI */
+  #badge {
+    position:fixed;
+    left:14px; bottom:14px;
+    font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.45);
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(8px);
+    padding:7px 10px;
+    border-radius:999px;
+  }
+  #controls {
+    position:fixed;
+    right:14px; bottom:14px;
+    display:flex; gap:8px;
+  }
+  #controls button, #controls a {
+    font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.7);
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.1);
+    padding:8px 11px;
+    border-radius:999px;
+    cursor:pointer;
+    text-decoration:none;
+    backdrop-filter: blur(8px);
+  }
+  #controls button:hover, #controls a:hover { background:rgba(255,255,255,.14); color:#fff; }
+</style>
+</head>
+<body>
+  <div id="wrap">
+    <div id="lottie" aria-label="404 Saturn Lottie"></div>
+  </div>
+  <div id="badge">404 · 12-8 · SATURN · 1880×1080 · 48fps · 5.98s</div>
+  <div id="controls">
+    <button id="toggle">pause</button>
+    <a href="./404-12-8.json" download>JSON ↘</a>
+    <a href="https://finsweet.com/lottieflow/download/404-12-8" target="_blank" rel="noopener">source ↗</a>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script>
+    const anim = lottie.loadAnimation({
+      container: document.getElementById('lottie'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      rendererSettings: {
+        preserveAspectRatio: 'xMidYMid meet', // <-- makes sure it FITS, no cropping
+        progressiveLoad: true
+      },
+      path: './404-12-8.json'
+    });
+
+    // stretch toggle: contain (fit) vs cover (big, may crop) — default is contain = fits perfectly
+    let mode = 'contain';
+    anim.setSubFrame(false);
+
+    // pause/play
+    const btn = document.getElementById('toggle');
+    btn.addEventListener('click', () => {
+      if (anim.isPaused) { anim.play(); btn.textContent = 'pause'; }
+      else { anim.pause(); btn.textContent = 'play'; }
+    });
+
+    // keyboard: space to toggle, f to fullscreen
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); btn.click(); }
+      if (e.code === 'KeyF') { document.documentElement.requestFullscreen?.(); }
+    });
+
+    // make it BIG but still fit — on resize, lottie auto-scales via CSS,
+    // no JS resize needed. Container is min(100vw, 177.78vh) etc.
+    // Ensure SVG scales crisply
+    anim.addEventListener('DOMLoaded', () => {
+      document.getElementById('lottie').style.opacity = '1';
+    });
+
+    // prefer reduced motion: pause if user prefers
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      anim.pause(); btn.textContent = 'play';
+    }
+  </script>
+</body>
+</html>

@@ -17,96 +17,76 @@ const Navbar = () => {
   let isAuthenticated = false;
   try { isAuthenticated = useConvexAuth().isAuthenticated; } catch { isAuthenticated = false; }
   const { pathname } = useLocation();
-
-  const visibleLinks = navLinks.filter(
-    (l) => (l.authOnly ? isAuthenticated : true) && !(l.guestOnly && isAuthenticated)
-  );
-  // Highlight only the first link that targets the current path — Sign Up / Login
-  // share /rng with RNG Game and must not all light up.
+  const visibleLinks = navLinks.filter((l) => (l.authOnly ? isAuthenticated : true) && !(l.guestOnly && isAuthenticated));
   const activeTo = visibleLinks.find((l) => l.to === pathname)?.to;
 
   return (
-    <nav className="sticky top-0 z-40 backdrop-blur-xl backdrop-saturate-150 bg-[#F5E6CA]/80 dark:bg-[#1a120b]/70 flex items-center justify-between p-6 text-[#8B4513] dark:text-[#f4d5ad] border-b border-[#8B4513]/15 dark:border-[#f4d5ad]/10">
-      <Link to="/" className="font-typewriter text-2xl font-bold">JASPER SONA</Link>
+    <div className="sticky top-0 z-40 w-full flex justify-center pt-5 md:pt-6 px-4 pointer-events-none">
+      <nav className="pointer-events-auto flex items-center justify-between gap-6 md:gap-10 px-5 md:px-7 py-3 rounded-full bg-white/80 dark:bg-[#1a120b]/70 backdrop-blur-xl backdrop-saturate-150 border border-[#8B4513]/10 dark:border-white/10 shadow-[0_8px_32px_rgba(139,69,19,0.12),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] max-w-5xl w-full">
+        <Link to="/" className="font-typewriter text-[1.05rem] md:text-lg font-bold tracking-[0.14em] text-[#1a120b] dark:text-[#f4d5ad] shrink-0">
+          JASPER SONA
+        </Link>
 
-      {/* Desktop nav */}
-      <div className="hidden md:flex items-center gap-6">
-        <ul className="flex gap-6 font-typewriter items-center">
+        <div className="hidden md:flex items-center gap-1.5">
           {visibleLinks.map((link) => (
-            <li key={link.label}>
-              <Link
-                to={link.to}
-                title={`Navigate to ${link.label}`}
-                aria-current={activeTo === link.to ? 'page' : undefined}
-                className={`relative transition-colors hover:text-accent dark:hover:text-[#c98a6e] ${
-                  activeTo === link.to ? 'text-accent dark:text-[#c98a6e] after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-accent dark:after:bg-[#c98a6e]' : ''
-                }`}
-              >
-                {link.label}
-              </Link>
-            </li>
+            <Link
+              key={link.label}
+              to={link.to}
+              aria-current={activeTo === link.to ? 'page' : undefined}
+              className={`px-3.5 py-1.5 rounded-full font-mono text-[13px] font-bold tracking-wide transition-all ${
+                activeTo === link.to
+                  ? 'bg-[#1a120b] text-[#f4d5ad] dark:bg-[#f4d5ad] dark:text-[#1a120b] shadow-sm'
+                  : 'text-[#8B4513]/70 dark:text-[#f4d5ad]/60 hover:text-[#1a120b] dark:hover:text-[#f4d5ad] hover:bg-[#F5E6CA] dark:hover:bg-white/10'
+              }`}
+            >
+              {link.label}
+            </Link>
           ))}
-        </ul>
-      </div>
+          <Link
+            to="/rng"
+            className="ml-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#1a120b] dark:bg-[#f4d5ad] text-[#f4d5ad] dark:text-[#1a120b] font-mono text-[13px] font-bold shadow-[0_4px_16px_rgba(26,18,11,0.2)] hover:translate-y-[-1px] transition-transform"
+          >
+            Play <span aria-hidden>→</span>
+          </Link>
+        </div>
 
-      {/* Mobile controls */}
-      <div className="md:hidden flex items-center">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="font-mono relative w-8 h-8 flex items-center justify-center"
+          className="md:hidden relative w-9 h-9 grid place-items-center rounded-full bg-[#1a120b] dark:bg-[#f4d5ad] text-[#f4d5ad] dark:text-[#1a120b]"
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
         >
-          <m.span
-            className="absolute block h-0.5 w-5 bg-current rounded"
-            animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -4 }}
-            transition={{ duration: 0.2 }}
-          />
-          <m.span
-            className="absolute block h-0.5 w-5 bg-current rounded"
-            animate={isOpen ? { opacity: 0, x: -8 } : { opacity: 1, x: 0 }}
-            transition={{ duration: 0.15 }}
-          />
-          <m.span
-            className="absolute block h-0.5 w-5 bg-current rounded"
-            animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 4 }}
-            transition={{ duration: 0.2 }}
-          />
+          <m.span className="absolute block h-0.5 w-4 bg-current rounded" animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -3 }} transition={{ duration: 0.2 }} />
+          <m.span className="absolute block h-0.5 w-4 bg-current rounded" animate={isOpen ? { opacity: 0 } : { opacity: 1 }} transition={{ duration: 0.15 }} />
+          <m.span className="absolute block h-0.5 w-4 bg-current rounded" animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 3 }} transition={{ duration: 0.2 }} />
         </button>
-      </div>
+      </nav>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <m.div
-            initial={{ opacity: 0, scaleY: 0, y: -8 }}
-            animate={{ opacity: 1, scaleY: 1, y: 0 }}
-            exit={{ opacity: 0, scaleY: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            style={{ transformOrigin: 'top' }}
-            className="md:hidden absolute top-full left-0 w-full overflow-hidden bg-[#F5E6CA] dark:bg-[#1a120b] border-b border-[#8B4513]/20 shadow-lg z-40"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="md:hidden absolute top-[72px] left-4 right-4 rounded-[20px] bg-white/90 dark:bg-[#1a120b]/90 backdrop-blur-xl border border-[#8B4513]/10 dark:border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.18)] overflow-hidden pointer-events-auto"
           >
-            <ul className="flex flex-col gap-4 font-typewriter p-6">
-              {visibleLinks.map((link, i) => (
-                <m.li
-                  key={link.label}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.07, duration: 0.2 }}
-                >
+            <ul className="flex flex-col p-3">
+              {visibleLinks.map((link) => (
+                <li key={link.label}>
                   <Link
                     to={link.to}
                     onClick={() => setIsOpen(false)}
-                    className="block py-1 hover:text-accent dark:hover:text-[#c98a6e] transition-colors"
+                    className={`block px-4 py-3 rounded-full font-mono text-sm font-bold ${activeTo === link.to ? 'bg-[#1a120b] text-[#f4d5ad] dark:bg-[#f4d5ad] dark:text-[#1a120b]' : 'text-[#1a120b] dark:text-[#f4d5ad]'}`}
                   >
                     {link.label}
                   </Link>
-                </m.li>
+                </li>
               ))}
             </ul>
           </m.div>
         )}
       </AnimatePresence>
-    </nav>
+    </div>
   );
 };
 
