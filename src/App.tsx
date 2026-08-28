@@ -18,7 +18,6 @@ import CookieBanner from './components/landing/CookieBanner';
 import ScrollUpButton from './components/landing/ScrollUpButton';
 import Navbar from './components/landing/Navbar';
 import MobileCTA from './components/landing/MobileCTA';
-import AnimatedBento from "./components/landing/AnimatedBento";
 import SmoothScroll from './components/app/SmoothScroll';
 import RNGSection from './components/game/RNGSection';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -89,7 +88,6 @@ function AnimatedRoutes() {
                   <AboutSection />
                   <TerminalSection />
                   <ContactSection />
-                  <AnimatedBento />
                 </main>
               </>
             } />
