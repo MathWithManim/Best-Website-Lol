@@ -38,3 +38,19 @@ security-audit-skill
 .omo
 
 .playwright-mcp/
+.agents/skills/design-taste-frontend/
+.agents/skills/gpt-taste/
+.agents/
+.omo/
+.agents/skills/design-taste-frontend/
+.agents/skills/gpt-taste/
+.claude/skills/
+.agents/
+.claude/
+.codegraph
+.omo/
+AGENTS.md
+CLAUDE.md
+PLAN.md
+full-system-prompt.md
+skills-lock.json
