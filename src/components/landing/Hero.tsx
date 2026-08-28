@@ -74,18 +74,7 @@ const Hero = () => {
           delay: 1.2,
         });
 
-        // Parallax on scroll - hero image and gradient
-        gsap.to(".hero-pill", {
-          yPercent: -18,
-          ease: "none",
-          scrollTrigger: {
-            trigger: rootRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.6,
-          },
-        });
-
+        // Parallax on scroll - hero gradient
         gsap.to(".hero-glow", {
           yPercent: 22,
           ease: "none",
@@ -168,14 +157,15 @@ const Hero = () => {
       <div className="relative z-10 text-center max-w-6xl mx-auto px-2 md:px-10">
         {/* Title with char split */}
         <h1 className="font-[Geist,sans-serif] text-[2.8rem] md:text-7xl lg:text-[5.8rem] font-[600] tracking-[-0.045em] leading-[0.92] text-[#1a120b] dark:text-[#f4d5ad] select-none">
-          <span className="inline-block overflow-hidden py-1">
-            {title.split("").map((ch, i) => (
-              <span key={i} className="hero-char inline-block will-change-transform" style={{ transformOrigin: "50% 100%" }}>
-                {ch}
-              </span>
-            ))}
-            <span className="inline-block w-[0.18em]" aria-hidden="true" />
-            <span className="text-[#A0522D] dark:text-[#e09f58] inline-block overflow-hidden">
+          <span className="inline-flex items-baseline overflow-hidden py-1 gap-[0.18em]">
+            <span className="inline-block">
+              {title.split("").map((ch, i) => (
+                <span key={i} className="hero-char inline-block will-change-transform" style={{ transformOrigin: "50% 100%" }}>
+                  {ch}
+                </span>
+              ))}
+            </span>
+            <span className="text-[#A0522D] dark:text-[#e09f58] inline-block">
               {titleAccent.split("").map((ch, i) => (
                 <span
                   key={i}
@@ -190,11 +180,6 @@ const Hero = () => {
         </h1>
 
         <div className="hero-tagline mt-5 md:mt-7 inline-flex flex-wrap items-center justify-center gap-3 text-[1.05rem] md:text-3xl lg:text-[2rem] font-mono text-[#1a120b]/72 dark:text-[#f4d5ad]/80 tracking-tight leading-none">
-          <span
-            className="hero-pill inline-block w-[3.6rem] h-[2.2rem] md:w-24 md:h-14 rounded-full overflow-hidden shadow-[0_10px_30px_rgba(26,18,11,0.18)] ring-2 ring-[#e09f58]/40 dark:ring-[#e09f58]/35 align-middle bg-cover bg-center will-change-transform"
-            style={{ backgroundImage: "url(https://picsum.photos/seed/jasper-hero/240/180)" }}
-            aria-hidden="true"
-          />
           <span>the RNG game that actually ships</span>
         </div>
       </div>
