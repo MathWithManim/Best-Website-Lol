@@ -83,12 +83,15 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
       if (lower.includes("already exists") || lower.includes("duplicate") || lower.includes("account")) {
         msg = `Account already exists for ${userEmail} — try logging in instead. (${raw})`;
         if (mode === "signup") setMode("login");
+      } else if (lower.includes("email_not_verified") || (lower.includes("email") && lower.includes("not verified")) || lower.includes("verify your email")) {
+        msg = `Account created for ${userEmail} — check your email to verify, then log in. (If you don't see it, check spam. You can also ask admin to disable 'Require email verification' in Neon Auth dashboard.)`;
+        if (mode === "signup") setMode("login");
       } else if (lower.includes("password") && lower.includes("short")) {
         msg = `Password too weak: ${raw}`;
       } else if (lower.includes("invalid") && lower.includes("email")) {
         msg = `Invalid email: ${raw}`;
       } else if (lower.includes("network") || lower.includes("fetch") || lower.includes("failed to fetch")) {
-        msg = `Network error — cannot reach auth server (${raw}). Check VITE_CONVEX_SITE_URL / NEON_AUTH_URL and try again.`;
+        msg = `Network error — cannot reach auth server (${raw}). Check VITE_NEON_AUTH_URL / NEON_AUTH_URL and try again.`;
       } else if (lower.includes("rate") || lower.includes("too many")) {
         msg = `Rate limited: ${raw} — wait a moment and retry.`;
       }
