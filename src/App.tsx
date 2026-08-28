@@ -47,7 +47,12 @@ const pageTransition = {
 
 function AnimatedRoutes() {
   const location = useLocation();
-  const { isAuthenticated } = useConvexAuth();
+  let isAuthenticated = false;
+  try {
+    isAuthenticated = useConvexAuth().isAuthenticated;
+  } catch {
+    isAuthenticated = false;
+  }
   const navigate = useNavigate();
 
   useEffect(() => {

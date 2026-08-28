@@ -14,7 +14,8 @@ const navLinks = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated } = useConvexAuth();
+  let isAuthenticated = false;
+  try { isAuthenticated = useConvexAuth().isAuthenticated; } catch { isAuthenticated = false; }
   const { pathname } = useLocation();
 
   const visibleLinks = navLinks.filter(

@@ -30,7 +30,13 @@ const getCachedCounts = (): Record<string, number> => {
 };
 
 const RNGSection = () => {
-  const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
+  let isAuthenticated = false;
+  let authLoading = false;
+  try {
+    const a = useConvexAuth();
+    isAuthenticated = a.isAuthenticated;
+    authLoading = a.isLoading;
+  } catch { isAuthenticated = false; authLoading = false; }
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRarity, setSelectedRarity] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);

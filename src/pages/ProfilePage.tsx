@@ -20,7 +20,9 @@ const ProfilePage = () => {
 
   const navigate = useNavigate();
   const user = useUser();
-  const { isAuthenticated, isLoading } = useConvexAuth();
+  let isAuthenticated = false;
+  let isLoading = false;
+  try { const a = useConvexAuth(); isAuthenticated = a.isAuthenticated; isLoading = a.isLoading; } catch { isAuthenticated = false; isLoading = false; }
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
 

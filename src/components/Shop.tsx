@@ -13,7 +13,8 @@ const COSMETIC_ICONS: Record<string, string> = {
 };
 
 const Shop = () => {
-  const { isAuthenticated } = useConvexAuth();
+  let isAuthenticated = false;
+  try { isAuthenticated = useConvexAuth().isAuthenticated; } catch { isAuthenticated = false; }
   const user = useUser();
   const [buying, setBuying] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);

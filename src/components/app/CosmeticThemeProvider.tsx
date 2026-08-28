@@ -15,12 +15,17 @@ const CosmeticThemeContext = createContext<CosmeticTheme | null>(null);
 
 export const CosmeticThemeProvider = ({ children }: { children: ReactNode }) => {
   const user = useUser();
-  const cosmetics = useQuery(api.shop.getCosmetics);
+  let cosmetics: any = undefined;
+  try {
+    cosmetics = useQuery((api as any)?.shop?.getCosmetics ?? 'shop.getCosmetics' as any);
+  } catch {
+    cosmetics = undefined;
+  }
   const [theme, setTheme] = useState<CosmeticTheme | null>(null);
   
   useEffect(() => {
-    const equipped = user?.equippedCosmetic;
-    const cosmeticTheme = cosmetics?.find((c) => c.id === equipped)?.theme;
+    const equipped = (user as any)?.equippedCosmetic;
+    const cosmeticTheme = (cosmetics as any)?.find?.((c: any) => c.id === equipped)?.theme;
     setTheme(cosmeticTheme || null);
   }, [user, cosmetics]);
 
