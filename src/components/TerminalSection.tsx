@@ -9,11 +9,12 @@ interface TermLine {
 
 const LINES: TermLine[] = [
   { cmd: true, text: 'whoami' },
-  { cmd: false, text: 'jasper — full-stack developer' },
-  { cmd: true, text: 'cat now.txt' },
-  { cmd: false, text: 'building things that actually ship' },
+  { cmd: false, text: 'your manipulator frfr' },
+  { cmd: true, text: 'exit' },
+  { cmd: false, text: 'stop crashing my apps plez' },
   { cmd: true, text: './status --verbose' },
-  { cmd: false, text: 'coffee: critical · motivation: max' },
+  { cmd: false, text: 'error error everywhere bro omg' },
+  { cmd: false, text: 'error error everywhere bro omg' },
   { cmd: false, text: '✓ everything is fine' },
 ];
 
