@@ -166,19 +166,6 @@ const Hero = () => {
       />
 
       <div className="relative z-10 text-center max-w-6xl mx-auto px-2 md:px-10">
-        {/* Eyebrow */}
-        <m.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05, duration: 0.5 }}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#8B4513]/15 dark:border-[#f4d5ad]/12 bg-white/60 dark:bg-white/[0.06] backdrop-blur-xl px-3.5 py-1.5 shadow-[0_4px_24px_rgba(139,69,19,0.08)]"
-        >
-          <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.9)] animate-pulse" />
-          <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-[#8B4513]/70 dark:text-[#f4d5ad]/70">
-            Live — RNG arcade online
-          </span>
-        </m.div>
-
         {/* Title with char split */}
         <h1 className="font-[Geist,sans-serif] text-[2.8rem] md:text-7xl lg:text-[5.8rem] font-[600] tracking-[-0.045em] leading-[0.92] text-[#1a120b] dark:text-[#f4d5ad] select-none">
           <span className="inline-block overflow-hidden py-1">
