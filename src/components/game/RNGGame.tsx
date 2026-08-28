@@ -10,6 +10,7 @@ import ShareCardModal from '../ShareCardModal';
 import { recordRoll } from '../../lib/rollHistory';
 import { api } from "../../convex/_generated/api";
 import { useMutation } from 'convex/react';
+import { localRoll } from '../../lib/neon-rng';
 
 interface RNGGameProps {
   onRollComplete: () => void;
@@ -157,9 +158,20 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
     const startedAt = Date.now();
 
     try {
+      // Helper: try Convex roll, fall back to local Neon roll if Convex unreachable
+      const tryRoll = async (): Promise<RollOutcome> => {
+        try {
+          // race with timeout so dummy convex doesn't hang forever
+          const convexPromise = roll() as Promise<RollOutcome>;
+          const timeout = new Promise<never>((_, rej) => setTimeout(() => rej(new Error('convex-timeout')), 3000));
+          return await Promise.race([convexPromise, timeout]);
+        } catch {
+          return localRoll(n);
+        }
+      };
       if (reduceMotion) {
         // Accessibility path: skip the long spin, snap straight to the result.
-        const outcome = await roll();
+        const outcome = await tryRoll();
         const idx = RARITY_INDEX[outcome.rarity] ?? 0;
         const k = Math.floor((startIdx + 2 * n - idx) / n) + 1;
         stripY.jump(idleY - (UPPER + idx + k * n) * tileH);
@@ -171,7 +183,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
       startSpin(phaseAY, 0.9, SPIN_EASE);
 
       // Fire the server roll in parallel; it must take at least MIN_SPIN_MS.
-      const [outcome] = await Promise.all([roll(), delay(MIN_SPIN_MS)]);
+      const [outcome] = await Promise.all([tryRoll(), delay(MIN_SPIN_MS)]);
 
       // Phase B: re-aim to the exact landing row (k = enough full laps to move forward).
       const idx = RARITY_INDEX[outcome.rarity] ?? 0;

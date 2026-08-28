@@ -4,12 +4,6 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: {
-    proxy: {
-      '/api/auth': {
-        target: 'https://sensible-mongoose-686.convex.site',
-        changeOrigin: true,
-      },
-    },
-  },
+  // No Convex proxy needed for Neon migration.
+  // Better Auth / Neon uses same-origin or NEON_AUTH_URL, not Convex site proxy.
 })

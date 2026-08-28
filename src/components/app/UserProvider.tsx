@@ -3,30 +3,64 @@ import { useConvexAuth, useQuery } from 'convex/react';
 
 import { UserContext } from '../../lib/useUser';
 import { api } from "../../convex/_generated/api";
+import { authClient } from '../../lib/auth-client';
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+  // Hooks must be called unconditionally — call both then branch on results
+  let baSession: any = undefined;
+  try { baSession = (authClient as any).useSession?.(); } catch { baSession = undefined; }
+  let convexAuth: any = { isAuthenticated: false, isLoading: false };
+  try { convexAuth = useConvexAuth(); } catch { convexAuth = { isAuthenticated: false, isLoading: false }; }
+
   let isAuthenticated = false;
   let isLoading = false;
-  try {
-    const auth = useConvexAuth();
-    isAuthenticated = auth.isAuthenticated;
-    isLoading = auth.isLoading;
-  } catch {
-    // No Convex provider or dummy client — treat as guest
-    isAuthenticated = false;
-    isLoading = false;
+  if (baSession !== undefined) {
+    if (baSession?.data?.user) {
+      isAuthenticated = true;
+      isLoading = false;
+    } else if (baSession?.isPending) {
+      isLoading = true;
+      isAuthenticated = false;
+    } else {
+      isAuthenticated = convexAuth.isAuthenticated;
+      isLoading = convexAuth.isLoading;
+    }
+  } else {
+    isAuthenticated = convexAuth.isAuthenticated;
+    isLoading = convexAuth.isLoading;
   }
 
-  let user: any = undefined;
+  let convexUser: any = undefined;
   try {
-    // Only query when authenticated; stub api returns string, dummy client will just return undefined
     const q = useQuery(
       (api as any)?.users?.getCurrentUser ?? 'users.getCurrentUser' as any,
       isAuthenticated ? {} : 'skip'
     );
-    user = q;
-  } catch {
-    user = null;
+    convexUser = q;
+  } catch { convexUser = null; }
+
+  let user: any = convexUser;
+  const baUser = baSession?.data?.user;
+  if (isAuthenticated && baUser && (convexUser === null || convexUser === undefined)) {
+    user = {
+      email: baUser.email,
+      username: baUser.name || baUser.email?.split('@')[0] || 'user',
+      name: baUser.name || '',
+      bio: '',
+      pfp: baUser.image || '',
+      luckbucks: 0,
+      equippedCosmetic: undefined,
+      rebirthCount: 0,
+      rollCount: 0,
+      nextRollCost: 0,
+      distinctCaught: 0,
+      totalRarities: 50,
+      nextRebirthAt: 10,
+      completedGame: false,
+      prestigeCount: 0,
+      discovered: {},
+      achievements: [],
+    };
   }
 
   const value = isLoading || (!isAuthenticated && user === undefined) ? undefined : (isAuthenticated ? user ?? null : null);
