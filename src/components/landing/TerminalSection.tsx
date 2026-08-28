@@ -94,19 +94,19 @@ const TerminalSection = () => {
   return (
     <section ref={sectionRef} className="overflow-x-hidden w-full max-w-full py-24 md:py-36 bg-[#0d0906] relative" aria-label="Terminal session">
       <div className="absolute inset-0 bg-[radial-gradient(800px_circle_at_50%_-10%,rgba(224,159,88,0.12),transparent_65%)] pointer-events-none" />
-      <div className="max-w-5xl mx-auto px-6 md:px-10 relative">
+      <div className="max-w-5xl mx-auto px-6 md:px-10 relative text-center">
         <m.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="font-mono text-xs text-accent mb-2 tracking-widest"
+          className="font-mono text-xs text-accent mb-2 tracking-widest text-center"
         >
           {'//'} session
         </m.p>
         <div
           ref={ref}
-          className="term-card relative bg-[#0d0906]/95 border border-[#f4d5ad]/10 rounded-[22px] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(244,213,173,0.08)] will-change-transform"
+          className="term-card relative text-left bg-[#0d0906]/95 border border-[#f4d5ad]/10 rounded-[22px] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(244,213,173,0.08)] will-change-transform"
           role="img"
           aria-label="Terminal showing a playful status session"
         >

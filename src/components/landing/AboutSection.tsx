@@ -58,13 +58,13 @@ const AboutSection = () => {
   );
 
   return (
-    <section ref={ref} id="about" className="p-6 md:p-10 max-w-5xl mx-auto scroll-mt-20">
+    <section ref={ref} id="about" className="p-6 md:p-10 max-w-5xl mx-auto scroll-mt-20 text-center">
       <m.p
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.4 }}
-        className="font-mono text-xs text-accent mb-2 tracking-widest"
+        className="font-mono text-xs text-accent mb-2 tracking-widest text-center"
       >
         {'//'} who
       </m.p>
@@ -73,12 +73,12 @@ const AboutSection = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="text-3xl md:text-4xl font-sans font-bold mb-6 text-primary tracking-tight"
+        className="text-3xl md:text-4xl font-sans font-bold mb-6 text-primary tracking-tight text-center"
       >
         About
       </m.h2>
 
-      <div className="about-card relative bg-white/70 dark:bg-[#1e160f]/55 backdrop-blur-xl border border-[#f4d5ad]/20 dark:border-white/10 rounded-[22px] overflow-hidden shadow-[0_16px_48px_rgba(139,69,19,0.12),0_0_0_1px_rgba(139,69,19,0.08)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.28)] will-change-transform">
+      <div className="about-card relative text-left bg-white/70 dark:bg-[#1e160f]/55 backdrop-blur-xl border border-[#f4d5ad]/20 dark:border-white/10 rounded-[22px] overflow-hidden shadow-[0_16px_48px_rgba(139,69,19,0.12),0_0_0_1px_rgba(139,69,19,0.08)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.28)] will-change-transform">
         {/* Top glow */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#e09f58]/30 to-transparent" />
         <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-[radial-gradient(circle_at_center,rgba(224,159,88,0.16),transparent_70%)] blur-[18px] pointer-events-none" />

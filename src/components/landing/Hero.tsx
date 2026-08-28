@@ -184,10 +184,10 @@ const Hero = () => {
         </div>
       </div>
 
-      <p className="hero-tagline relative mt-3 font-mono text-sm md:text-base font-bold text-[#A0522D] dark:text-[#e09f58] text-center tracking-wide">
+      <p className="hero-tagline relative mt-3 mx-auto font-mono text-sm md:text-base font-bold text-[#A0522D] dark:text-[#e09f58] text-center tracking-wide">
         {TAGLINE}
       </p>
-      <p className="hero-intro relative mt-2 max-w-[36rem] font-mono text-xs md:text-[13px] text-[#8B4513]/65 dark:text-[#f4d5ad]/60 text-center leading-relaxed px-4">
+      <p className="hero-intro relative mt-2 max-w-[36rem] mx-auto font-mono text-xs md:text-[13px] text-[#8B4513]/65 dark:text-[#f4d5ad]/60 text-center leading-relaxed px-4">
         {INTRO}
       </p>
 
