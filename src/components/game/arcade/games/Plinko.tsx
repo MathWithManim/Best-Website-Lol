@@ -1,4 +1,7 @@
+import { ARCADE, PLINKO_MULTS } from "../../../../lib/convex-constants/arcade";
 import { db } from "../../../../db";
+import { api } from "../../../../convex/_generated/api";
+import { useMutation } from 'convex/react';
 import { useEffect, useRef, useState } from 'react';
 
 

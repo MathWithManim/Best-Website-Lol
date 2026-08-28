@@ -1,7 +1,4 @@
-
 import { useState, useEffect } from 'react';
-
-
 import Navbar from '../components/landing/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useNavigate, Link } from 'react-router-dom';
@@ -9,6 +6,9 @@ import { useUser } from '../lib/useUser';
 import { authClient } from '../lib/auth-client';
 import { RARITY_COLORS } from '../lib/rarities';
 import { COSMETIC_ICONS } from '../lib/cosmetics';
+import { useConvexAuth } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
+import { api } from '../convex/_generated/api';
 
 const ProfilePage = () => {
   useEffect(() => {
@@ -20,6 +20,7 @@ const ProfilePage = () => {
 
   const navigate = useNavigate();
   const user = useUser();
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
 
@@ -29,8 +30,13 @@ const ProfilePage = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
+  const updateProfile = useMutation(api.users.updateProfile);
+  const searchResults = useQuery(
+    api.users.searchUsers,
+    activeSearch ? { query: activeSearch } : "skip" as any
+  ) as any;
 
-    activeSearch ? { query: activeSearch } : "skip"
+  const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [pfp, setPfp] = useState('');
@@ -39,10 +45,10 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (user) {
-      setName(user.name || '');
-      setUsername(user.username || '');
-      setBio(user.bio || '');
-      setPfp(user.pfp || '');
+      setName((user as any).name || '');
+      setUsername((user as any).username || '');
+      setBio((user as any).bio || '');
+      setPfp((user as any).pfp || '');
     }
   }, [user]);
 
@@ -50,7 +56,7 @@ const ProfilePage = () => {
     e.preventDefault();
     setError(null);
     try {
-      await updateProfile({ name, username, bio, pfp });
+      await updateProfile({ name, username, bio, pfp } as any);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -96,14 +102,14 @@ const ProfilePage = () => {
           </button>
         </div>
 
-        {user.equippedCosmetic && (
+        {(user as any).equippedCosmetic && (
           <div className="-mt-4 mb-8">
             <span
-              title={`Equipped cosmetic: ${user.equippedCosmetic}`}
+              title={`Equipped cosmetic: ${(user as any).equippedCosmetic}`}
               className="inline-flex items-center gap-1.5 font-mono text-xs px-2 py-1 rounded bg-accent/10 dark:bg-[#c98a6e]/10 border border-accent/20 dark:border-[#c98a6e]/20 text-primary dark:text-[#f4d5ad]"
             >
-              <span aria-hidden>{COSMETIC_ICONS[user.equippedCosmetic] ?? '✨'}</span>
-              {user.equippedCosmetic}
+              <span aria-hidden>{(COSMETIC_ICONS as any)[(user as any).equippedCosmetic] ?? '✨'}</span>
+              {(user as any).equippedCosmetic}
             </span>
           </div>
         )}
@@ -111,6 +117,7 @@ const ProfilePage = () => {
         <form onSubmit={handleSave} className="bg-secondary/10 dark:bg-secondary/5 border border-primary/20 dark:border-[#f4d5ad]/20 p-8 rounded-2xl space-y-6">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <img
+              src={pfp || "https://api.dicebear.com/7.x/bottts/svg?seed=default"}
               alt="Avatar"
               className="w-20 h-20 rounded-full border-2 border-accent bg-bg dark:bg-[#2d1e14] object-cover"
             />
@@ -178,7 +185,6 @@ const ProfilePage = () => {
           </div>
         </form>
 
-        {/* Search Users */}
         <div className="mt-12">
           <h2 className="text-2xl font-sans font-bold mb-4">Search Users</h2>
           <div className="flex gap-2 mb-4">
@@ -201,20 +207,18 @@ const ProfilePage = () => {
             </button>
           </div>
 
-          {/* Loading state while search is in flight */}
           {activeSearch && searchResults === undefined && (
             <p className="text-center text-sm font-mono text-primary/50 dark:text-[#f4d5ad]/50">Searching...</p>
           )}
 
-          {/* Results */}
-          {activeSearch && searchResults !== undefined && searchResults.length === 0 && (
+          {activeSearch && searchResults !== undefined && (searchResults as any[]).length === 0 && (
             <p className="text-center text-sm font-mono text-primary/50 dark:text-[#f4d5ad]/50">No users found.</p>
           )}
 
-          {searchResults && searchResults.length > 0 && (
+          {searchResults && (searchResults as any[]).length > 0 && (
             <div className="space-y-2">
-              {searchResults.map((result) => {
-                const color = RARITY_COLORS[result.bestRarity] || '#9CA3AF';
+              {(searchResults as any[]).map((result: any) => {
+                const color = (RARITY_COLORS as any)[result.bestRarity] || '#9CA3AF';
                 return (
                   <div
                     key={result.username}
@@ -251,11 +255,11 @@ const ProfilePage = () => {
 
         <div className="mt-10">
           <h2 className="text-2xl font-sans font-bold mb-4">Achievements</h2>
-          {user.achievements.length === 0 ? (
+          {(user as any).achievements.length === 0 ? (
             <p className="text-sm font-mono text-primary/50 dark:text-[#f4d5ad]/50">No achievements defined yet.</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {user.achievements.map((a) => (
+              {(user as any).achievements.map((a: any) => (
                 <div
                   key={a.id}
                   title={a.unlocked ? a.description : `${a.description} (locked)`}

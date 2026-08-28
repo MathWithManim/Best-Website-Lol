@@ -8,6 +8,8 @@ import { useSettings } from '../../lib/settings';
 import { playRollStart, playWin } from '../../lib/sounds';
 import ShareCardModal from '../ShareCardModal';
 import { recordRoll } from '../../lib/rollHistory';
+import { api } from "../../convex/_generated/api";
+import { useMutation } from 'convex/react';
 
 interface RNGGameProps {
   onRollComplete: () => void;

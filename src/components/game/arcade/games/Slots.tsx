@@ -3,6 +3,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { useMutation } from 'convex/react';
 import { useSettings } from '../../../../lib/settings';
 import { ARCADE, SLOTS_SYMBOLS, SLOTS_TRIPLE_PAY } from '../../../../lib/convex-constants/arcade';
+import { api } from "../../../../convex/_generated/api";
 
 const GLYPH: Record<string, string> = {
   SEVEN: '7',

@@ -4,6 +4,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import { useMutation, useQuery, useConvexAuth } from 'convex/react';
 
 import { useUser } from '../lib/useUser';
+import { api } from "../convex/_generated/api";
 
 const COSMETIC_ICONS: Record<string, string> = {
   cat: '🐱',

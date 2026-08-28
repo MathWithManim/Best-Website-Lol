@@ -1,8 +1,10 @@
 import { m, AnimatePresence } from 'framer-motion';
+import { useMutation } from 'convex/react';
 import { useEffect, useState } from 'react';
 
 
 import { RARITY_COLORS, RARITY_VALUES } from '../../lib/rarities';
+import { api } from "../../convex/_generated/api";
 
 interface RarityStatsModalProps {
   isOpen: boolean;

@@ -1,6 +1,4 @@
-import { useRef } from 'react';
 import { m } from 'framer-motion';
-import { DiceIcon } from './Hero';
 
 const FEATURES = [
   { title: 'Dice Roll', desc: 'Slide your odds, roll the fate.', icon: '◆', img: 'https://picsum.photos/seed/dicegame/800/600?grayscale' },

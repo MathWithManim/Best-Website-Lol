@@ -1,4 +1,6 @@
 import { ARCADE, WHEEL_MULTS, WHEEL_LABELS, PLINKO_MULTS } from "../../../../lib/convex-constants/arcade";
+import { api } from "../../../../convex/_generated/api";
+import { useMutation } from 'convex/react';
 import { db } from "../../../../db";
 import { useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';

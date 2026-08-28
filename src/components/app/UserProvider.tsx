@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 import { useConvexAuth, useQuery } from 'convex/react';
 
 import { UserContext } from '../../lib/useUser';
+import { api } from "../../convex/_generated/api";
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, isLoading } = useConvexAuth();

@@ -17,6 +17,7 @@ import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 
 import { encodeRarityData, decodeRarityData } from '../../lib/crypto';
 import { useUser } from '../../lib/useUser';
+import { api } from "../../convex/_generated/api";
 
 const getCachedCounts = (): Record<string, number> => {
   try {
@@ -78,10 +79,11 @@ const RNGSection = () => {
 
   const junkPreview = (maxValue: number) =>
     Object.entries(displayCounts).reduce((sum, [rarity, count]) => {
+      const c = count as number;
       const idx = RARITIES.indexOf(rarity);
       if (idx < 0) return sum;
       const value = RARITY_VALUES[idx];
-      return value > 0 && value <= maxValue ? sum + value * count : sum;
+      return value > 0 && value <= maxValue ? sum + value * c : sum;
     }, 0);
 
   const handlePrestige = useCallback(async () => {

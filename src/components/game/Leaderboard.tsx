@@ -6,6 +6,8 @@ import { m } from 'framer-motion';
 import { RARITY_COLORS } from '../../lib/rarities';
 import { fmtCompact } from '../../lib/format';
 import { useUser } from '../../lib/useUser';
+import { api } from "../../convex/_generated/api";
+import { useQuery } from 'convex/react';
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 const spring = { type: 'spring', damping: 1.0, stiffness: 300 } as const;
