@@ -1,15 +1,23 @@
-import { Client } from "pg";
-export interface Env { HYPERDRIVE?: { connectionString: string } }
+import { betterAuth } from "better-auth";
+import { Pool } from "pg";
+
+export interface Env {
+  HYPERDRIVE?: { connectionString: string };
+}
+
+const pool = new Pool({
+  connectionString: (process.env as any)?.HYPERDRIVE?.connectionString || process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+});
+
+const auth = betterAuth({
+  database: pool as any,
+  logger: false,
+  emailAndPassword: { enabled: true },
+  session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
+});
 
 export async function onRequest(context: { env: Env; request: Request }) {
-  const client = new Client({ connectionString: context.env.HYPERDRIVE?.connectionString });
-  await client.connect();
-  try {
-    const { rows } = await client.query("SELECT * FROM users WHERE email = $1 LIMIT 1", ["test"]);
-    return new Response(JSON.stringify({ ok: true, users: rows }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } finally {
-    await client.end();
-  }
+  // Fixes AUTH_FAILURE / Symbol(pino.msgPrefix): disable broken logger, pass to handler
+  return auth.handler(context.request);
 }

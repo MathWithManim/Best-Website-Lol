@@ -5,7 +5,6 @@ export const pool = new Pool({
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
-export async function query<T = any>(text: string, params?: any[]) {
-  const res = await pool.query<T>(text, params);
-  return res;
+export async function query(text: string, params?: any[]) {
+  return pool.query(text, params);
 }
