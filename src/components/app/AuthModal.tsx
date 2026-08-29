@@ -55,6 +55,18 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
 
       if (result.error) throw result.error;
 
+      // Neon Auth with "Require email verification" ON returns success but no session (token null)
+      // Detect it and surface a helpful message instead of silently bouncing back to AuthModal
+      const data: any = (result as any)?.data;
+      const needsVerification = mode === "signup" && data?.user && (data?.token === null || data?.user?.emailVerified === false) && !data?.session;
+      // If verification needed, treat as soft-success: switch to login with instructions
+      if (needsVerification) {
+        setError(`Account created for ${userEmail} — check your email to verify, then log in. (If you don't see it, check spam. Or ask admin to disable 'Require email verification' in Neon Auth dashboard for instant login.)`);
+        setMode("login");
+        setSubmitting(false);
+        return;
+      }
+
       const storedAccounts = JSON.parse(localStorage.getItem("savedAccounts:v1") || "[]");
       if (!storedAccounts.includes(userEmail)) {
         storedAccounts.push(userEmail);

@@ -18,6 +18,7 @@ import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 import { encodeRarityData, decodeRarityData } from '../../lib/crypto';
 import { useUser } from '../../lib/useUser';
 import { api } from "../../convex/_generated/api";
+import { authClient } from '../../lib/auth-client';
 
 const getCachedCounts = (): Record<string, number> => {
   try {
@@ -30,13 +31,31 @@ const getCachedCounts = (): Record<string, number> => {
 };
 
 const RNGSection = () => {
+  let convexAuth: any = { isAuthenticated: false, isLoading: false };
+  try { convexAuth = useConvexAuth(); } catch { convexAuth = { isAuthenticated: false, isLoading: false }; }
+  // Better-Auth (Neon) session — must be called unconditionally as a hook
+  let baSession: any = undefined;
+  try { baSession = (authClient as any).useSession?.(); } catch { baSession = undefined; }
+
+  // Unified auth: authenticated if EITHER Convex or Neon has a session
   let isAuthenticated = false;
   let authLoading = false;
-  try {
-    const a = useConvexAuth();
-    isAuthenticated = a.isAuthenticated;
-    authLoading = a.isLoading;
-  } catch { isAuthenticated = false; authLoading = false; }
+  if (baSession !== undefined) {
+    if (baSession?.data?.user) {
+      isAuthenticated = true;
+      authLoading = false;
+    } else if (baSession?.isPending) {
+      isAuthenticated = false;
+      authLoading = true;
+    } else {
+      isAuthenticated = convexAuth.isAuthenticated;
+      authLoading = convexAuth.isLoading;
+    }
+  } else {
+    isAuthenticated = convexAuth.isAuthenticated;
+    authLoading = convexAuth.isLoading;
+  }
+
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRarity, setSelectedRarity] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
