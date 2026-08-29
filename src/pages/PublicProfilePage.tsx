@@ -1,7 +1,6 @@
 
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Navbar from '../components/landing/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import RarityGrid from '../components/game/RarityGrid';
 import { COSMETIC_ICONS } from '../lib/cosmetics';
@@ -27,7 +26,6 @@ const PublicProfilePage = () => {
   if (profile === null) {
     return (
       <div className="min-h-screen bg-bg dark:bg-[#1a120b] text-primary dark:text-[#f4d5ad]">
-        <Navbar />
         <Breadcrumbs />
         <main className="max-w-2xl mx-auto p-8 text-center space-y-4">
           <h1 className="text-3xl font-sans font-bold">Player not found</h1>
@@ -42,7 +40,6 @@ const PublicProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] text-primary dark:text-[#f4d5ad] transition-colors duration-300">
-      <Navbar />
       <Breadcrumbs />
       <main className="max-w-5xl mx-auto p-8">
         <div className="flex items-center gap-5 mb-8">

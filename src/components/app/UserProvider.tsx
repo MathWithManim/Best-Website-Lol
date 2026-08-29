@@ -41,6 +41,25 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   let user: any = convexUser;
   const baUser = baSession?.data?.user;
+  // local overrides (bio/username/pfp edited via RNG settings gear) — read once
+  let overrides: Record<string, string> = {};
+  try {
+    const raw = typeof window !== 'undefined' ? localStorage.getItem('profile:overrides:v1') : null;
+    if (raw) overrides = JSON.parse(raw);
+  } catch {}
+  // merge overrides into any user object so AccountSettingsModal edits show immediately
+  const applyOverrides = (u: any) => {
+    if (!u || !overrides || Object.keys(overrides).length === 0) return u;
+    return {
+      ...u,
+      name: overrides.name ?? u.name,
+      username: overrides.username ?? u.username,
+      bio: overrides.bio ?? u.bio,
+      pfp: overrides.pfp ?? u.pfp,
+      image: overrides.pfp ?? u.image,
+    };
+  };
+
   if (isAuthenticated && baUser && (convexUser === null || convexUser === undefined)) {
     user = {
       email: baUser.email,
@@ -62,6 +81,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       achievements: [],
     };
   }
+  user = applyOverrides(user);
 
   const value = isLoading || (!isAuthenticated && user === undefined) ? undefined : (isAuthenticated ? user ?? null : null);
 

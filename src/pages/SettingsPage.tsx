@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import Navbar from '../components/landing/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useUser } from '../lib/useUser';
 import { useConvexAuth } from 'convex/react';
@@ -93,7 +92,6 @@ const SettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] text-primary dark:text-[#f4d5ad] transition-colors duration-300">
-      <Navbar />
       <Breadcrumbs />
       <main className="max-w-2xl mx-auto p-8 space-y-6">
         <div className="flex justify-between items-center mb-2">

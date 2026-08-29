@@ -9,10 +9,10 @@ import EndgameScreen from '../EndgameScreen';
 import RecentWins from '../RecentWins';
 import { fmtCompact } from '../../lib/format';
 import { RARITIES, RARITY_VALUES } from '../../lib/rarities';
-import Navbar from '../landing/Navbar';
 import RollHistory from '../RollHistory';
 import LuckPanel from '../LuckPanel';
 import CompletionRing from '../CompletionRing';
+import AccountSettingsModal from './AccountSettingsModal';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 
 import { encodeRarityData, decodeRarityData } from '../../lib/crypto';
@@ -57,6 +57,7 @@ const RNGSection = () => {
   }
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedRarity, setSelectedRarity] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [rebirthError, setRebirthError] = useState<string | null>(null);
@@ -170,7 +171,20 @@ const RNGSection = () => {
 
   return (
     <div id="rng" className="max-w-6xl mx-auto px-4 py-8 md:py-12">
-      <Navbar />
+      {/* top bar: back to site + settings gear (only when logged in) */}
+      <div className="flex items-center justify-between mb-6">
+        <a href="/" className="inline-flex items-center gap-2 font-mono text-xs font-bold text-white/60 hover:text-white transition-colors">
+          <span aria-hidden>←</span> Jasper Sona
+        </a>
+        <button
+          onClick={()=>setSettingsOpen(true)}
+          aria-label="Open account settings"
+          title="Account settings — edit bio, name, avatar"
+          className="w-9 h-9 grid place-items-center rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 9 15a1.65 1.65 0 0 0-1-1.51V13a1.65 1.65 0 0 0 1-1.51 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 13.5 7a1.65 1.65 0 0 0 1 1.51V9a1.65 1.65 0 0 0-1 1.51 1.65 1.65 0 0 0 .33 1.82Z"/></svg>
+        </button>
+      </div>
       <RecentWins />
       <div className="relative flex flex-col md:flex-row gap-8 md:gap-12 items-start bg-black/20 dark:bg-black/40 p-6 md:p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
         <div className="w-full md:w-2/5 flex flex-col items-center">
@@ -286,6 +300,7 @@ const RNGSection = () => {
         userCount={userCountForSelected}
         onSellComplete={handleSellComplete}
       />
+      <AccountSettingsModal open={settingsOpen} onClose={()=>setSettingsOpen(false)} />
     </div>
   );
 };

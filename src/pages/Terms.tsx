@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import Navbar from '../components/landing/Navbar';
 import Breadcrumbs from '../components/Breadcrumbs';
 const Terms = () => {
   useEffect(() => {
@@ -11,7 +10,6 @@ const Terms = () => {
 
   return (
     <div className="min-h-screen bg-bg dark:bg-[#1a120b] dark:text-[#f4d5ad] transition-colors duration-300">
-      <Navbar />
       <Breadcrumbs />
       <main className="max-w-3xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-sans font-bold mb-8">Terms and Conditions</h1>

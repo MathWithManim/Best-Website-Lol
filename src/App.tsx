@@ -16,7 +16,6 @@ import { SettingsProvider } from './components/app/SettingsProvider';
 import ScrollProgress from './components/landing/ScrollProgress';
 import CookieBanner from './components/landing/CookieBanner';
 import ScrollUpButton from './components/landing/ScrollUpButton';
-import Navbar from './components/landing/Navbar';
 import MobileCTA from './components/landing/MobileCTA';
 import SmoothScroll from './components/app/SmoothScroll';
 import RNGSection from './components/game/RNGSection';
@@ -81,15 +80,12 @@ function AnimatedRoutes() {
           <Suspense fallback={<Spinner />}>
             <Routes location={location}>
             <Route path="/" element={
-              <>
-                <Navbar />
-                <main id="main-content">
-                  <Hero />
-                  <AboutSection />
-                  <TerminalSection />
-                  <ContactSection />
-                </main>
-              </>
+              <main id="main-content">
+                <Hero />
+                <AboutSection />
+                <TerminalSection />
+                <ContactSection />
+              </main>
             } />
             <Route path="/rng" element={<>
               <RNGSection />
