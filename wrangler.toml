@@ -1,0 +1,7 @@
+name = "jasper-sona"
+compatibility_date = "2026-08-29"
+compatibility_flags = ["nodejs_compat"]
+
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = "96cfe535ec4743eeb83818b056cc9e59"
