@@ -5,6 +5,5 @@
     "opencode-dynamic-context-pruning",
     "opencode-command-inject",
     "opencode-autotitle",
-    "superpowers@git+https://github.com/obra/superpowers.git"
-  ]
+    "superpowers@git+https://github.com/obra/superpowers.git", "open-mem@latest"]
 }
