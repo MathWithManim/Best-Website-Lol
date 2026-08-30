@@ -12,7 +12,9 @@ const getDatabaseUrl = (): string => {
     const viteUrl = (import.meta as any)?.env?.VITE_DATABASE_URL || (import.meta as any)?.env?.DATABASE_URL;
     if (viteUrl) return viteUrl;
   } catch {}
-  // Node / build env (Cloudflare Pages Functions, etc)
+  // Node / build env (Cloudflare Pages Functions, server, etc)
+  const envUrl = typeof process !== 'undefined' ? (process as any).env?.DATABASE_URL : undefined;
+  if (envUrl) return envUrl;
   try {
     // @ts-ignore
     if (typeof process !== 'undefined' && (process as any).env?.DATABASE_URL) return (process as any).env.DATABASE_URL;
