@@ -11,14 +11,14 @@ export const useDb = () => useContext(DbContext);
 // queries/mutations will just stay in pending state and be handled by Neon fallbacks.
 const convexUrl =
   ((import.meta as any).env?.VITE_CONVEX_URL as string | undefined) ||
-  'https://dummy-123.convex.cloud';
+  'https://gorgeous-sloth-123.convex.cloud';
 
 let convex: ConvexReactClient;
 try {
   convex = new ConvexReactClient(convexUrl);
 } catch (e) {
   console.warn('[ConvexClientProvider] Failed to create Convex client, using dummy:', e);
-  convex = new ConvexReactClient('https://dummy-123.convex.cloud');
+  convex = new ConvexReactClient('https://gorgeous-sloth-123.convex.cloud');
 }
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {

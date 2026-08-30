@@ -256,6 +256,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
                 id="auth-username"
                 type="text"
                 name="username"
+                autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full p-3 rounded-lg bg-bg dark:bg-[#1a120b] border border-primary/30 dark:border-[#f4d5ad]/30 text-primary dark:text-[#f4d5ad] font-mono focus:outline-none focus:border-accent"
@@ -271,6 +272,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
               id="auth-email"
               type="text"
               name="email"
+              autoComplete="email"
               autoFocus
               required
               value={email}
@@ -286,6 +288,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
                 id="auth-password"
                 type={showPassword ? "text" : "password"}
                 name="password"
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

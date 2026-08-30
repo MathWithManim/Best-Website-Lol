@@ -3,14 +3,12 @@ import { Pool } from "pg";
 
 export interface Env {
   HYPERDRIVE?: { connectionString: string };
+  DATABASE_URL?: string;
 }
 
-const pool = new Pool({
-  connectionString: (process.env as any)?.HYPERDRIVE?.connectionString || process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
-});
+let authInstance: any = null;
+let poolInstance: Pool | null = null;
 
-// No-op logger to prevent pino crash in Workers environment
 const noopLogger = {
   info: () => {},
   warn: () => {},
@@ -21,13 +19,43 @@ const noopLogger = {
   child: () => noopLogger,
 };
 
-const auth = betterAuth({
-  database: pool as any,
-  logger: noopLogger as any,
-  emailAndPassword: { enabled: true },
-  session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
-});
+function getAuth(env: Env) {
+  if (authInstance) return authInstance;
+
+  const connectionString = env.HYPERDRIVE?.connectionString || env.DATABASE_URL || (process.env as any)?.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL / HYPERDRIVE connection string is not set in environment!");
+  }
+
+  poolInstance = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  authInstance = betterAuth({
+    database: poolInstance as any,
+    logger: noopLogger as any,
+    emailAndPassword: { enabled: true },
+    session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
+  });
+
+  return authInstance;
+}
 
 export async function onRequest(context: { env: Env; request: Request }) {
-  return auth.handler(context.request);
+  try {
+    const auth = getAuth(context.env);
+    return await auth.handler(context.request);
+  } catch (error: any) {
+    return new Response(
+      JSON.stringify({
+        error: error.message || "Internal Server Error during auth initialization",
+        code: "AUTH_INIT_FAILURE",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 }
