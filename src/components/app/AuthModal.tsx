@@ -255,6 +255,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
               <input
                 id="auth-username"
                 type="text"
+                name="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full p-3 rounded-lg bg-bg dark:bg-[#1a120b] border border-primary/30 dark:border-[#f4d5ad]/30 text-primary dark:text-[#f4d5ad] font-mono focus:outline-none focus:border-accent"
@@ -269,6 +270,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
             <input
               id="auth-email"
               type="text"
+              name="email"
               autoFocus
               required
               value={email}
@@ -283,6 +285,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
               <input
                 id="auth-password"
                 type={showPassword ? "text" : "password"}
+                name="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -367,6 +370,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
                       inputMode="numeric"
                       autoComplete="one-time-code"
                       maxLength={1}
+                      name={`captcha-${i}`}
                       value={captchaInput[i]}
                       onChange={(e) => handleCaptchaChange(i, e.target.value)}
                       onKeyDown={(e) => handleCaptchaKeyDown(i, e)}
