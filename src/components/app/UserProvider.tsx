@@ -1,8 +1,6 @@
 import { type ReactNode } from 'react';
-import { useConvexAuth, useQuery } from 'convex/react';
 
 import { UserContext } from '../../lib/useUser';
-import { api } from "../../convex/_generated/api";
 import { authClient } from '../../lib/auth-client';
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
@@ -10,7 +8,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   let baSession: any = undefined;
   try { baSession = (authClient as any).useSession?.(); } catch { baSession = undefined; }
   let convexAuth: any = { isAuthenticated: false, isLoading: false };
-  try { convexAuth = useConvexAuth(); } catch { convexAuth = { isAuthenticated: false, isLoading: false }; }
+  try { convexAuth = {isAuthenticated:false}; } catch { convexAuth = { isAuthenticated: false, isLoading: false }; }
 
   let isAuthenticated = false;
   let isLoading = false;

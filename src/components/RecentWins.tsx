@@ -2,8 +2,6 @@ import { m } from 'framer-motion';
 
 
 import { RARITY_COLORS, RARITY_INDEX } from '../lib/rarities';
-import { api } from "../convex/_generated/api";
-import { useQuery } from 'convex/react';
 
 function timeAgo(ts: number): string {
   const mins = Math.max(0, Math.floor((Date.now() - ts) / 60000));

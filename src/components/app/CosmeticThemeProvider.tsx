@@ -1,7 +1,5 @@
 import { createContext, type ReactNode, useState, useEffect } from 'react';
 import { useUser } from '../../lib/useUser';
-import { api } from "../../convex/_generated/api";
-import { useQuery } from 'convex/react';
 
 
 
