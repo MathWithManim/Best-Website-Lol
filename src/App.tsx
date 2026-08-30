@@ -7,7 +7,6 @@ import TerminalSection from './components/landing/TerminalSection';
 import ContactSection from './components/landing/ContactSection';
 import ArcadeSection from './components/game/arcade/ArcadeSection';
 import NotFound from './components/NotFound';
-import ConvexClientProvider from './components/app/ConvexClientProvider';
 import { UserProvider } from './components/app/UserProvider';
 import AchievementToasts from './components/app/AchievementToasts';
 import { CosmeticThemeProvider } from './components/app/CosmeticThemeProvider';
@@ -134,7 +133,7 @@ function AppShell() {
 
 function App() {
   return (
-    <ConvexClientProvider>
+    
       <UserProvider>
         <SettingsProvider>
           <CosmeticThemeProvider>
@@ -142,7 +141,7 @@ function App() {
           </CosmeticThemeProvider>
         </SettingsProvider>
       </UserProvider>
-    </ConvexClientProvider>
+    
   );
 }
 
