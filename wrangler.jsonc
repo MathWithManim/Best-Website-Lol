@@ -10,7 +10,8 @@
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "c0f509b2af8d4e47ad5eb6611c33d19b"
+      "id": "c0f509b2af8d4e47ad5eb6611c33d19b",
+      "localConnectionString": "postgresql://neondb_owner:npg_tP35eWiwmOJp@ep-silent-boat-az6ergbe-pooler.c-3.ap-southeast-1.aws.neon.tech/Jasper?sslmode=require&channel_binding=require"
     }
   ]
 }

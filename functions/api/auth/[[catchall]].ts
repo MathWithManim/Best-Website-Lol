@@ -16,11 +16,14 @@ const noopLogger = {
   child: () => noopLogger,
 };
 
-async function getAuth(env: Env) {
+export async function getAuth(env: Env) {
   if (authInstance) return authInstance;
+  console.log("getAuth called. Env keys:", Object.keys(env));
 
   const connectionString =
     env.HYPERDRIVE?.connectionString || env.DATABASE_URL || (process.env as any)?.DATABASE_URL;
+  console.log("Connection string found:", !!connectionString);
+  
   if (!connectionString) {
     throw new Error("DATABASE_URL / HYPERDRIVE connection string is not set in environment!");
   }
@@ -28,11 +31,10 @@ async function getAuth(env: Env) {
   // Dynamic imports keep module evaluation trivial — a failure here is caught
   // by onRequest and returned as JSON instead of a blank 500.
   const { betterAuth } = await import("better-auth");
-  const { Pool } = await import("pg");
+  const { Pool } = await import("@neondatabase/serverless");
 
   poolInstance = new Pool({
     connectionString,
-    ssl: { rejectUnauthorized: false },
   });
 
   authInstance = betterAuth({
@@ -50,9 +52,12 @@ export async function onRequest(context: { env: Env; request: Request }) {
     const auth = await getAuth(context.env);
     return await auth.handler(context.request);
   } catch (error: any) {
+    console.error("[AuthHandler] Error:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
     return new Response(
       JSON.stringify({
-        error: error?.message || "Internal Server Error during auth initialization",
+        error: error?.message || "Internal Server Error",
+        stack: error?.stack,
+        details: JSON.stringify(error, Object.getOwnPropertyNames(error)),
         code: "AUTH_INIT_FAILURE",
       }),
       {
