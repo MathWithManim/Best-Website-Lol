@@ -27,8 +27,6 @@ const ProfilePage = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-    api.users.searchUsers,
-    activeSearch ? { query: activeSearch } : "skip" as any
   ) as any;
 
   const [name, setName] = useState('');
