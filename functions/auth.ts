@@ -10,14 +10,24 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
+// No-op logger to prevent pino crash in Workers environment
+const noopLogger = {
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+  debug: () => {},
+  trace: () => {},
+  fatal: () => {},
+  child: () => noopLogger,
+};
+
 const auth = betterAuth({
   database: pool as any,
-  logger: false,
+  logger: noopLogger as any,
   emailAndPassword: { enabled: true },
   session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
 });
 
 export async function onRequest(context: { env: Env; request: Request }) {
-  // Fixes AUTH_FAILURE / Symbol(pino.msgPrefix): disable broken logger, pass to handler
   return auth.handler(context.request);
 }
