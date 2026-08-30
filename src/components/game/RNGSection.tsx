@@ -13,11 +13,9 @@ import RollHistory from '../RollHistory';
 import LuckPanel from '../LuckPanel';
 import CompletionRing from '../CompletionRing';
 import AccountSettingsModal from './AccountSettingsModal';
-import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 
 import { encodeRarityData, decodeRarityData } from '../../lib/crypto';
 import { useUser } from '../../lib/useUser';
-import { api } from "../../convex/_generated/api";
 import { authClient } from '../../lib/auth-client';
 
 const getCachedCounts = (): Record<string, number> => {
@@ -32,7 +30,6 @@ const getCachedCounts = (): Record<string, number> => {
 
 const RNGSection = () => {
   let convexAuth: any = { isAuthenticated: false, isLoading: false };
-  try { convexAuth = useConvexAuth(); } catch { convexAuth = { isAuthenticated: false, isLoading: false }; }
   // Better-Auth (Neon) session — must be called unconditionally as a hook
   let baSession: any = undefined;
   try { baSession = (authClient as any).useSession?.(); } catch { baSession = undefined; }
@@ -61,7 +58,6 @@ const RNGSection = () => {
   const [selectedRarity, setSelectedRarity] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [rebirthError, setRebirthError] = useState<string | null>(null);
-  const rebirth = useMutation(api.rng.rebirth);
 
   useEffect(() => {
     if (window.location.hash === '#rng') {
@@ -70,9 +66,6 @@ const RNGSection = () => {
   }, []);
 
   const user = useUser();
-  const userRarityCounts = useQuery(api.rng.getUserRarityCounts, isAuthenticated ? {} : "skip");
-  const rarityStats = useQuery(api.rng.getRarityStats, isAuthenticated ? {} : "skip");
-  const luckBucks = useQuery(api.shop.getLuckBucks, isAuthenticated ? {} : "skip");
 
   const isLoading = authLoading || userRarityCounts === undefined || (isAuthenticated && luckBucks === undefined);
 
@@ -95,13 +88,10 @@ const RNGSection = () => {
   // Convex queries are reactive, so the grid and reel refresh on their own.
   const handleRollComplete = useCallback(() => {}, []);
   const handleSellComplete = useCallback(() => {}, []);
-  const sellBulkJunk = useMutation(api.rng.sellBulkJunk);
-  const prestigeMut = useMutation(api.rng.prestige);
   const [bulkMsg, setBulkMsg] = useState<string | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
   const [prestigeBusy, setPrestigeBusy] = useState(false);
 
-  const totalRolls = useQuery(api.leaderboard.getTotalRolls);
 
   const junkPreview = (maxValue: number) =>
     Object.entries(displayCounts).reduce((sum, [rarity, count]) => {

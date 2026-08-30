@@ -1,8 +1,5 @@
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { useMutation } from 'convex/react';
-import { ARCADE } from '../../../../lib/convex-constants/arcade';
-import { api } from "../../../../convex/_generated/api";
 
 interface LimboResult {
   roll: number;
@@ -14,7 +11,6 @@ interface LimboResult {
 const QUICK = [1.5, 2, 5, 10];
 
 const Limbo = () => {
-  const play = useMutation(api.arcade.playLimbo);
   const [target, setTarget] = useState(2);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<LimboResult | null>(null);

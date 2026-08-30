@@ -3,8 +3,6 @@ import { m, AnimatePresence } from 'framer-motion';
 import { useUser } from '../../lib/useUser';
 import { useSettings } from '../../lib/settings';
 import { authClient } from '../../lib/auth-client';
-import { useMutation } from 'convex/react';
-import { api } from '../../convex/_generated/api';
 
 interface Props {
   open: boolean;
@@ -54,7 +52,6 @@ const AccountSettingsModal = ({ open, onClose }: Props) => {
 
   // try to get mutation if backend exists, otherwise no-op
   let updateProfile: any = null;
-  try { updateProfile = useMutation((api as any)?.users?.updateProfile ?? 'users.updateProfile' as any); } catch { updateProfile = null; }
 
   useEffect(()=>{
     if (open && user) {

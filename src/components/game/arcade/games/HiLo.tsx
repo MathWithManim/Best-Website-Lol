@@ -1,7 +1,4 @@
 import { db } from "../../../../db";
-import { ARCADE } from "../../../../lib/convex-constants/arcade";
-import { api } from "../../../../convex/_generated/api";
-import { useMutation } from 'convex/react';
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 
@@ -48,8 +45,6 @@ function multFor(card: number, dir: 'higher' | 'lower'): number {
 }
 
 const HiLo = () => {
-  const start = useMutation(api.arcade.startHiLo);
-  const guess = useMutation(api.arcade.guessHiLo);
   const [card, setCard] = useState<Card | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);

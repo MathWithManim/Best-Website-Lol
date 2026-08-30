@@ -1,7 +1,4 @@
-import { ARCADE, PLINKO_MULTS } from "../../../../lib/convex-constants/arcade";
 import { db } from "../../../../db";
-import { api } from "../../../../convex/_generated/api";
-import { useMutation } from 'convex/react';
 import { useEffect, useRef, useState } from 'react';
 
 
@@ -34,7 +31,6 @@ const Plinko = () => {
   const [falling, setFalling] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const playPlinko = useMutation(api.arcade.playPlinko);
 
   useEffect(
     () => () => {

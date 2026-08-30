@@ -8,8 +8,6 @@ import { useSettings } from '../../lib/settings';
 import { playRollStart, playWin } from '../../lib/sounds';
 import ShareCardModal from '../ShareCardModal';
 import { recordRoll } from '../../lib/rollHistory';
-import { api } from "../../convex/_generated/api";
-import { useMutation } from 'convex/react';
 import { localRoll } from '../../lib/neon-rng';
 
 interface RNGGameProps {
@@ -44,7 +42,6 @@ interface RollOutcome {
 }
 
 const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalRarities, discovered }: RNGGameProps) => {
-  const roll = useMutation(api.rng.roll);
   const { settings } = useSettings();
   const reduceMotion = settings.reduceMotion;
   const soundEnabled = settings.soundEnabled;

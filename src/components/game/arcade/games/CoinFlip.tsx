@@ -1,7 +1,4 @@
 import { db } from "../../../../db";
-import { ARCADE } from "../../../../lib/convex-constants/arcade";
-import { api } from "../../../../convex/_generated/api";
-import { useMutation } from 'convex/react';
 import { useRef, useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';
 
@@ -28,7 +25,6 @@ const Face = ({ side }: { side: Side }) => (
 
 const CoinFlip = () => {
   const { settings } = useSettings();
-  const flip = useMutation(api.arcade.playCoinFlip);
   const rotateY = useMotionValue(0);
   const [flipping, setFlipping] = useState(false);
   const [result, setResult] = useState<{ landed: Side; won: boolean; net: number } | null>(null);

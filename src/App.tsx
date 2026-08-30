@@ -20,7 +20,6 @@ import SmoothScroll from './components/app/SmoothScroll';
 import RNGSection from './components/game/RNGSection';
 import ErrorBoundary from './components/ErrorBoundary';
 import Spinner from './components/Spinner';
-import { useConvexAuth } from 'convex/react';
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const PublicProfilePage = lazy(() => import('./pages/PublicProfilePage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
@@ -46,7 +45,6 @@ function AnimatedRoutes() {
   const location = useLocation();
   let isAuthenticated = false;
   try {
-    isAuthenticated = useConvexAuth().isAuthenticated;
   } catch {
     isAuthenticated = false;
   }

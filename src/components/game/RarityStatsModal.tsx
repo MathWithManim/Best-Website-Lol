@@ -1,10 +1,8 @@
 import { m, AnimatePresence } from 'framer-motion';
-import { useMutation } from 'convex/react';
 import { useEffect, useState } from 'react';
 
 
 import { RARITY_COLORS, RARITY_VALUES } from '../../lib/rarities';
-import { api } from "../../convex/_generated/api";
 
 interface RarityStatsModalProps {
   isOpen: boolean;
@@ -30,7 +28,6 @@ const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, on
   const valuePerItem = index >= 0 && index < RARITY_VALUES.length ? RARITY_VALUES[index] : 1;
   const [selling, setSelling] = useState(false);
   const [sellResult, setSellResult] = useState<string | null>(null);
-  const sellRarity = useMutation(api.rng.sellRarity);
 
   const handleSell = async (amount: number) => {
     if (selling) return;

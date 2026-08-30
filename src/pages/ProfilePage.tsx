@@ -5,9 +5,6 @@ import { useUser } from '../lib/useUser';
 import { authClient } from '../lib/auth-client';
 import { RARITY_COLORS } from '../lib/rarities';
 import { COSMETIC_ICONS } from '../lib/cosmetics';
-import { useConvexAuth } from 'convex/react';
-import { useMutation, useQuery } from 'convex/react';
-import { api } from '../convex/_generated/api';
 
 const ProfilePage = () => {
   useEffect(() => {
@@ -21,7 +18,6 @@ const ProfilePage = () => {
   const user = useUser();
   let isAuthenticated = false;
   let isLoading = false;
-  try { const a = useConvexAuth(); isAuthenticated = a.isAuthenticated; isLoading = a.isLoading; } catch { isAuthenticated = false; isLoading = false; }
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
 
@@ -31,8 +27,6 @@ const ProfilePage = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  const updateProfile = useMutation(api.users.updateProfile);
-  const searchResults = useQuery(
     api.users.searchUsers,
     activeSearch ? { query: activeSearch } : "skip" as any
   ) as any;

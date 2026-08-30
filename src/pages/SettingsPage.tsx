@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useUser } from '../lib/useUser';
-import { useConvexAuth } from 'convex/react';
 import { useSettings } from '../lib/settings';
 import { authClient } from '../lib/auth-client';
 
@@ -55,7 +54,6 @@ const SettingsPage = () => {
   const navigate = useNavigate();
   let isAuthenticated = false;
   let isLoading = false;
-  try { const a = useConvexAuth(); isAuthenticated = a.isAuthenticated; isLoading = a.isLoading; } catch { isAuthenticated = false; isLoading = false; }
   const user = useUser();
   const { settings, setSetting } = useSettings();
   const [dataMessage, setDataMessage] = useState<string | null>(null);

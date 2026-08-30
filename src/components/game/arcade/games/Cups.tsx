@@ -1,7 +1,4 @@
 import { db } from "../../../../db";
-import { ARCADE } from "../../../../lib/convex-constants/arcade";
-import { api } from "../../../../convex/_generated/api";
-import { useMutation } from 'convex/react';
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 
@@ -19,7 +16,6 @@ const CUP_X = [-72, 0, 72];
 
 const Cups = () => {
   const { settings } = useSettings();
-  const play = useMutation(api.arcade.playCups);
   const [phase, setPhase] = useState<Phase>('idle');
   const [shuffleOffsets, setShuffleOffsets] = useState([0, 0, 0]);
   const [result, setResult] = useState<CupsResult | null>(null);

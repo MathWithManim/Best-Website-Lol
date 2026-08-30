@@ -1,11 +1,9 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { db } from '../../db';
 
 const DbContext = createContext(db);
 export const useDb = () => useContext(DbContext);
 
-// Always provide a Convex client so `useMutation`/`useQuery`/`useConvexAuth`
 // never throw "Could not find Convex client!" even when VITE_CONVEX_URL is unset
 // (Neon migration). The dummy URL satisfies Convex's deployment-name parser;
 // queries/mutations will just stay in pending state and be handled by Neon fallbacks.

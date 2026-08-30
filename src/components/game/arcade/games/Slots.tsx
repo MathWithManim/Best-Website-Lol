@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { useMutation } from 'convex/react';
 import { useSettings } from '../../../../lib/settings';
-import { ARCADE, SLOTS_SYMBOLS, SLOTS_TRIPLE_PAY } from '../../../../lib/convex-constants/arcade';
-import { api } from "../../../../convex/_generated/api";
 
 const GLYPH: Record<string, string> = {
   SEVEN: '7',
@@ -22,7 +19,6 @@ interface SlotsResult {
 
 const Slots = () => {
   const { settings } = useSettings();
-  const play = useMutation(api.arcade.playSlots);
   const [display, setDisplay] = useState<string[]>(['7', '◆', '★']);
   const [spinning, setSpinning] = useState<boolean[]>([false, false, false]);
   const [busy, setBusy] = useState(false);
