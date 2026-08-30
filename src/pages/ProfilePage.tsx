@@ -27,8 +27,6 @@ const ProfilePage = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  ) as any;
-
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
