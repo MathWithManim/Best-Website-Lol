@@ -1,8 +1,12 @@
-import { createContext, useContext, type ReactNode } from 'react';
-import { ConvexClientProvider as ConvexProvider, ConvexClient, ConvexReactClient } from '../convex/_generated/api';
+import { type ReactNode } from 'react';
 
-const DbContext = createContext(db);
-export const useDb = () => useContext(DbContext);
+const DbContext = { Provider: ({ children }: { children: ReactNode }) => children };
+export const useDb = () => ({} as any);
+
+export function ConvexClientProvider({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}
+export default ConvexClientProvider;
 
 // never throw "Could not find Convex client!" even when VITE_CONVEX_URL is unset
 // (Neon migration). The dummy URL satisfies Convex's deployment-name parser;
