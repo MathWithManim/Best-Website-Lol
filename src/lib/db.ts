@@ -1,10 +1,8 @@
-import { Pool } from "pg";
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import { Pool } from '@neondatabase/serverless';
+import * as schema from '../db/schema';
 
-export const pool = new Pool({
-  connectionString: (process.env as any).HYPERDRIVE?.connectionString || process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
-});
+const connectionString = process.env.DATABASE_URL || '';
 
-export async function query(text: string, params?: any[]) {
-  return pool.query(text, params);
-}
+export const pool = new Pool({ connectionString });
+export const db = drizzle(pool, { schema });
