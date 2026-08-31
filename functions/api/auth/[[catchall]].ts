@@ -37,6 +37,7 @@ export async function getAuth(env: Env) {
     connectionString,
   });
 
+
   authInstance = betterAuth({
     database: poolInstance as any,
     logger: noopLogger as any,
