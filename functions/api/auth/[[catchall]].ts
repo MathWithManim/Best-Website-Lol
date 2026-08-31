@@ -38,8 +38,9 @@ export async function getAuth(env: Env) {
   });
 
 
+  const { neon } = await import("@neondatabase/serverless");
   authInstance = betterAuth({
-    database: poolInstance as any,
+    database: neon(connectionString) as any,
     logger: noopLogger as any,
     emailAndPassword: { enabled: true },
     session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
