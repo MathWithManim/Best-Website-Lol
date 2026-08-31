@@ -28,37 +28,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     isLoading = convexAuth.isLoading;
   }
 
-  let convexUser: any = undefined;
-  try {
-    const q = useQuery(
-      (api as any)?.users?.getCurrentUser ?? 'users.getCurrentUser' as any,
-      isAuthenticated ? {} : 'skip'
-    );
-    convexUser = q;
-  } catch { convexUser = null; }
-
-  let user: any = convexUser;
+  let user: any = undefined;
   const baUser = baSession?.data?.user;
-  // local overrides (bio/username/pfp edited via RNG settings gear) — read once
-  let overrides: Record<string, string> = {};
-  try {
-    const raw = typeof window !== 'undefined' ? localStorage.getItem('profile:overrides:v1') : null;
-    if (raw) overrides = JSON.parse(raw);
-  } catch {}
-  // merge overrides into any user object so AccountSettingsModal edits show immediately
-  const applyOverrides = (u: any) => {
-    if (!u || !overrides || Object.keys(overrides).length === 0) return u;
-    return {
-      ...u,
-      name: overrides.name ?? u.name,
-      username: overrides.username ?? u.username,
-      bio: overrides.bio ?? u.bio,
-      pfp: overrides.pfp ?? u.pfp,
-      image: overrides.pfp ?? u.image,
-    };
-  };
-
-  if (isAuthenticated && baUser && (convexUser === null || convexUser === undefined)) {
+  if (isAuthenticated && baUser) {
     user = {
       email: baUser.email,
       username: baUser.name || baUser.email?.split('@')[0] || 'user',
@@ -79,6 +51,25 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       achievements: [],
     };
   }
+  // local overrides (bio/username/pfp edited via RNG settings gear) — read once
+  let overrides: Record<string, string> = {};
+  try {
+    const raw = typeof window !== 'undefined' ? localStorage.getItem('profile:overrides:v1') : null;
+    if (raw) overrides = JSON.parse(raw);
+  } catch {}
+  // merge overrides into any user object so AccountSettingsModal edits show immediately
+  const applyOverrides = (u: any) => {
+    if (!u || !overrides || Object.keys(overrides).length === 0) return u;
+    return {
+      ...u,
+      name: overrides.name ?? u.name,
+      username: overrides.username ?? u.username,
+      bio: overrides.bio ?? u.bio,
+      pfp: overrides.pfp ?? u.pfp,
+      image: overrides.pfp ?? u.image,
+    };
+  };
+
   user = applyOverrides(user);
 
   const value = isLoading || (!isAuthenticated && user === undefined) ? undefined : (isAuthenticated ? user ?? null : null);
