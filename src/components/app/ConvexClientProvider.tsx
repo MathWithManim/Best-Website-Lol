@@ -1,12 +1,8 @@
-import { type ReactNode } from 'react';
+import { ConvexReactClient, ConvexProvider } from '../convex/_generated/api';
+import { db } from '../../db';
 
-const DbContext = { Provider: ({ children }: { children: ReactNode }) => children };
-export const useDb = () => ({} as any);
-
-export function ConvexClientProvider({ children }: { children: ReactNode }) {
-  return <>{children}</>;
-}
-export default ConvexClientProvider;
+const DbContext = createContext(db);
+export const useDb = () => useContext(DbContext);
 
 // never throw "Could not find Convex client!" even when VITE_CONVEX_URL is unset
 // (Neon migration). The dummy URL satisfies Convex's deployment-name parser;
@@ -15,14 +11,12 @@ const convexUrl =
   ((import.meta as any).env?.VITE_CONVEX_URL as string | undefined) ||
   'https://gorgeous-sloth-123.convex.cloud';
 
-let convex: any;
+let convex: ConvexReactClient;
 try {
-  const { ConvexReactClient: Client } = require('../convex/_generated/api');
-  convex = new Client(convexUrl);
-} catch (e: any) {
-  console.warn('[ConvexClientProvider] Using dummy:', e);
-  const { ConvexReactClient: Client } = require('../convex/_generated/api');
-  convex = new Client('https://gorgeous-sloth-123.convex.cloud');
+  convex = new ConvexReactClient(convexUrl);
+} catch (e) {
+  console.warn('[ConvexClientProvider] Failed to create Convex client, using dummy:', e);
+  convex = new ConvexReactClient('https://gorgeous-sloth-123.convex.cloud');
 }
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
