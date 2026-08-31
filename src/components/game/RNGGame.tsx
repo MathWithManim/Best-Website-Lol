@@ -159,7 +159,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
       const tryRoll = async (): Promise<RollOutcome> => {
         try {
           // race with timeout so dummy convex doesn't hang forever
-          const convexPromise = roll() as Promise<RollOutcome>;
+          const convexPromise = Promise.resolve(localRoll(n)) as Promise<RollOutcome>;
           const timeout = new Promise<never>((_, rej) => setTimeout(() => rej(new Error('convex-timeout')), 3000));
           return await Promise.race([convexPromise, timeout]);
         } catch {

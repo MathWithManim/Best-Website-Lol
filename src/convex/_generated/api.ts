@@ -8,3 +8,7 @@ export const api: any = new Proxy({}, {
     });
   }
 });
+export const useQuery = () => ({ data: null, isLoading: false, error: null }) as any;
+export const useMutation = () => (() => Promise.resolve()) as any;
+export const ConvexReactClient = () => ({}) as any;
+export const ConvexProvider = ({ children }: { children: any }) => children;
