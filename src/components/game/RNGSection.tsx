@@ -17,6 +17,7 @@ import AccountSettingsModal from './AccountSettingsModal';
 import { encodeRarityData, decodeRarityData } from '../../lib/crypto';
 import { useUser } from '../../lib/useUser';
 import { authClient } from '../../lib/auth-client';
+import { useQuery, useMutation, api } from '../../lib/lib/db';
 
 const getCachedCounts = (): Record<string, number> => {
   try {
@@ -66,6 +67,15 @@ const RNGSection = () => {
   }, []);
 
   const user = useUser();
+
+  // Stub Convex queries/mutations for build
+  const userRarityCounts = useQuery(api.users.getRarityCounts as any) || {};
+  const luckBucks = useQuery(api.users.getLuckBucks as any) ?? 0;
+  const prestigeMut = useMutation(api.users.prestige as any);
+  const sellBulkJunk = useMutation(api.users.sellBulkJunk as any);
+  const rebirth = () => Promise.resolve();
+  const rarityStats = useQuery(api.stats.getRarityStats as any) || [];
+  const totalRolls = useQuery(api.stats.getTotalRolls as any) ?? 0;
 
   const isLoading = authLoading || userRarityCounts === undefined || (isAuthenticated && luckBucks === undefined);
 

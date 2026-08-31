@@ -1,5 +1,6 @@
-import { ConvexReactClient, ConvexProvider } from '../convex/_generated/api';
-import { db } from '../../db';
+import { ConvexReactClient, ConvexProvider } from '../../convex/_generated/api';
+import { createContext, useContext, ReactNode } from 'react';
+import { db } from '../../lib/db';
 
 const DbContext = createContext(db);
 export const useDb = () => useContext(DbContext);
@@ -11,7 +12,7 @@ const convexUrl =
   ((import.meta as any).env?.VITE_CONVEX_URL as string | undefined) ||
   'https://gorgeous-sloth-123.convex.cloud';
 
-let convex: ConvexReactClient;
+let convex: any;
 try {
   convex = new ConvexReactClient(convexUrl);
 } catch (e) {

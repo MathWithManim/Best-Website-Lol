@@ -1,4 +1,5 @@
 import { db, leaderboard, users } from "../../db";
+import { useQuery, api } from '../../lib/lib/db';
 import { useState } from 'react';
 import { m } from 'framer-motion';
 

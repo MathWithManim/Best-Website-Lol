@@ -1,4 +1,4 @@
-import { useQuery, useMutation, api } from "../lib/convex-stub";
+import { useQuery, api } from "../convex/_generated/api";
 import { m } from 'framer-motion';
 
 

@@ -1,4 +1,5 @@
-import { db } from "../../../../db";
+import { ARCADE, start, guess } from "../../../../lib/arcade-stubs";
+import { db } from "../../../../lib/db";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 

@@ -1,3 +1,4 @@
+import { ARCADE } from "../../../../lib/arcade-stubs";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { eq } from 'drizzle-orm';

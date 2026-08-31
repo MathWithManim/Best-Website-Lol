@@ -1,4 +1,5 @@
-import { db } from "../../../../db";
+import { ARCADE, flip, play, start, guess } from "../../../../lib/arcade-stubs";
+import { db } from "../../../../lib/db";
 import { useRef, useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';
 
@@ -105,7 +106,7 @@ const CoinFlip = () => {
                 : 'bg-secondary/30 dark:bg-secondary/10 border border-primary/20 dark:border-[#f4d5ad]/20 text-primary dark:text-[#f4d5ad] hover:border-accent'
             }`}
           >
-            {side === 'heads' ? `Heads (${ARCADE.coin.cost})` : `Tails (${ARCADE.coin.cost})`}
+            {side === 'heads' ? `Heads (${ARCADE.coinflip.cost})` : `Tails (${ARCADE.coinflip.cost})`}
           </button>
         ))}
       </div>
@@ -116,7 +117,7 @@ const CoinFlip = () => {
           result.won ? (
             <span className="text-green-600 dark:text-green-400">Called it — it&apos;s {result.landed}! +{result.net} LB</span>
           ) : (
-            <span className="text-red-600 dark:text-red-400">It landed {result.landed}. {ARCADE.coin.cost} LB gone.</span>
+            <span className="text-red-600 dark:text-red-400">It landed {result.landed}. {ARCADE.coinflip.cost} LB gone.</span>
           )
         )}
         {!error && !result && flipping && <span className="text-primary/50 dark:text-[#f4d5ad]/50">In the air...</span>}

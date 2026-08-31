@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 
 import { RARITY_COLORS, RARITY_VALUES } from '../../lib/rarities';
+import { useMutation, api } from '../../lib/lib/db';
 
 interface RarityStatsModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface RarityStatsModalProps {
 }
 
 const RarityStatsModal = ({ isOpen, onClose, rarity, index, stats, userCount, onSellComplete }: RarityStatsModalProps) => {
+  const sellRarity = useMutation(api.rng.sellRarity as any);
 
   useEffect(() => {
     if (!isOpen) return;

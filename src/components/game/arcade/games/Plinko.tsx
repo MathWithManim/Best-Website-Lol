@@ -1,5 +1,5 @@
-import { ARCADE, PLINKO_MULTS, WHEEL_MULTS, WHEEL_LABELS, SLOTS_TRIPLE_PAY } from "../../../../lib/arcade-stubs";
-import { db } from "../../../../db";
+import { ARCADE, PLINKO_MULTS, WHEEL_MULTS, WHEEL_LABELS, SLOTS_TRIPLE_PAY, playPlinko } from "../../../../lib/arcade-stubs";
+import { db } from "../../../../lib/db";
 import { useEffect, useRef, useState } from 'react';
 
 

@@ -1,5 +1,5 @@
-export const useQuery = () => ({ data: null, isLoading: false }) as any;
-export const useMutation = () => (() => Promise.resolve({})) as any;
+export const useQuery = (...args: any[]): any => ({ data: null, isLoading: false }) as any;
+export const useMutation = (...args: any[]): any => ((...margs: any[]) => Promise.resolve({})) as any;
 export const ConvexReactClient = () => ({}) as any;
 export const api: any = new Proxy({}, {
   get(_t, mod: string) {

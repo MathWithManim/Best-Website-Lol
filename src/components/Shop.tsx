@@ -1,4 +1,4 @@
-import { useQuery, useMutation, api } from "../../lib/convex-stub";
+import { useQuery, useMutation, api } from "../../convex/_generated/api";
 import { db } from "../db";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';

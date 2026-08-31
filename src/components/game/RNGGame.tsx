@@ -219,7 +219,7 @@ const RNGGame = ({ onRollComplete, equippedCosmetic, rollCost, luckBucks, totalR
     } finally {
       busyRef.current = false;
     }
-  }, [roll, n, tileH, idleY, reduceMotion, rolling, result, soundEnabled, discovered, startSpin, stripY, cancelAnims, finish]);
+  }, [n, tileH, idleY, reduceMotion, rolling, result, soundEnabled, discovered, startSpin, stripY, cancelAnims, finish]);
 
   useEffect(() => {
     if (cooldownEnd === 0) return;
