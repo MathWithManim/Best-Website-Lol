@@ -1,3 +1,4 @@
+import { ARCADE, PLINKO_MULTS, WHEEL_MULTS, WHEEL_LABELS, SLOTS_TRIPLE_PAY, playWheel, playPlinko } from "../../../lib/arcade-stubs";
 import { useEffect, useRef, useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { useSettings } from '../../../../lib/settings';

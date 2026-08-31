@@ -1,3 +1,4 @@
+import { ARCADE, WHEEL_MULTS, WHEEL_LABELS, playWheel } from "../../../../lib/arcade-stubs";
 import { db } from "../../../../db";
 import { useState } from 'react';
 import { animate, m, useMotionValue } from 'framer-motion';

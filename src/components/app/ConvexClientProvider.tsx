@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import { db } from '../../db';
+import { ConvexClientProvider as ConvexProvider, ConvexClient, ConvexReactClient } from '../convex/_generated/api';
 
 const DbContext = createContext(db);
 export const useDb = () => useContext(DbContext);
@@ -11,12 +11,14 @@ const convexUrl =
   ((import.meta as any).env?.VITE_CONVEX_URL as string | undefined) ||
   'https://gorgeous-sloth-123.convex.cloud';
 
-let convex: ConvexReactClient;
+let convex: any;
 try {
-  convex = new ConvexReactClient(convexUrl);
-} catch (e) {
-  console.warn('[ConvexClientProvider] Failed to create Convex client, using dummy:', e);
-  convex = new ConvexReactClient('https://gorgeous-sloth-123.convex.cloud');
+  const { ConvexReactClient: Client } = require('../convex/_generated/api');
+  convex = new Client(convexUrl);
+} catch (e: any) {
+  console.warn('[ConvexClientProvider] Using dummy:', e);
+  const { ConvexReactClient: Client } = require('../convex/_generated/api');
+  convex = new Client('https://gorgeous-sloth-123.convex.cloud');
 }
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {

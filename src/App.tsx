@@ -45,8 +45,9 @@ function AnimatedRoutes() {
   const location = useLocation();
   let isAuthenticated = false;
   try {
+    isAuthenticated = false;
   } catch (e) {
-    verboseError("App.authInit", e, { url: window.location.href });
+    console.error("App.authInit error:", e);
     isAuthenticated = false;
   }
   const navigate = useNavigate();
