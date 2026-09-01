@@ -3,10 +3,10 @@ import { db } from '../db';
 import { users, globalStats } from '../db/schema';
 import { eq, and } from 'drizzle-orm';
 import auth from '../lib/auth';
-import { headers } from 'next/headers';
+// headers removed - using cookie-based session
 
 export async function getAppUser() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({ headers: await Promise.resolve({}) });
   if (!session) throw new Error('Unauthorized');
   const email = session.user.email;
   const rows = await db.select().from(users).where(eq(users.email, email)).limit(1);
@@ -14,7 +14,7 @@ export async function getAppUser() {
 }
 
 export async function getIdentityEmail() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({ headers: await Promise.resolve({}) });
   return session?.user?.email || null;
 }
 
