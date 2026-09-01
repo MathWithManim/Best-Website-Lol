@@ -28,9 +28,33 @@ export async function getAuth(env: Env) {
   }
 
   const { betterAuth } = await import('better-auth');
+  const { drizzleAdapter } = await import('@better-auth/drizzle-adapter');
+  const { neon } = await import('@neondatabase/serverless');
+
+  // Import schema from src/db/auth-schema for adapter
+  let schemaModule: any = {};
+  try {
+    schemaModule = await import('../../src/db/auth-schema');
+  } catch {
+    // If schema import fails in serverless context, use minimal schema
+    schemaModule = {
+      authUser: { name: 'user', fields: {} },
+      authSession: { name: 'session', fields: {} },
+      authAccount: { name: 'account', fields: {} },
+      authVerification: { name: 'verification', fields: {} },
+    };
+  }
 
   authInstance = betterAuth({
-    database: await import('@neondatabase/serverless').then(({ neon }) => neon(connectionString) as any),
+    database: drizzleAdapter(neon(connectionString), {
+      provider: 'pg',
+      schema: {
+        user: schemaModule.authUser || schemaModule.user,
+        session: schemaModule.authSession || schemaModule.session,
+        account: schemaModule.authAccount || schemaModule.account,
+        verification: schemaModule.authVerification || schemaModule.verification,
+      },
+    }),
     logger: noopLogger as any,
     emailAndPassword: { enabled: true },
     session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
