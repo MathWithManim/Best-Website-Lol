@@ -1,5 +1,5 @@
 import { db, leaderboard, users } from "../../db";
-import { useQuery, api } from '../../lib/lib/db';
+import { useQuery, api } from '../../convex/_generated/api';
 import { useState } from 'react';
 import { m } from 'framer-motion';
 

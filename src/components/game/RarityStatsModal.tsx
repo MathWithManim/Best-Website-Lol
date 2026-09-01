@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 
 import { RARITY_COLORS, RARITY_VALUES } from '../../lib/rarities';
-import { useMutation, api } from '../../lib/lib/db';
+import { useMutation, api } from '../../convex/_generated/api';
 
 interface RarityStatsModalProps {
   isOpen: boolean;

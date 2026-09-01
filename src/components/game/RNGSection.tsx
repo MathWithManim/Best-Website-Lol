@@ -17,7 +17,7 @@ import AccountSettingsModal from './AccountSettingsModal';
 import { encodeRarityData, decodeRarityData } from '../../lib/crypto';
 import { useUser } from '../../lib/useUser';
 import { authClient } from '../../lib/auth-client';
-import { useQuery, useMutation, api } from '../../lib/lib/db';
+import { useQuery, useMutation, api } from '../../convex/_generated/api';
 
 const getCachedCounts = (): Record<string, number> => {
   try {
