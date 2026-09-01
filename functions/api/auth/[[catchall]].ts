@@ -56,7 +56,7 @@ export async function getAuth(env: Env) {
       },
     }),
     logger: noopLogger as any,
-    emailAndPassword: { enabled: true },
+    emailAndPassword: { enabled: true, requireEmailVerification: false },
     session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
     secret: env.BETTER_AUTH_SECRET || process.env.BETTER_AUTH_SECRET || 'default-secret-change-in-production',
     baseURL: env.BETTER_AUTH_URL || process.env.BETTER_AUTH_URL || 'http://localhost:5173',
