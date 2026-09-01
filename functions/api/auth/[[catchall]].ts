@@ -53,16 +53,12 @@ export async function onRequest(context: { env: Env; request: Request }) {
     const auth = await getAuth(context.env);
     return await auth.handler(context.request);
   } catch (error: any) {
-    console.error('[AuthHandler] Error:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    console.error('[AuthHandler] Error details:', error);
+    const msg = error?.message || error?.toString() || 'Internal Server Error';
+    const stack = error?.stack ? error.stack.slice(0, 500) : '';
     return new Response(
-      JSON.stringify({
-        error: error?.message || 'Internal Server Error',
-        code: 'AUTH_INIT_FAILURE',
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
+      JSON.stringify({ error: msg, stack: stack, code: 'AUTH_INIT_FAILURE', details: JSON.stringify(error) }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 }
