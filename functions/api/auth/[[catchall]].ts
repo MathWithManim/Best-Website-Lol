@@ -62,6 +62,9 @@ export async function getAuth(env: Env) {
     baseURL: env.BETTER_AUTH_URL || process.env.BETTER_AUTH_URL || 'http://localhost:5173',
     trustedOrigins: [
       env.BETTER_AUTH_URL || process.env.BETTER_AUTH_URL || 'http://localhost:5173',
+      'http://localhost:5173',
+      'https://nostalgiachillax.pages.dev',
+      'https://jasper.nostalgiachillax.pages.dev',
     ],
   });
 

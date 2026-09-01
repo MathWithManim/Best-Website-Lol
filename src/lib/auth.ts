@@ -23,9 +23,13 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24,
   },
   secret: process.env.BETTER_AUTH_SECRET || 'default-secret-change-in-production',
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:5173',
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+    process.env.BETTER_AUTH_URL || 'http://localhost:5173',
+    'http://localhost:5173',
+    'https://nostalgiachillax.pages.dev',
+    'https://*.nostalgiachillax.pages.dev',
+    'http://localhost:3000',
   ],
 });
 
