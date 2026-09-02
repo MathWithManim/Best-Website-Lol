@@ -7,11 +7,21 @@
   "observability": {
     "enabled": true
   },
+  "vars": {
+    "DATABASE_URL": "postgresql://neondb_owner:npg_8NHGKVq5TOWh@ep-rough-pond-ay9tusfw-pooler.c-5.us-east-2.aws.neon.tech/jasper?sslmode=require&channel_binding=require",
+    "BETTER_AUTH_SECRET": "supersecretkeyforbetterauthmigration",
+    "BETTER_AUTH_URL": "https://nostalgiachillax.pages.dev"
+  },
+  "headers": [
+    { "name": "X-Content-Type-Options", "value": "nosniff" },
+    { "name": "X-Frame-Options", "value": "DENY" },
+    { "name": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://nostalgiachillax.pages.dev; font-src 'self'; img-src 'self' data: https:;" }
+  ],
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
       "id": "c0f509b2af8d4e47ad5eb6611c33d19b",
-      "localConnectionString": "postgresql://neondb_owner:npg_tP35eWiwmOJp@ep-silent-boat-az6ergbe-pooler.c-3.ap-southeast-1.aws.neon.tech/Jasper?sslmode=require&channel_binding=require"
+      "localConnectionString": "postgresql://neondb_owner:npg_8NHGKVq5TOWh@ep-rough-pond-ay9tusfw-pooler.c-5.us-east-2.aws.neon.tech/jasper?sslmode=require&channel_binding=require"
     }
   ]
 }

@@ -33,7 +33,9 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
         storedAccounts.push(data.email);
         localStorage.setItem("savedAccounts:v1", JSON.stringify(storedAccounts));
       }
+      setInfo(`Welcome, ${data.name || data.email.split("@")[0]}! Account created successfully.`);
       onLogin?.(data.email);
+      setSubmitting(false);
     } catch (err: unknown) {
       const e: any = err;
       const raw = e?.message || e?.error?.message || e?.body?.message || e?.cause?.message || (typeof e === "string" ? e : null) || (e ? JSON.stringify(e).slice(0, 400) : null) || "Unknown error";
