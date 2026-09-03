@@ -1,36 +1,34 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useState, useEffect } from 'react';
 
 import { UserContext } from '../../lib/useUser';
-import { authClient } from '../../lib/auth-client';
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  // Hooks must be called unconditionally — call both then branch on results
-  let baSession: any = undefined;
-  try { baSession = (authClient as any).useSession?.(); } catch { baSession = undefined; }
+  const [sessionUser, setSessionUser] = useState<{ email: string; name: string; id: string } | null | undefined>(undefined);
 
-  let isAuthenticated = false;
-  let isLoading = false;
-  if (baSession !== undefined) {
-    if (baSession?.data?.user) {
-      isAuthenticated = true;
-      isLoading = false;
-    } else if (baSession?.isPending) {
-      isLoading = true;
-      isAuthenticated = false;
-    } else {
-    }
-  } else {
-  }
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/auth/get-session', { credentials: 'include' })
+      .then(r => r.json())
+      .then((data: any) => {
+        if (cancelled) return;
+        setSessionUser(data?.user ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setSessionUser(null);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  const isAuthenticated = sessionUser != null && !!sessionUser.email;
 
   let user: any = undefined;
-  const baUser = baSession?.data?.user;
-  if (isAuthenticated && baUser) {
+  if (isAuthenticated && sessionUser) {
     user = {
-      email: baUser.email,
-      username: baUser.name || baUser.email?.split('@')[0] || 'user',
-      name: baUser.name || '',
+      email: sessionUser.email,
+      username: sessionUser.name || sessionUser.email?.split('@')[0] || 'user',
+      name: sessionUser.name || '',
       bio: '',
-      pfp: baUser.image || '',
+      pfp: '',
       luckbucks: 0,
       equippedCosmetic: undefined,
       rebirthCount: 0,
@@ -45,13 +43,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       achievements: [],
     };
   }
-  // local overrides (bio/username/pfp edited via RNG settings gear) — read once
+
   let overrides: Record<string, string> = {};
   try {
     const raw = typeof window !== 'undefined' ? localStorage.getItem('profile:overrides:v1') : null;
     if (raw) overrides = JSON.parse(raw);
   } catch {}
-  // merge overrides into any user object so AccountSettingsModal edits show immediately
   const applyOverrides = (u: any) => {
     if (!u || !overrides || Object.keys(overrides).length === 0) return u;
     return {
@@ -66,7 +63,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   user = applyOverrides(user);
 
-  const value = isLoading || (!isAuthenticated && user === undefined) ? undefined : (isAuthenticated ? user ?? null : null);
+  const value = sessionUser === undefined ? undefined : (isAuthenticated ? user ?? null : null);
 
   return (
     <UserContext.Provider value={value}>

@@ -16,7 +16,7 @@ import AccountSettingsModal from './AccountSettingsModal';
 
 import { encodeRarityData, decodeRarityData } from '../../lib/crypto';
 import { useUser } from '../../lib/useUser';
-import { authClient } from '../../lib/auth-client';
+
 import { useQuery, useMutation, api } from '../../convex/_generated/api';
 
 const getCachedCounts = (): Record<string, number> => {
@@ -41,16 +41,7 @@ const RNGSection = () => {
   const [prestigeBusy, setPrestigeBusy] = useState(false);
 
   const user = useUser();
-
-  // Auth session — unconditional hook call
-  let baSession: any = { data: null, isPending: false };
-  try {
-    baSession = (authClient as any).useSession?.() ?? { data: null, isPending: false };
-  } catch {
-    baSession = { data: null, isPending: false };
-  }
-
-  const isAuthenticated = !!(baSession?.data?.user && user && user.email);
+  const isAuthenticated = !!user && !!user.email;
 
   // Stub Convex queries / mutations for build
   const userRarityCounts = useQuery(api.users.getRarityCounts as any) || {};
