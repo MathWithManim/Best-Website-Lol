@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
-import { authClient } from "../../lib/auth-client";
+
 
 interface AuthModalProps {
   onLogin?: (email: string) => void;
@@ -25,9 +25,16 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
     setError(null);
     setInfo(null);
     try {
-      const result = await authClient.signUp.email({ email: data.email, password: data.password, name: data.name });
-      if ((result as any)?.error) throw (result as any).error;
-      const d: any = (result as any)?.data;
+      const res = await fetch('/api/auth/sign-up/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: data.email, password: data.password, name: data.name }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error || body?.message || `Signup failed (${res.status})`);
+      }
       const storedAccounts = JSON.parse(localStorage.getItem("savedAccounts:v1") || "[]");
       if (!storedAccounts.includes(data.email)) {
         storedAccounts.push(data.email);
@@ -39,23 +46,18 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
       setSubmitting(false);
     } catch (err: unknown) {
       const e: any = err;
-      const raw = e?.message || e?.error?.message || e?.body?.message || e?.cause?.message || (typeof e === "string" ? e : null) || (e ? JSON.stringify(e).slice(0, 400) : null) || "Unknown error";
-      const code = e?.code || e?.error?.code || e?.body?.code || "";
-      const status = e?.status || e?.statusCode || "";
-      console.error("[AuthModal] signUp failed:", { err, raw, code, status, email: data.email });
+      const raw = e?.message || (typeof e === "string" ? e : "Unknown error");
+      console.error("[AuthModal] signUp failed:", { err, raw, email: data.email });
       const lower = raw.toLowerCase();
-      let msg = code ? `${raw} (${code})` : raw;
-      if (status) msg += ` [${status}]`;
+      let msg = raw;
       if (lower.includes("already exists") || lower.includes("duplicate")) {
         msg = `Account already exists for ${data.email} — try logging in instead.`;
         setMode("login");
-        // removed
       } else if (lower.includes("password") && lower.includes("short")) msg = `Password too weak: ${raw}`;
       else if (lower.includes("invalid") && lower.includes("email")) msg = `Invalid email: ${raw}`;
       else if (lower.includes("network") || lower.includes("fetch") || lower.includes("failed to fetch")) msg = `Network error — cannot reach auth server (${raw}).`;
       else if (lower.includes("rate") || lower.includes("too many")) msg = `Rate limited: ${raw} — wait a moment.`;
       setError(msg);
-      // removed
     } finally {
       setSubmitting(false);
     }
@@ -77,19 +79,24 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
     if (mode === "login") {
       setSubmitting(true);
       try {
-        const result = await authClient.signIn.email({ email: userEmail, password });
-        if ((result as any)?.error) throw (result as any).error;
+        const res = await fetch('/api/auth/sign-in/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email: userEmail, password }),
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body?.error || body?.message || `Login failed (${res.status})`);
+        }
         const storedAccounts = JSON.parse(localStorage.getItem("savedAccounts:v1") || "[]");
         if (!storedAccounts.includes(userEmail)) { storedAccounts.push(userEmail); localStorage.setItem("savedAccounts:v1", JSON.stringify(storedAccounts)); }
         onLogin?.(userEmail);
         setTimeout(() => { window.location.href = '/rng'; }, 600);
       } catch (err: unknown) {
         const e: any = err;
-        const raw = e?.message || e?.error?.message || e?.body?.message || (typeof e === "string" ? e : null) || "Unknown error";
-        const code = e?.code || "";
-        const status = e?.status || "";
-        let msg = code ? `${raw} (${code})` : raw;
-        if (status) msg += ` [${status}]`;
+        const raw = e?.message || (typeof e === "string" ? e : "Unknown error");
+        let msg = raw;
         if (raw.toLowerCase().includes("email_not_verified") || raw.toLowerCase().includes("not verified")) msg = `Email not verified — check your inbox for the verification link.`;
         setError(msg);
       } finally { setSubmitting(false); }
