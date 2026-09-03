@@ -35,6 +35,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
       }
       setInfo(`Welcome, ${data.name || data.email.split("@")[0]}! Account created successfully.`);
       onLogin?.(data.email);
+      setTimeout(() => { window.location.href = '/rng'; }, 600);
       setSubmitting(false);
     } catch (err: unknown) {
       const e: any = err;
@@ -81,6 +82,7 @@ const AuthModal = ({ onLogin }: AuthModalProps) => {
         const storedAccounts = JSON.parse(localStorage.getItem("savedAccounts:v1") || "[]");
         if (!storedAccounts.includes(userEmail)) { storedAccounts.push(userEmail); localStorage.setItem("savedAccounts:v1", JSON.stringify(storedAccounts)); }
         onLogin?.(userEmail);
+        setTimeout(() => { window.location.href = '/rng'; }, 600);
       } catch (err: unknown) {
         const e: any = err;
         const raw = e?.message || e?.error?.message || e?.body?.message || (typeof e === "string" ? e : null) || "Unknown error";
