@@ -48,7 +48,7 @@ const RNGSection = () => {
     baSession = { data: null, isPending: false };
   }
 
-  const isAuthenticated = !!baSession?.data?.user;
+  const isAuthenticated = !!(baSession?.data?.user && user && user.email);
 
   const user = useUser();
 
