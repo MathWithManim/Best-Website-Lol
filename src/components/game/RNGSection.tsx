@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import AuthModal from '../app/AuthModal';
 import RNGGame from './RNGGame';
 import Shop from '../Shop';
@@ -8,7 +8,7 @@ import RarityStatsModal from './RarityStatsModal';
 import EndgameScreen from '../EndgameScreen';
 import RecentWins from '../RecentWins';
 import { fmtCompact } from '../../lib/format';
-import { RARITIES, RARITY_VALUES } from '../../lib/rarities';
+import { RARITIES, RARITY_COLORS, RARITY_VALUES } from '../../lib/rarities';
 import RollHistory from '../RollHistory';
 import LuckPanel from '../LuckPanel';
 import CompletionRing from '../CompletionRing';
@@ -30,45 +30,29 @@ const getCachedCounts = (): Record<string, number> => {
 };
 
 const RNGSection = () => {
-  let convexAuth: any = { isAuthenticated: false, isLoading: false };
-  // Better-Auth (Neon) session — must be called unconditionally as a hook
-  let baSession: any = undefined;
-  try { baSession = (authClient as any).useSession?.(); } catch { baSession = undefined; }
-
-  // Unified auth: authenticated if EITHER Convex or Neon has a session
-  let isAuthenticated = false;
-  let authLoading = false;
-  if (baSession !== undefined) {
-    if (baSession?.data?.user) {
-      isAuthenticated = true;
-      authLoading = false;
-    } else if (baSession?.isPending) {
-      isAuthenticated = false;
-      authLoading = true;
-    } else {
-      isAuthenticated = convexAuth.isAuthenticated;
-      authLoading = convexAuth.isLoading;
-    }
-  } else {
-    isAuthenticated = convexAuth.isAuthenticated;
-    authLoading = convexAuth.isLoading;
-  }
-
+  // All hooks must be called unconditionally before any return
   const [modalOpen, setModalOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedRarity, setSelectedRarity] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [rebirthError, setRebirthError] = useState<string | null>(null);
+  const [bulkMsg, setBulkMsg] = useState<string | null>(null);
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const [prestigeBusy, setPrestigeBusy] = useState(false);
 
-  useEffect(() => {
-    if (window.location.hash === '#rng') {
-      document.getElementById('rng')?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, []);
+  // Auth session — unconditional hook call
+  let baSession: any = { data: null, isPending: false };
+  try {
+    baSession = (authClient as any).useSession?.() ?? { data: null, isPending: false };
+  } catch {
+    baSession = { data: null, isPending: false };
+  }
+
+  const isAuthenticated = !!baSession?.data?.user;
 
   const user = useUser();
 
-  // Stub Convex queries/mutations for build
+  // Stub Convex queries / mutations for build
   const userRarityCounts = useQuery(api.users.getRarityCounts as any) || {};
   const luckBucks = useQuery(api.users.getLuckBucks as any) ?? 0;
   const prestigeMut = useMutation(api.users.prestige as any);
@@ -77,9 +61,15 @@ const RNGSection = () => {
   const rarityStats = useQuery(api.stats.getRarityStats as any) || [];
   const totalRolls = useQuery(api.stats.getTotalRolls as any) ?? 0;
 
-  const isLoading = authLoading || userRarityCounts === undefined || (isAuthenticated && luckBucks === undefined);
+  const isLoading = (baSession?.isPending ?? false) || userRarityCounts === undefined || (isAuthenticated && luckBucks === undefined);
 
   const displayCounts = userRarityCounts || getCachedCounts();
+
+  useEffect(() => {
+    if (window.location.hash === '#rng') {
+      document.getElementById('rng')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
 
   useEffect(() => {
     if (userRarityCounts && user?.email) {
@@ -98,10 +88,17 @@ const RNGSection = () => {
   // Convex queries are reactive, so the grid and reel refresh on their own.
   const handleRollComplete = useCallback(() => {}, []);
   const handleSellComplete = useCallback(() => {}, []);
-  const [bulkMsg, setBulkMsg] = useState<string | null>(null);
-  const [bulkBusy, setBulkBusy] = useState(false);
-  const [prestigeBusy, setPrestigeBusy] = useState(false);
 
+  useEffect(() => {
+    document.title = 'RNG Game — Jasper Sona';
+    return () => { document.title = 'Jasper Sona'; };
+  }, []);
+
+  useEffect(() => {
+    if (!bulkMsg) return;
+    const t = setTimeout(() => setBulkMsg(null), 4000);
+    return () => clearTimeout(t);
+  }, [bulkMsg]);
 
   const junkPreview = (maxValue: number) =>
     Object.entries(displayCounts).reduce((sum, [rarity, count]) => {
@@ -126,17 +123,6 @@ const RNGSection = () => {
     }
   }, [prestigeBusy, prestigeMut, user?.prestigeCount]);
 
-  useEffect(() => {
-    document.title = 'RNG Game — Jasper Sona';
-    return () => { document.title = 'Jasper Sona'; };
-  }, []);
-
-  useEffect(() => {
-    if (!bulkMsg) return;
-    const t = setTimeout(() => setBulkMsg(null), 4000);
-    return () => clearTimeout(t);
-  }, [bulkMsg]);
-
   const handleSellJunk = useCallback(async (maxSellValue: number, label: string) => {
     if (bulkBusy) return;
     setBulkBusy(true);
@@ -160,13 +146,8 @@ const RNGSection = () => {
     }
   }, [rebirth]);
 
-  if (!isAuthenticated || authLoading) {
-    return <AuthModal />;
-  }
-
-  const statsForSelected = rarityStats?.find(s => s.rarity === selectedRarity) || null;
+  const statsForSelected = (Array.isArray(rarityStats) ? rarityStats.find((s: any) => s.rarity === selectedRarity) : undefined) || null;
   const userCountForSelected = displayCounts[selectedRarity] || 0;
-
   const rebirthEligible = !!user && !user.completedGame && user.rebirthCount < 45 && user.distinctCaught >= user.nextRebirthAt;
 
   return (
@@ -219,8 +200,8 @@ const RNGSection = () => {
             </>
           ) : (
             <>
-              <RNGGame 
-                onRollComplete={handleRollComplete} 
+              <RNGGame
+                onRollComplete={handleRollComplete}
                 rollCost={user?.nextRollCost ?? 0}
                 luckBucks={luckBucks ?? 0}
                 totalRarities={user?.totalRarities ?? 50}
@@ -301,6 +282,8 @@ const RNGSection = () => {
         onSellComplete={handleSellComplete}
       />
       <AccountSettingsModal open={settingsOpen} onClose={()=>setSettingsOpen(false)} />
+      {/* Auth gate: show modal overlay when not authenticated, without skipping hooks */}
+      {!isAuthenticated && <AuthModal />}
     </div>
   );
 };

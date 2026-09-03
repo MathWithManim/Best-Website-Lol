@@ -21,7 +21,7 @@ const AchievementToasts = () => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !Array.isArray(user.achievements)) return;
     const unlockedNow = new Set(user.achievements.filter((a) => a.unlocked).map((a) => a.id));
     const prev = prevUnlockedRef.current;
     prevUnlockedRef.current = unlockedNow;
@@ -37,7 +37,7 @@ const AchievementToasts = () => {
     }
     if (!changed) return;
 
-    const items = user.achievements
+    const items = (Array.isArray(user?.achievements) ? user.achievements : [])
       .filter((a) => a.unlocked && !prev.has(a.id))
       .slice(0, 3)
       .map((a) => ({ key: `${a.id}:${Date.now()}`, name: a.name, description: a.description }));

@@ -1,5 +1,5 @@
-import { useQuery, api } from "../convex/_generated/api";
 import { m } from 'framer-motion';
+import { useQuery, api } from '../convex/_generated/api';
 
 
 import { RARITY_COLORS, RARITY_INDEX } from '../lib/rarities';
@@ -16,7 +16,7 @@ function timeAgo(ts: number): string {
 const RecentWins = () => {
   const wins = useQuery(api.leaderboard.getRecentWins);
 
-  if (!wins || wins.length === 0) return null;
+  if (!Array.isArray(wins) || wins.length === 0) return null;
 
   return (
     <m.div
@@ -27,7 +27,7 @@ const RecentWins = () => {
       aria-label="Recent top pulls by other players"
     >
       <span aria-hidden>🔥</span>
-      {wins.map((w) => {
+      {Array.isArray(wins) && wins.map((w) => {
         const color = RARITY_COLORS[w.rarity] || '#9CA3AF';
         return (
           <span key={`${w.username}-${w.timestamp}`} className="font-mono text-xs text-white/70 shrink-0">

@@ -1,9 +1,9 @@
-import { useQuery, useMutation, api } from "../../convex/_generated/api";
 import { db } from "../db";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 
 import { useUser } from '../lib/useUser';
+import { useQuery, useMutation, api } from "../../convex/_generated/api";
 
 const COSMETIC_ICONS: Record<string, string> = {
   cat: '🐱',
@@ -59,7 +59,7 @@ const Shop = () => {
       if (user?.equippedCosmetic !== cosmeticId) {
         await equipCosmetic({ cosmeticId });
       }
-      const cosmetic = cosmetics?.find((c) => c.id === cosmeticId);
+      const cosmetic = Array.isArray(cosmetics) ? cosmetics.find((c) => c.id === cosmeticId) || null : null;
       setCosmeticMsg(cosmetic ? `Equipped ${cosmetic.name}!` : 'Equipped!');
     } catch (err) {
       setCosmeticMsg(err instanceof Error ? err.message : 'Action failed');
@@ -151,7 +151,7 @@ const Shop = () => {
         Cosmetics
       </m.h3>
       <div className="space-y-8">
-        {cosmetics?.map((cosmetic) => {
+        {Array.isArray(cosmetics) && cosmetics.map((cosmetic) => {
           const owned = ownedCosmetics?.includes(cosmetic.id) ?? false;
           const equipped = user?.equippedCosmetic === cosmetic.id;
           const canAfford = (luckBucks ?? 0) >= cosmetic.price;

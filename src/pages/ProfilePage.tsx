@@ -246,11 +246,11 @@ const ProfilePage = () => {
 
         <div className="mt-10">
           <h2 className="text-2xl font-sans font-bold mb-4">Achievements</h2>
-          {(user as any).achievements.length === 0 ? (
+          {!Array.isArray((user as any)?.achievements) || (user as any).achievements.length === 0 ? (
             <p className="text-sm font-mono text-primary/50 dark:text-[#f4d5ad]/50">No achievements defined yet.</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {(user as any).achievements.map((a: any) => (
+              {((user as any).achievements as any[]).map((a: any) => (
                 <div
                   key={a.id}
                   title={a.unlocked ? a.description : `${a.description} (locked)`}

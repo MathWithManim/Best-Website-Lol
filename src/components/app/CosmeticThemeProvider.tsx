@@ -1,6 +1,6 @@
 import { createContext, type ReactNode, useState, useEffect } from 'react';
-import { useQuery, api } from '../../convex/_generated/api';
 import { useUser } from '../../lib/useUser';
+import { useQuery, api } from '../../convex/_generated/api';
 
 
 
@@ -24,7 +24,7 @@ export const CosmeticThemeProvider = ({ children }: { children: ReactNode }) => 
   
   useEffect(() => {
     const equipped = (user as any)?.equippedCosmetic;
-    const cosmeticTheme = (cosmetics as any)?.find?.((c: any) => c.id === equipped)?.theme;
+    const cosmeticTheme = Array.isArray(cosmetics) ? (cosmetics.find((c: any) => c.id === equipped)?.theme ?? null) : null;
     setTheme(cosmeticTheme || null);
   }, [user, cosmetics]);
 

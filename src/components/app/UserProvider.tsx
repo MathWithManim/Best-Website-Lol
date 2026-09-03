@@ -7,8 +7,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // Hooks must be called unconditionally — call both then branch on results
   let baSession: any = undefined;
   try { baSession = (authClient as any).useSession?.(); } catch { baSession = undefined; }
-  let convexAuth: any = { isAuthenticated: false, isLoading: false };
-  try { convexAuth = {isAuthenticated:false}; } catch { convexAuth = { isAuthenticated: false, isLoading: false }; }
 
   let isAuthenticated = false;
   let isLoading = false;
@@ -20,12 +18,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       isLoading = true;
       isAuthenticated = false;
     } else {
-      isAuthenticated = convexAuth.isAuthenticated;
-      isLoading = convexAuth.isLoading;
     }
   } else {
-    isAuthenticated = convexAuth.isAuthenticated;
-    isLoading = convexAuth.isLoading;
   }
 
   let user: any = undefined;

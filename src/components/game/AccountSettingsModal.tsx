@@ -98,7 +98,6 @@ const AccountSettingsModal = ({ open, onClose }: Props) => {
         }
       } catch (e) { console.warn('[settings] auth updateUser failed', e); }
 
-      // try convex/drizzle mutation if wired
       if (updateProfile) {
         try { await updateProfile({ name, username, bio, pfp } as any); } catch (e) { console.warn('[settings] updateProfile failed (stub backend)', e); }
       }

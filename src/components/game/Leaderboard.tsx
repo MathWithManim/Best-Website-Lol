@@ -29,7 +29,8 @@ const Leaderboard = () => {
     );
   }
 
-  if (boards.length === 0) {
+  const safeBoards = Array.isArray(boards) ? boards : [];
+  if (safeBoards.length === 0) {
     return (
       <div className="w-full max-w-sm mx-auto mt-8">
         <h3 className="text-lg font-sans font-bold text-primary dark:text-[#f4d5ad] text-center mb-4">Weekly Race</h3>
@@ -38,7 +39,8 @@ const Leaderboard = () => {
     );
   }
 
-  const active = tier === null ? boards[0] : boards.find((b) => b.tier === tier) ?? boards[0];
+  const active = tier === null ? safeBoards[0] : safeBoards.find((b) => b.tier === tier) ?? safeBoards[0];
+  const entries = Array.isArray(active?.entries) ? active.entries : [];
 
   return (
     <div className="w-full max-w-sm mx-auto mt-8">
@@ -52,9 +54,9 @@ const Leaderboard = () => {
         Weekly Race
       </m.h3>
 
-      {boards.length > 1 && (
+      {safeBoards.length > 1 && (
         <div className="flex flex-wrap justify-center gap-1.5 mb-4" role="tablist" aria-label="Rebirth tiers">
-          {boards.map((b) => (
+          {safeBoards.map((b) => (
             <button
               key={b.tier}
               role="tab"
@@ -73,11 +75,11 @@ const Leaderboard = () => {
         </div>
       )}
 
-      {active.entries.length === 0 ? (
+      {entries.length === 0 ? (
         <p className="text-center text-sm font-mono text-primary/50 dark:text-[#f4d5ad]/50">No scores on this board yet.</p>
       ) : (
         <div className="space-y-2">
-          {active.entries.map((entry, i) => {
+          {entries.map((entry, i) => {
             const color = RARITY_COLORS[entry.bestRarity] || '#9CA3AF';
             return (
               <m.div
