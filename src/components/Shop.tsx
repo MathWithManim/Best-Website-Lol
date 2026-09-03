@@ -1,9 +1,9 @@
-import { db } from "../db";
+import { db } from "../lib/db";
 import { useState } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 
 import { useUser } from '../lib/useUser';
-import { useQuery, useMutation, api } from "../../convex/_generated/api";
+import { useQuery, useMutation, api } from "../convex/_generated/api";
 
 const COSMETIC_ICONS: Record<string, string> = {
   cat: '🐱',
