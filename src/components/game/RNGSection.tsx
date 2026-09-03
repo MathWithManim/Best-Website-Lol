@@ -40,6 +40,8 @@ const RNGSection = () => {
   const [bulkBusy, setBulkBusy] = useState(false);
   const [prestigeBusy, setPrestigeBusy] = useState(false);
 
+  const user = useUser();
+
   // Auth session — unconditional hook call
   let baSession: any = { data: null, isPending: false };
   try {
@@ -49,8 +51,6 @@ const RNGSection = () => {
   }
 
   const isAuthenticated = !!(baSession?.data?.user && user && user.email);
-
-  const user = useUser();
 
   // Stub Convex queries / mutations for build
   const userRarityCounts = useQuery(api.users.getRarityCounts as any) || {};
