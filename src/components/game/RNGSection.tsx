@@ -152,8 +152,12 @@ const RNGSection = () => {
 
   return (
     <div id="rng" className="max-w-6xl mx-auto px-4 py-8 md:py-12">
-      {/* top bar: back to site + settings gear (only when logged in) */}
-      <div className="flex items-center justify-between mb-6">
+      {!isAuthenticated ? (
+        <AuthModal />
+      ) : (
+        <>
+          {/* top bar: back to site + settings gear (only when logged in) */}
+          <div className="flex items-center justify-between mb-6">
         <a href="/" className="inline-flex items-center gap-2 font-mono text-xs font-bold text-white/60 hover:text-white transition-colors">
           <span aria-hidden>←</span> Jasper Sona
         </a>
@@ -282,8 +286,8 @@ const RNGSection = () => {
         onSellComplete={handleSellComplete}
       />
       <AccountSettingsModal open={settingsOpen} onClose={()=>setSettingsOpen(false)} />
-      {/* Auth gate: show modal overlay when not authenticated, without skipping hooks */}
-      {!isAuthenticated && <AuthModal />}
+        </>
+      )}
     </div>
   );
 };
